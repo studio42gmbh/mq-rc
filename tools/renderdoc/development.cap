@@ -1,0 +1,27 @@
+{
+    "rdocCaptureSettings": 1,
+    "settings": {
+        "autoStart": false,
+        "commandLine": "-jar \"..\\target\\mqrc-demo-0.1.0.jar\" -app=\"app.mq.dl\"",
+        "environment": [
+        ],
+        "executable": "C:\\Program Files\\java\\jdk-14.0.1\\bin\\java.exe",
+        "inject": false,
+        "numQueuedFrames": 0,
+        "options": {
+            "allowFullscreen": true,
+            "allowVSync": true,
+            "apiValidation": false,
+            "captureAllCmdLists": false,
+            "captureCallstacks": false,
+            "captureCallstacksOnlyDraws": false,
+            "debugOutputMute": true,
+            "delayForDebugger": 0,
+            "hookIntoChildren": false,
+            "refAllResources": false,
+            "verifyBufferAccess": false
+        },
+        "queuedFrameCap": 0,
+        "workingDir": "C:\\home\\s42\\merqry\\development\\demos\\mqrc-demo\\data"
+    }
+}

@@ -1,0 +1,489 @@
+/*
+ * Copyright Studio 42 GmbH 2021. All rights reserved.
+ *  
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
+ *  
+ * For details to the License read https://www.s42m.de/license
+ */
+package de.s42.mq.rendering;
+
+import de.s42.mq.buffers.FXBuffer;
+import de.s42.mq.buffers.GBuffer;
+import de.s42.mq.cameras.Camera;
+import de.s42.mq.input.Input;
+import de.s42.mq.loaders.obj.ObjLoader;
+import de.s42.mq.materials.*;
+import de.s42.mq.materials.Texture.TextureWrap;
+import de.s42.mq.meshes.*;
+import de.s42.mq.shaders.*;
+import de.s42.mq.shaders.DebugShader.BlitMode;
+import de.s42.mq.shaders.Shader.CullType;
+import de.s42.mq.tasks.AbstractTask;
+import de.s42.mq.tasks.LongRunningTask;
+import de.s42.mq.ui.Window;
+
+import java.io.IOException;
+import de.s42.log.LogManager;
+import de.s42.log.Logger;
+import org.lwjgl.opengl.GL;
+import static org.lwjgl.glfw.GLFW.*;
+import java.lang.Math;
+
+/**
+ *
+ * @author Benjamin Schiller
+ */
+public class RenderTask extends AbstractTask implements LongRunningTask
+{
+	private final static Logger log = LogManager.getLogger(RenderTask.class.getName());
+
+	private Window window;
+	private Input input;
+
+	private int currentBufferIndex;
+	private int currentBuffer;
+	private int buffers[];
+
+	// little controller
+	private float rotation;
+	private float speed;
+	private float zoom = 5.0f;
+	private float time;
+
+	private final Texture environmentTexture = new Texture("de/s42/mq/rc/backgrounds/venice_sunset_2k.hdr");
+
+	private final Texture brdfLUTTexture = new Texture("de/s42/mq/rc/materials/lut_brdf.png");
+
+	/**/
+	private final PBRMaterial elevatorMaterial = new PBRMaterial(
+		"de/s42/mq/rc/materials/elevator/base.png",
+		"de/s42/mq/rc/materials/elevator/heromeao.png",
+		"de/s42/mq/rc/materials/elevator/normal.png",
+		"de/s42/mq/rc/materials/elevator/emtr.png",
+		null,
+		null,
+		null
+	);
+	/** /
+	private final PBRMaterial elevatorMaterial = new PBRMaterial( 
+		"de/s42/mq/rc/materials/white/base.png",
+		"de/s42/mq/rc/materials/white/heromeao.png", 
+		"de/s42/mq/rc/materials/white/normal.png", 
+		null, 
+		null, 
+		null ,
+		null
+	);
+	/**/
+	private final PBRMaterial scifiWallMaterial = new PBRMaterial(
+		"de/s42/mq/rc/materials/scifiwall/base.png",
+		"de/s42/mq/rc/materials/scifiwall/heromeao.png",
+		"de/s42/mq/rc/materials/scifiwall/normal.png",
+		null,
+		null,
+		null,
+		null
+	);
+
+	private final PBRMaterial desertCliffMaterial = new PBRMaterial(
+		"de/s42/mq/rc/materials/desertcliff/base.png",
+		"de/s42/mq/rc/materials/desertcliff/heromeao.png",
+		"de/s42/mq/rc/materials/desertcliff/normal.png",
+		null,
+		null,
+		null,
+		null
+	);
+
+	private final PBRMaterial chairMaterial = new PBRMaterial(
+		"de/s42/mq/rc/materials/chair/base.png",
+		"de/s42/mq/rc/materials/chair/heromeao.png",
+		"de/s42/mq/rc/materials/chair/normal.png",
+		null,
+		null,
+		null,
+		null
+	);
+
+	private final BasicShader backgroundShader = new BasicShader();
+
+	private final SkyShader skyShader = new SkyShader();
+
+	private final FxaaShader fxaaShader = new FxaaShader();
+
+	private final DebugShader debugShader = new DebugShader();
+
+	private final Sphere sphere = new Sphere(1.0f, 800, 800);
+
+	private final Sphere sphere2 = new Sphere(1.0f, 800, 800);
+
+	private final Sphere sphere3 = new Sphere(1.0f, 800, 800);
+
+	private final Sphere sphereBackground = new Sphere(300f, 200, 200);
+
+	private final ScreenQuad screenQuad = new ScreenQuad();
+
+	private Mesh chairMesh;
+
+	private final Camera camera = new Camera(50.0f, 0.1f, 500.0f, 1.0f);
+
+	private final GBuffer gBuffer = new GBuffer();
+
+	private final FXBuffer fxBuffer = new FXBuffer();
+
+	private final IrradianceShader irradianceShader = new IrradianceShader();
+	private final FXBuffer irradianceBuffer = new FXBuffer();
+	private Texture irradianceEquirectangularTexture;
+	private CubeTexture irradianceCubeTexture;
+
+	private CubeTexture environmentCubeTexture;
+
+	protected void loadFrameBuffers()
+	{
+		gBuffer.setClearBuffer(true);
+		gBuffer.setWidth(window.getWidth());
+		gBuffer.setHeight(window.getHeight());
+		gBuffer.load();
+
+		fxBuffer.setWidth(window.getWidth());
+		fxBuffer.setHeight(window.getHeight());
+		fxBuffer.load();
+
+		fetchRenderBuffers();
+	}
+
+	protected void onResize()
+	{
+		camera.setAspectRatio(window.getAspectRatio());
+
+		gBuffer.resize(window.getWidth(), window.getHeight());
+		fxBuffer.resize(window.getWidth(), window.getHeight());
+		fetchRenderBuffers();
+
+		fxaaShader.setWidth(window.getWidth());
+		fxaaShader.setHeight(window.getHeight());
+	}
+
+	protected void fetchRenderBuffers()
+	{
+		buffers = new int[]{
+			fxBuffer.getTexture().getTextureId(),
+			gBuffer.getColorRenderBuffer(),
+			gBuffer.getAlbedoRenderBuffer(),
+			gBuffer.getDepthRenderBuffer(),
+			gBuffer.getNormalRenderBuffer(),
+			gBuffer.getPositionRenderBuffer(),
+			gBuffer.getSpecialRenderBuffer(),
+			gBuffer.getIrradianceRenderBuffer(),
+			irradianceEquirectangularTexture.getTextureId(),
+			environmentTexture.getTextureId()
+		};
+
+		currentBuffer = buffers[currentBufferIndex];
+	}
+
+	protected void loadShaders() throws IOException
+	{
+		environmentTexture.setHDRDefaults();
+		environmentTexture.load();
+
+		brdfLUTTexture.setWrapR(TextureWrap.CLAMP_TO_EDGE);
+		brdfLUTTexture.setWrapS(TextureWrap.CLAMP_TO_EDGE);
+		brdfLUTTexture.setWrapT(TextureWrap.CLAMP_TO_EDGE);
+		brdfLUTTexture.load();
+
+		// Prepare irradiance texture
+		irradianceBuffer.setWidth(256);
+		irradianceBuffer.setHeight(256);
+		irradianceBuffer.getTexture().setMaxMipLevel(0);
+		irradianceBuffer.getTexture().setGenerateMipMap(false);
+		irradianceBuffer.load();
+		irradianceShader.load();
+		irradianceEquirectangularTexture = irradianceBuffer.getTexture();
+
+		irradianceBuffer.startRender();
+		irradianceShader.setInBufferId(environmentTexture.getTextureId());
+		screenQuad.render(irradianceShader);
+		irradianceBuffer.endRender();
+
+		irradianceCubeTexture = new CubeTexture(512, 512, 5);
+		irradianceCubeTexture.createFromEquirectangularHDR(irradianceEquirectangularTexture);
+
+		// Prepare environment texture
+		environmentCubeTexture = new CubeTexture(512, 512, 5);
+		environmentCubeTexture.createFromEquirectangularHDR(environmentTexture);
+
+		backgroundShader.setBaseTexture(irradianceEquirectangularTexture);
+		backgroundShader.setCamera(camera);
+		backgroundShader.setCullType(CullType.FRONT);
+		backgroundShader.load();
+
+		//chairMaterial.getShader().setWireframe(true);
+		chairMaterial.setEnvironmentTexture(environmentCubeTexture);
+		chairMaterial.setIrradianceTexture(irradianceCubeTexture);
+		chairMaterial.setBrdfLUTTexture(brdfLUTTexture);
+		chairMaterial.setCamera(camera);
+		chairMaterial.load();
+		/*
+		elevatorMaterial.setEnvironmentTexture(environmentCubeTexture);
+		elevatorMaterial.setIrradianceTexture(irradianceCubeTexture);
+		elevatorMaterial.setBrdfLUTTexture(brdfLUTTexture);
+		elevatorMaterial.setCamera(camera);
+		elevatorMaterial.load();
+
+		scifiWallMaterial.setEnvironmentTexture(environmentCubeTexture);
+		scifiWallMaterial.setIrradianceTexture(irradianceCubeTexture);
+		scifiWallMaterial.setBrdfLUTTexture(brdfLUTTexture);
+		scifiWallMaterial.setCamera(camera);
+		scifiWallMaterial.load();
+
+		desertCliffMaterial.setEnvironmentTexture(environmentCubeTexture);
+		desertCliffMaterial.setIrradianceTexture(irradianceCubeTexture);
+		desertCliffMaterial.setBrdfLUTTexture(brdfLUTTexture);
+		desertCliffMaterial.setCamera(camera);
+		desertCliffMaterial.load();
+		 */
+		skyShader.setCamera(camera);
+		skyShader.load();
+
+		fxaaShader.setWidth(window.getWidth());
+		fxaaShader.setHeight(window.getHeight());
+		fxaaShader.load();
+
+		debugShader.load();
+	}
+
+	public void update(float elapsedTime)
+	{
+		if (input.isLeftDown()) {
+			speed = org.joml.Math.lerp(speed, -2.0f, 0.05f);
+		}
+		if (input.isRightDown()) {
+			speed = org.joml.Math.lerp(speed, +2.0f, 0.05f);
+		}
+
+		if (input.isUpDown()) {
+			zoom = org.joml.Math.lerp(zoom, 1.5f, 0.05f);
+		}
+		if (input.isDownDown()) {
+			zoom = org.joml.Math.lerp(zoom, 20.0f, 0.05f);
+		}
+
+		if (input.isChangeDisplayBuffer()) {
+			currentBufferIndex = (currentBufferIndex + 1) % buffers.length;
+
+			fetchRenderBuffers();
+
+			input.setChangeDisplayBuffer(false);
+			log.debug("Changed display buffer {} {}", currentBufferIndex, currentBuffer);
+		}
+
+		if (input.isChangeDisplayBufferBack()) {
+			currentBufferIndex = currentBufferIndex - 1;
+			if (currentBufferIndex < 0) {
+				currentBufferIndex = buffers.length - 1;
+			}
+
+			fetchRenderBuffers();
+
+			input.setChangeDisplayBufferBack(false);
+			log.debug("Changed display buffer {} {}", currentBufferIndex, currentBuffer);
+		}
+
+		if (input.isChangeBlitMode()) {
+			input.setChangeBlitMode(false);
+			debugShader.nextBlitMode();
+			log.debug("Changed blit mode {}", debugShader.getBlitMode().toString());
+		}
+
+		if (input.isChangeBlitModeBack()) {
+			input.setChangeBlitModeBack(false);
+			debugShader.previousBlitMode();
+			log.debug("Changed blit mode {}", debugShader.getBlitMode().toString());
+		}
+
+		rotation += elapsedTime * speed;
+
+		time += elapsedTime;
+
+		// dampen and stop under epsilon
+		speed *= 0.95f;
+		if (Math.abs(speed) < 0.01f) {
+			speed = 0.0f;
+		}
+
+		//sphere.getModelMatrix().setRotationXYZ(0.5f, time * 0.1f, 0.0f);
+		//sphere2.getModelMatrix().setRotationXYZ(0.5f, time * 0.1f, 0.0f);
+		//sphere3.getModelMatrix().setRotationXYZ(0.5f, time * 0.1f, 0.0f);
+		camera.setPosition((float) Math.sin(-rotation) * zoom,
+			(float) 2.0f,
+			(float) Math.cos(-rotation) * zoom);
+
+		camera.update();
+
+		if (window.isResized()) {
+			onResize();
+			window.setResized(false);
+		}
+	}
+
+	public void render()
+	{
+		gBuffer.startRender();
+
+		// render background
+		//screenQuad.render(skyShader);
+		//environmentTexture.setMinLod(5);
+		sphereBackground.render(backgroundShader);
+		//environmentTexture.setMinLod(0);
+
+		// render spheres
+		//sphere.render(elevatorMaterial);
+		//sphere2.render(desertCliffMaterial);
+		//sphere3.render(scifiWallMaterial);
+		
+		//for (int z = 0; z < 10; ++z)
+		//{
+			//for (int x = 0; x < 10; ++x)
+			//{
+				//chairMesh.getModelMatrix().setTranslation((float)x - 4.5f, 0.0f, (float)z - 4.5f);
+				chairMesh.render(chairMaterial);
+			//}
+		//}
+		
+		
+
+		gBuffer.endRender();
+
+		// blit fxaa from source
+		fxBuffer.startRender();
+
+		fxaaShader.setInBufferId(gBuffer.getColorRenderBuffer());
+		screenQuad.render(fxaaShader);
+
+		fxBuffer.endRender();
+
+		// blit render buffer to screen
+		debugShader.setInBufferId(currentBuffer);
+		screenQuad.render(debugShader);
+
+		// display in window
+		window.swapBuffer();
+	}
+
+	@SuppressWarnings("CallToPrintStackTrace")
+	public void init()
+	{
+		glfwMakeContextCurrent(window.getGlfwWindowHandle());
+		GL.createCapabilities();
+
+		try {
+
+			chairMesh = ObjLoader.loadMeshFromSingleFileZipResource("de/s42/mq/rc/meshes/chair.obj.zip");
+			chairMesh.getModelMatrix().scale(0.4f);
+			chairMesh.getModelMatrix().setTranslation(0.0f, -1.5f, 0.0f);
+			camera.init();
+			//sphere.load();
+			//sphere2.getModelMatrix().setTranslation(3.0f, 0.0f, 0.0f);
+			//sphere2.load();
+			//sphere3.getModelMatrix().setTranslation(-3.0f, 0.0f, 0.0f);
+			//sphere3.load();
+			sphereBackground.load();
+			screenQuad.load();
+			loadShaders();
+			loadFrameBuffers();
+
+			// start with certain buffer and blitmode
+			currentBufferIndex = 0;
+			debugShader.setBlitMode(BlitMode.DEFAULT);
+		}
+		catch (IOException ex) {
+			log.error(ex);
+			ex.printStackTrace();
+		}
+	}
+
+	@Override
+	@SuppressWarnings({"SynchronizeOnNonFinalField", "CallToPrintStackTrace"})
+	protected void runTask()
+	{
+		log.info("Start rendering");
+
+		init();
+
+		long lastTime = System.nanoTime();
+		long lastTimeInfo = System.nanoTime();
+		long frameCounter = 0;
+		while (!glfwWindowShouldClose(window.getGlfwWindowHandle())) {
+
+			glfwMakeContextCurrent(window.getGlfwWindowHandle());
+
+			long thisTime = System.nanoTime();
+			float elapsedTime = (thisTime - lastTime) * 1E-9f;
+			lastTime = thisTime;
+			update(elapsedTime);
+			render();
+
+			frameCounter++;
+
+			float elapsedInfo = (thisTime - lastTimeInfo) / 1E9f;
+			if (elapsedInfo > 10.0) {
+				float fps = (float) frameCounter / elapsedInfo;
+				log.debug("FPS {}", fps);
+				lastTimeInfo = thisTime;
+				frameCounter = 0;
+			}
+		}
+
+		cleanup();
+
+		log.info("EXIT rendering");
+	}
+
+	protected void cleanup()
+	{
+		elevatorMaterial.unload();
+		desertCliffMaterial.unload();
+		scifiWallMaterial.unload();
+		backgroundShader.unload();
+		environmentTexture.unload();
+		chairMesh.unload();
+		sphere.unload();
+		sphere2.unload();
+		sphere3.unload();
+		screenQuad.unload();
+		fxaaShader.unload();
+		debugShader.unload();
+		skyShader.unload();
+
+		gBuffer.unload();
+		fxBuffer.unload();
+
+		GL.setCapabilities(null);
+		glfwMakeContextCurrent(0);
+	}
+
+	public Window getWindow()
+	{
+		return window;
+	}
+
+	public void setWindow(Window window)
+	{
+		this.window = window;
+	}
+
+	public Input getInput()
+	{
+		return input;
+	}
+
+	public void setInput(Input input)
+	{
+		this.input = input;
+	}
+}

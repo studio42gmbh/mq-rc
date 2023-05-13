@@ -1,0 +1,30 @@
+--class-path
+'C:/Users/Studio42/.m2/repository/de/s42/dlt/0.1.0/dlt-0.1.0.jar;C:/Users/Studio42/.m2/repository/org/lwjgl/lwjgl-opencl/3.2.3/lwjgl-opencl-3.2.3.jar;C:/Users/Studio42/.m2/repository/org/lwjgl/lwjgl/3.2.3/lwjgl-3.2.3-natives-windows.jar;C:/Users/Studio42/.m2/repository/org/lwjgl/lwjgl-assimp/3.2.3/lwjgl-assimp-3.2.3-natives-windows.jar;C:/Users/Studio42/.m2/repository/org/lwjgl/lwjgl-glfw/3.2.3/lwjgl-glfw-3.2.3-natives-windows.jar;C:/Users/Studio42/.m2/repository/org/lwjgl/lwjgl-openal/3.2.3/lwjgl-openal-3.2.3-natives-windows.jar;C:/Users/Studio42/.m2/repository/org/lwjgl/lwjgl-stb/3.2.3/lwjgl-stb-3.2.3-natives-windows.jar'
+--module-path
+'C:/Users/Studio42/.m2/repository/org/antlr/antlr4-runtime/4.9.2/antlr4-runtime-4.9.2.jar;C:/Users/Studio42/.m2/repository/org/lwjgl/lwjgl/3.2.3/lwjgl-3.2.3.jar;C:/Users/Studio42/.m2/repository/org/lwjgl/lwjgl-glfw/3.2.3/lwjgl-glfw-3.2.3.jar;C:/Users/Studio42/.m2/repository/org/joml/joml/1.10.1/joml-1.10.1.jar;C:/Users/Studio42/.m2/repository/org/lwjgl/lwjgl-openal/3.2.3/lwjgl-openal-3.2.3.jar;C:/Users/Studio42/.m2/repository/de/s42/base42/1.0.0/base42-1.0.0.jar;C:/home/s42/merqry/development/mq-rc/target/classes;C:/Users/Studio42/.m2/repository/de/s42/log42/0.1.0/log42-0.1.0.jar;C:/Users/Studio42/.m2/repository/org/lwjgl/lwjgl-opengl/3.2.3/lwjgl-opengl-3.2.3.jar;C:/Users/Studio42/.m2/repository/de/s42/dl/0.1.0/dl-0.1.0.jar;C:/Users/Studio42/.m2/repository/org/lwjgl/lwjgl-assimp/3.2.3/lwjgl-assimp-3.2.3.jar;C:/Users/Studio42/.m2/repository/org/lwjgl/lwjgl-stb/3.2.3/lwjgl-stb-3.2.3.jar;C:/Users/Studio42/.m2/repository/org/lwjgl/lwjgl-opengl/3.2.3/lwjgl-opengl-3.2.3-natives-windows.jar;C:/Users/Studio42/.m2/repository/org/json/json/20210307/json-20210307.jar'
+--patch-module
+de.sft.mq.rc='C:/home/s42/merqry/development/mq-rc/src/main/java;C:/home/s42/merqry/development/mq-rc/target/generated-sources/antlr4;C:/home/s42/merqry/development/mq-rc/target/generated-sources/annotations'
+-encoding
+'UTF-8'
+-private
+-source
+'14'
+--module-source-path
+'C:/home/s42/merqry/development/mq-rc/docs/javadoc/src'
+-author
+-bottom
+'Copyright &#169; 2022. All rights reserved.'
+-charset
+'UTF-8'
+-d
+'C:/home/s42/merqry/development/mq-rc/docs/javadoc'
+-docencoding
+'UTF-8'
+-doctitle
+'MerQry Rich Client 0.1.0 API'
+-linkoffline
+'https://docs.oracle.com/en/java/javase/14/docs/api' 'C:/home/s42/merqry/development/mq-rc/target/javadoc-bundle-options'
+-use
+-version
+-windowtitle
+'MerQry Rich Client 0.1.0 API'
