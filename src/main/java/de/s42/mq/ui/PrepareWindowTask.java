@@ -103,7 +103,7 @@ public class PrepareWindowTask extends AbstractWindowTask
 
 			//glfwSetWindowMonitor(window.getGlfwWindowHandle(), 0, 0, 0, window.getWidth(), window.getHeight(), 60);
 			glfwSetWindowPos(window.getGlfwWindowHandle(), (vidmode.width() - window.getWidth()) / 2, (vidmode.height() - window.getHeight()) / 2);
-			try ( MemoryStack frame = MemoryStack.stackPush()) {
+			try (MemoryStack frame = MemoryStack.stackPush()) {
 				IntBuffer framebufferSize = frame.mallocInt(2);
 				nglfwGetFramebufferSize(window.getGlfwWindowHandle(), memAddress(framebufferSize), memAddress(framebufferSize) + 4);
 				window.setSize(framebufferSize.get(0), framebufferSize.get(1));
@@ -116,31 +116,38 @@ public class PrepareWindowTask extends AbstractWindowTask
 			throw new RuntimeException("Failed to create the GLFW window");
 		}
 
-		try {
-			//load icon
-			glfwSetWindowIcon(window.getGlfwWindowHandle(), window.getImageBufferFromIcon());
-		} catch (IOException ex) {
-			throw new RuntimeException("Error loading icon - " + ex.getMessage(), ex);
+		// Load icon for window
+		if (window.getIcon() != null) {
+			try {
+				//load icon
+				glfwSetWindowIcon(window.getGlfwWindowHandle(), window.getImageBufferFromIcon());
+			} catch (IOException ex) {
+				throw new RuntimeException("Error loading icon - " + ex.getMessage(), ex);
+			}
 		}
 
 		glfwMakeContextCurrent(window.getGlfwWindowHandle());
 
+		// Vsync
 		if (window.isvSync()) {
 			glfwSwapInterval(1);
 		} else {
 			glfwSwapInterval(0);
 		}
 
+		// Load the window
 		try {
 			window.load();
 		} catch (DLException ex) {
 			throw new RuntimeException(ex);
 		}
 
+		// Set the default cursor
 		if (window.getDefaultCursor() != null) {
 			window.setCursor(window.getDefaultCursor());
 		}
 
+		// Display the window
 		glfwShowWindow(window.getGlfwWindowHandle());
 
 		glfwMakeContextCurrent(0);

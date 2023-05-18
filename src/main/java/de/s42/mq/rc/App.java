@@ -57,6 +57,7 @@ public class App
 
 		Map<String, String> arguments = ModuleHelper.parseArguments(args);
 
+		// Load -app:...
 		if (!arguments.containsKey(COMMANDLINE_ARGUMENT_APP)) {
 			throw new IllegalArgumentException("Missing commandline argument 'app'");
 		}
@@ -71,6 +72,7 @@ public class App
 
 		Path configFile = null;
 
+		// Load config if given -config: ...
 		if (arguments.containsKey(COMMANDLINE_ARGUMENT_CONFIG)) {
 
 			configFile = Path.of(arguments.get(COMMANDLINE_ARGUMENT_CONFIG));

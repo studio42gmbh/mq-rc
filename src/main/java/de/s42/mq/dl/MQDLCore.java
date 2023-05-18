@@ -143,6 +143,7 @@ import de.s42.mq.tasks.Task;
 import de.s42.mq.tasks.TaskManager;
 import de.s42.mq.tasks.TaskQueue;
 import de.s42.mq.tasks.Tasks;
+import de.s42.mq.tasks.Worker;
 import de.s42.mq.ui.AbstractWindowTask;
 import de.s42.mq.ui.ActivateForRenderingTask;
 import de.s42.mq.ui.Button;
@@ -260,7 +261,7 @@ public class MQDLCore extends DefaultCore
 		defineType(createType(Vector3Data.class), "Vector3Data");
 		defineType(createType(Vector4Data.class), "Vector4Data");
 		defineType(createType(PathData.class), "PathData");
-
+		
 		// Assets
 		defineType(createType(AssetManager.class), "AssetManager");
 		defineType(createType(Updateable.class), "Updateable");
@@ -269,6 +270,7 @@ public class MQDLCore extends DefaultCore
 		defineType(createType(Assets.class), "Assets");
 
 		// Tasks
+		defineType(createType(Worker.class));
 		defineType(createType(Task.class), "Task");
 		defineType(createType(AbstractTask.class), "AbstractTask");
 		defineType(createType(ReferenceTask.class), "ReferenceTask");
