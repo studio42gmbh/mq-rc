@@ -1,21 +1,24 @@
 /*
  * Copyright Studio 42 GmbH 2021. All rights reserved.
- *  
+ *
  * Unless required by applicable law or agreed to in writing, software
  * distributed under the License is distributed on an "AS IS" BASIS,
  * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
  * See the License for the specific language governing permissions and
  * limitations under the License.
- *  
+ *
  * For details to the License read https://www.s42m.de/license
  */
 package de.s42.mq.i18n;
 
 import de.s42.base.files.FilesHelper;
-import de.s42.dl.exceptions.InvalidValue;
 import de.s42.dl.*;
 import de.s42.dl.DLAttribute.AttributeDL;
 import de.s42.dl.exceptions.DLException;
+import de.s42.dl.exceptions.InvalidValue;
+import de.s42.dl.types.DLContainer;
+import de.s42.log.LogManager;
+import de.s42.log.Logger;
 import de.s42.mq.assets.AbstractAsset;
 import de.s42.mq.data.StringData;
 import java.io.IOException;
@@ -23,9 +26,6 @@ import java.io.InputStream;
 import java.nio.file.*;
 import java.util.*;
 import java.util.concurrent.atomic.AtomicInteger;
-import de.s42.log.LogManager;
-import de.s42.log.Logger;
-import de.s42.dl.types.DLContainer;
 
 /**
  *
@@ -99,7 +99,7 @@ public class L10N extends AbstractAsset implements DLContainer
 
 									for (DLInstance l10nInstance : l10nInstances) {
 
-										L10N l10n = (L10N)l10nInstance.toJavaObject();
+										L10N l10n = (L10N) l10nInstance.toJavaObject();
 
 										l10n.load();
 
@@ -115,7 +115,7 @@ public class L10N extends AbstractAsset implements DLContainer
 								log.debug("Loading properties file " + FilesHelper.createMavenNetbeansFileConsoleLink(file));
 
 								Properties prop = new Properties();
-								try ( InputStream in = Files.newInputStream(file)) {
+								try (InputStream in = Files.newInputStream(file)) {
 									prop.load(in);
 
 									String loc = getDefaultLocale();
@@ -259,6 +259,12 @@ public class L10N extends AbstractAsset implements DLContainer
 		}
 
 		revision.incrementAndGet();
+	}
+
+	@Override
+	public List getChildren()
+	{
+		return Collections.unmodifiableList(new ArrayList<>(l10ns.values()));
 	}
 
 	public int getRevision()

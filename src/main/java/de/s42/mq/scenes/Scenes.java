@@ -1,24 +1,24 @@
 /*
  * Copyright Studio 42 GmbH 2021. All rights reserved.
- *  
+ *
  * Unless required by applicable law or agreed to in writing, software
  * distributed under the License is distributed on an "AS IS" BASIS,
  * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
  * See the License for the specific language governing permissions and
  * limitations under the License.
- *  
+ *
  * For details to the License read https://www.s42m.de/license
  */
 package de.s42.mq.scenes;
 
 import de.s42.dl.DLAttribute.AttributeDL;
 import de.s42.dl.exceptions.DLException;
+import de.s42.dl.types.DLContainer;
+import de.s42.log.LogManager;
+import de.s42.log.Logger;
 import de.s42.mq.assets.AbstractAsset;
 import de.s42.mq.data.BooleanData;
 import java.util.*;
-import de.s42.log.LogManager;
-import de.s42.log.Logger;
-import de.s42.dl.types.DLContainer;
 
 /**
  *
@@ -136,11 +136,18 @@ public class Scenes extends AbstractAsset implements DLContainer
 	@Override
 	public void addChild(String name, Object child)
 	{
-		if (child instanceof Scene) {
-			addScene((Scene) child);
-		} else if (child instanceof SceneTransition) {
-			addSceneTransition((SceneTransition) child);
+		if (child instanceof Scene scene) {
+			addScene(scene);
+		} else if (child instanceof SceneTransition sceneTransition) {
+			addSceneTransition(sceneTransition);
 		}
+	}
+
+	@Override
+	public List getChildren()
+	{
+		// @todo
+		return Collections.unmodifiableList(scenes);
 	}
 
 	public List<Scene> getScenes()

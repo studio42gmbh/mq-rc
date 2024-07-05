@@ -1,37 +1,37 @@
 /*
  * Copyright Studio 42 GmbH 2021. All rights reserved.
- *  
+ *
  * Unless required by applicable law or agreed to in writing, software
  * distributed under the License is distributed on an "AS IS" BASIS,
  * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
  * See the License for the specific language governing permissions and
  * limitations under the License.
- *  
+ *
  * For details to the License read https://www.s42m.de/license
  */
 package de.s42.mq.meshes;
 
 import de.s42.dl.DLAttribute.AttributeDL;
 import de.s42.dl.exceptions.DLException;
+import de.s42.log.LogManager;
+import de.s42.log.Logger;
 import de.s42.mq.cameras.Camera;
 import de.s42.mq.data.BooleanData;
 import java.util.*;
-import de.s42.log.LogManager;
-import de.s42.log.Logger;
-import de.s42.dl.types.DLContainer;
 
 /**
  *
  * @author Benjamin Schiller
  * @param <ChildType>
  */
-public class MeshGroup<ChildType extends Object> extends Mesh<ChildType> implements DLContainer<ChildType>
+public class MeshGroup<ChildType extends Object> extends Mesh<ChildType>
 {
+
 	private final static Logger log = LogManager.getLogger(MeshGroup.class.getName());
 
-	@AttributeDL(required = false)	
+	@AttributeDL(required = false)
 	protected BooleanData enabled = new BooleanData(true);
-	
+
 	protected final List<Mesh> meshes = new ArrayList();
 	protected final Map<String, Object> customProperties = new HashMap<>();
 
@@ -139,12 +139,11 @@ public class MeshGroup<ChildType extends Object> extends Mesh<ChildType> impleme
 			mesh.getMaterial().beforeRendering();
 		}
 
-		if (mesh instanceof MeshGroup) {
+		if (mesh instanceof MeshGroup meshGroup) {
 			// @todo: should i preserve the layers of contained meshgroups?
-			((MeshGroup) mesh).setLayers(getLayers());
+			meshGroup.setLayers(getLayers());
 			mesh.render();
-		}
-		else if (shallBeRendered(mesh)) {
+		} else if (shallBeRendered(mesh)) {
 			mesh.render();
 		}
 
@@ -183,14 +182,20 @@ public class MeshGroup<ChildType extends Object> extends Mesh<ChildType> impleme
 	@Override
 	public void addChild(String name, ChildType child)
 	{
-		if (child instanceof Mesh) {
-			addMesh((Mesh) child);
-		}
-		else if (child instanceof MeshReference) {
-			addMesh(((MeshReference) child).getMesh());
+		if (child instanceof Mesh mesh) {
+			addMesh(mesh);
+		} else if (child instanceof MeshReference meshReference) {
+			addMesh(meshReference.getMesh());
 		}
 
 		super.addChild(name, child);
+	}
+
+	@Override
+	public List<ChildType> getChildren()
+	{
+		// @todo
+		return (List<ChildType>) Collections.unmodifiableList(animations);
 	}
 
 	public List<Mesh> getMeshes()
@@ -209,8 +214,8 @@ public class MeshGroup<ChildType extends Object> extends Mesh<ChildType> impleme
 				return (MeshType) mesh;
 			}
 
-			if (mesh instanceof MeshGroup) {
-				Mesh sub = ((MeshGroup) mesh).findMesh(name);
+			if (mesh instanceof MeshGroup meshGroup) {
+				Mesh sub = meshGroup.findMesh(name);
 				if (sub != null) {
 					return (MeshType) sub;
 				}
@@ -244,8 +249,8 @@ public class MeshGroup<ChildType extends Object> extends Mesh<ChildType> impleme
 				result.add((MeshType) mesh);
 			}
 
-			if (mesh instanceof MeshGroup) {
-				((MeshGroup) mesh).findMeshesOfType(type, result);
+			if (mesh instanceof MeshGroup meshGroup) {
+				meshGroup.findMeshesOfType(type, result);
 			}
 		}
 	}
@@ -319,8 +324,8 @@ public class MeshGroup<ChildType extends Object> extends Mesh<ChildType> impleme
 
 		log.debug(indentStr + " " + mesh);
 
-		if (mesh instanceof MeshGroup) {
-			for (Mesh child : (List<Mesh>) ((MeshGroup) mesh).getMeshes()) {
+		if (mesh instanceof MeshGroup meshGroup) {
+			for (Mesh child : (List<Mesh>) meshGroup.getMeshes()) {
 				logHierarchy(child, indent + 1);
 			}
 		}

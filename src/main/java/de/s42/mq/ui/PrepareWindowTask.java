@@ -1,21 +1,21 @@
 /*
  * Copyright Studio 42 GmbH 2021. All rights reserved.
- *  
+ *
  * Unless required by applicable law or agreed to in writing, software
  * distributed under the License is distributed on an "AS IS" BASIS,
  * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
  * See the License for the specific language governing permissions and
  * limitations under the License.
- *  
+ *
  * For details to the License read https://www.s42m.de/license
  */
 package de.s42.mq.ui;
 
 import de.s42.dl.exceptions.DLException;
-import java.io.IOException;
-import java.nio.IntBuffer;
 import de.s42.log.LogManager;
 import de.s42.log.Logger;
+import java.io.IOException;
+import java.nio.IntBuffer;
 import static org.lwjgl.glfw.GLFW.*;
 import org.lwjgl.glfw.GLFWErrorCallback;
 import org.lwjgl.glfw.GLFWVidMode;
@@ -51,7 +51,7 @@ public class PrepareWindowTask extends AbstractWindowTask
 
 		glfwDefaultWindowHints();
 		glfwWindowHint(GLFW_CONTEXT_VERSION_MAJOR, 3);
-		glfwWindowHint(GLFW_CONTEXT_VERSION_MINOR, 2);
+		glfwWindowHint(GLFW_CONTEXT_VERSION_MINOR, 3);
 		glfwWindowHint(GLFW_OPENGL_PROFILE, GLFW_OPENGL_CORE_PROFILE);
 		glfwWindowHint(GLFW_OPENGL_FORWARD_COMPAT, GLFW_TRUE);
 		glfwWindowHint(GLFW_OPENGL_DEBUG_CONTEXT, GLFW_FALSE);
@@ -151,10 +151,9 @@ public class PrepareWindowTask extends AbstractWindowTask
 		glfwShowWindow(window.getGlfwWindowHandle());
 
 		glfwMakeContextCurrent(0);
-
 		// @todo this causes the app NOT to exit - find out why some day
 		/*
-		debugProc = GLUtil.setupDebugMessageCallback();		
+		debugProc = GLUtil.setupDebugMessageCallback();
 		if (debugProc != null) {
 			glDebugMessageCallback(null, 0L);
 			//debugProc.free();

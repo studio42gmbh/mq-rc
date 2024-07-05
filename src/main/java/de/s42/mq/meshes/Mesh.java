@@ -1,18 +1,21 @@
 /*
  * Copyright Studio 42 GmbH 2021. All rights reserved.
- *  
+ *
  * Unless required by applicable law or agreed to in writing, software
  * distributed under the License is distributed on an "AS IS" BASIS,
  * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
  * See the License for the specific language governing permissions and
  * limitations under the License.
- *  
+ *
  * For details to the License read https://www.s42m.de/license
  */
 package de.s42.mq.meshes;
 
 import de.s42.dl.DLAttribute.AttributeDL;
 import de.s42.dl.exceptions.DLException;
+import de.s42.dl.types.DLContainer;
+import de.s42.log.LogManager;
+import de.s42.log.Logger;
 import de.s42.mq.assets.AbstractAsset;
 import de.s42.mq.cameras.Camera;
 import de.s42.mq.core.Copyable;
@@ -20,10 +23,7 @@ import de.s42.mq.materials.Material;
 import de.s42.mq.util.Transform;
 import java.lang.reflect.InvocationTargetException;
 import java.util.*;
-import de.s42.log.LogManager;
-import de.s42.log.Logger;
 import org.joml.*;
-import de.s42.dl.types.DLContainer;
 
 /**
  *
@@ -233,9 +233,15 @@ public abstract class Mesh<ChildType extends Object> extends AbstractAsset imple
 	@Override
 	public void addChild(String name, ChildType child)
 	{
-		if (child instanceof MeshAnimation) {
-			addAnimation((MeshAnimation) child);
+		if (child instanceof MeshAnimation meshAnimation) {
+			addAnimation(meshAnimation);
 		}
+	}
+
+	@Override
+	public List<ChildType> getChildren()
+	{
+		return (List<ChildType>) Collections.unmodifiableList(animations);
 	}
 
 	public Matrix4f getParentMatrix()

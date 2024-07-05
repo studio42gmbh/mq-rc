@@ -1,23 +1,24 @@
 /*
  * Copyright Studio 42 GmbH 2021. All rights reserved.
- *  
+ *
  * Unless required by applicable law or agreed to in writing, software
  * distributed under the License is distributed on an "AS IS" BASIS,
  * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
  * See the License for the specific language governing permissions and
  * limitations under the License.
- *  
+ *
  * For details to the License read https://www.s42m.de/license
  */
 package de.s42.mq.assets;
 
 import de.s42.dl.exceptions.DLException;
+import de.s42.dl.types.DLContainer;
 import de.s42.log.LogManager;
 import de.s42.log.Logger;
 import de.s42.mq.materials.Material;
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.List;
-import de.s42.dl.types.DLContainer;
 
 /**
  *
@@ -26,6 +27,7 @@ import de.s42.dl.types.DLContainer;
  */
 public class Assets<ChildType extends Object> extends AbstractAsset implements DLContainer<ChildType>
 {
+
 	private final static Logger log = LogManager.getLogger(Assets.class.getName());
 
 	protected final List<Asset> assets = new ArrayList();
@@ -68,9 +70,15 @@ public class Assets<ChildType extends Object> extends AbstractAsset implements D
 	@Override
 	public void addChild(String name, ChildType child)
 	{
-		if (child instanceof Asset) {
-			add((Asset) child);
+		if (child instanceof Asset asset) {
+			add(asset);
 		}
+	}
+
+	@Override
+	public List<ChildType> getChildren()
+	{
+		return (List<ChildType>) Collections.unmodifiableList(assets);
 	}
 
 	protected Material findMaterial(Assets container, String name)
@@ -84,8 +92,8 @@ public class Assets<ChildType extends Object> extends AbstractAsset implements D
 				return (Material) asset;
 			}
 
-			if (asset instanceof Assets) {
-				Material mat = findMaterial((Assets) asset, name);
+			if (asset instanceof Assets assets1) {
+				Material mat = findMaterial(assets1, name);
 
 				if (mat != null) {
 					return mat;

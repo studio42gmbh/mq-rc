@@ -1,12 +1,12 @@
 /*
  * Copyright Studio 42 GmbH 2021. All rights reserved.
- *  
+ *
  * Unless required by applicable law or agreed to in writing, software
  * distributed under the License is distributed on an "AS IS" BASIS,
  * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
  * See the License for the specific language governing permissions and
  * limitations under the License.
- *  
+ *
  * For details to the License read https://www.s42m.de/license
  */
 package de.s42.mq.fonts;
@@ -16,13 +16,13 @@ import de.s42.dl.DLAttribute.AttributeDL;
 import de.s42.dl.annotations.files.IsDirectoryDLAnnotation.isDirectory;
 import de.s42.dl.annotations.files.IsFileDLAnnotation.isFile;
 import de.s42.dl.exceptions.DLException;
+import de.s42.dl.types.DLContainer;
+import de.s42.log.LogManager;
+import de.s42.log.Logger;
 import de.s42.mq.assets.AbstractAsset;
 import de.s42.mq.fonts.fnt.FntLoader;
 import java.nio.file.Path;
 import java.util.*;
-import de.s42.log.LogManager;
-import de.s42.log.Logger;
-import de.s42.dl.types.DLContainer;
 
 /**
  *
@@ -168,6 +168,12 @@ public class Font extends AbstractAsset implements DLContainer<GlyphPage>
 		assert child != null;
 
 		addPage(child);
+	}
+
+	@Override
+	public List<GlyphPage> getChildren()
+	{
+		return (List<GlyphPage>) Collections.unmodifiableList(pages);
 	}
 
 	public String getFace()
