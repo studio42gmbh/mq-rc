@@ -1,20 +1,18 @@
 /*
  * Copyright Studio 42 GmbH 2021. All rights reserved.
- *  
+ *
  * Unless required by applicable law or agreed to in writing, software
  * distributed under the License is distributed on an "AS IS" BASIS,
  * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
  * See the License for the specific language governing permissions and
  * limitations under the License.
- *  
+ *
  * For details to the License read https://www.s42m.de/license
  */
 package de.s42.mq.shaders.postfx;
 
 import de.s42.mq.data.*;
 import de.s42.mq.shaders.Shader;
-import de.s42.log.LogManager;
-import de.s42.log.Logger;
 
 /**
  *
@@ -22,7 +20,7 @@ import de.s42.log.Logger;
  */
 public class PostFXShader extends Shader
 {
-	private final static Logger log = LogManager.getLogger(PostFXShader.class.getName());
+	//private final static Logger log = LogManager.getLogger(PostFXShader.class.getName());
 
 	protected int width;
 	protected int height;
@@ -86,6 +84,7 @@ public class PostFXShader extends Shader
 		setUniform(inBufferResolutionUniform, 1.0f / (float) getWidth(), 1.0f / (float) getHeight());
 
 		setTexture(inBufferId.getIntegerValue(), 0);
+		setTexture(inBufferId.getIntegerValue(), 1);
 
 		// @todo -> causes 1281 OpenGL error in default buffer as glfw uses GL_BACK_LEFT
 		// see https://www.glfw.org/docs/3.3/window_guide.html#window_attributes
@@ -233,5 +232,5 @@ public class PostFXShader extends Shader
 		this.height = height;
 	}
 
-	// </editor-fold>	
+	// </editor-fold>
 }

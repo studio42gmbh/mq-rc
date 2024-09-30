@@ -11,14 +11,10 @@
  */
 package de.s42.mq.shaders;
 
-import de.s42.dl.DLAnnotation.AnnotationDL;
 import de.s42.dl.DLAttribute.AttributeDL;
 import de.s42.dl.exceptions.DLException;
 import de.s42.mq.data.ColorData;
 import de.s42.mq.materials.Texture;
-import de.s42.log.LogManager;
-import de.s42.log.Logger;
-import de.s42.mq.dl.annotations.EditableDLAnnotation;
 
 /**
  *
@@ -26,15 +22,15 @@ import de.s42.mq.dl.annotations.EditableDLAnnotation;
  */
 public class BasicShader extends Shader
 {
-	private final static Logger log = LogManager.getLogger(BasicShader.class.getName());
 
+	//private final static Logger log = LogManager.getLogger(BasicShader.class.getName());
 	@AttributeDL(required = false)
 	protected Texture baseTexture;
-	
+
 	@AttributeDL(required = false)
 	//@AnnotationDL(value = EditableDLAnnotation.DEFAULT_SYMBOL)
 	protected ColorData tint = new ColorData();
-	
+
 	protected int viewMatrixUniform = -1;
 	protected int projectionMatrixUniform = -1;
 	protected int modelMatrixUniform = -1;
@@ -102,8 +98,7 @@ public class BasicShader extends Shader
 
 		if (mesh.getIdentifier() > 0) {
 			setDraw7ColorAttachments();
-		}
-		else {
+		} else {
 			setDraw6ColorAttachments();
 		}
 	}
