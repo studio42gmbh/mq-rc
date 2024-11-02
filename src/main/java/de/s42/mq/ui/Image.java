@@ -17,6 +17,8 @@ import de.s42.log.LogManager;
 import de.s42.log.Logger;
 import de.s42.mq.buffers.FXBuffer;
 import de.s42.mq.data.ColorData;
+import de.s42.mq.data.Vector2Data;
+import de.s42.mq.data.Vector4Data;
 import de.s42.mq.materials.Material;
 import de.s42.mq.materials.Texture;
 import de.s42.mq.materials.Texture.TextureFiltering;
@@ -66,6 +68,19 @@ public class Image extends Quad implements UIComponent
 	@AttributeDL(required = false)
 	protected Layout layout;
 
+	/**
+	 * x = lefttop, y = righttop, z = rightbottom, w = leftbottom
+	 */
+	@AttributeDL(required = false)
+	//@AnnotationDL(value = EditableDLAnnotation.DEFAULT_SYMBOL)
+	//@AnnotationDL(value = MinDLAnnotation.DEFAULT_SYMBOL, parameters = "0.0")
+	//@AnnotationDL(value = MaxDLAnnotation.DEFAULT_SYMBOL, parameters = "10000.0")
+	//@AnnotationDL(value = StepDLAnnotation.DEFAULT_SYMBOL, parameters = "1.0")
+	protected Vector4Data borderRadius = new Vector4Data();
+
+	@AttributeDL(required = false)
+	protected Vector2Data dimensionUI = new Vector2Data();
+
 	@AttributeDL(required = false)
 	protected LayoutOptions layoutOptions;
 
@@ -103,6 +118,8 @@ public class Image extends Quad implements UIComponent
 		copy.layoutOptions = layoutOptions;
 		copy.smooth = smooth;
 		copy.screenUvs = screenUvs;
+		copy.borderRadius.setValue(borderRadius.getValue());
+		copy.dimensionUI.setValue(dimensionUI.getValue());
 		copy.tint.setValue(tint.getValue());
 
 		return copy;
@@ -199,8 +216,7 @@ public class Image extends Quad implements UIComponent
 		}
 
 		//set texture into shader if given BasicShade
-		Texture tex = getTexture();
-		if (tex != null) {
+		if (texture != null) {
 
 			Material mat = getMaterial();
 
@@ -210,7 +226,7 @@ public class Image extends Quad implements UIComponent
 
 			//@todo how to make sharing of a texture into shading/materials more generic?
 			if (shader instanceof BasicShader basicShader) {
-				basicShader.setBaseTexture(tex);
+				basicShader.setBaseTexture(texture);
 				basicShader.setTint(getTint());
 			}
 		}
@@ -329,4 +345,23 @@ public class Image extends Quad implements UIComponent
 	}
 	// "Getters/Setters" </editor-fold>
 
+	public Vector4Data getBorderRadius()
+	{
+		return borderRadius;
+	}
+
+	public void setBorderRadius(Vector4Data borderRadius)
+	{
+		this.borderRadius = borderRadius;
+	}
+
+	public Vector2Data getDimensionUI()
+	{
+		return dimensionUI;
+	}
+
+	public void setDimensionUI(Vector2Data dimensionUI)
+	{
+		this.dimensionUI = dimensionUI;
+	}
 }

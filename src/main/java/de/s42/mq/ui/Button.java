@@ -1,12 +1,12 @@
 /*
  * Copyright Studio 42 GmbH 2021. All rights reserved.
- *  
+ *
  * Unless required by applicable law or agreed to in writing, software
  * distributed under the License is distributed on an "AS IS" BASIS,
  * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
  * See the License for the specific language governing permissions and
  * limitations under the License.
- *  
+ *
  * For details to the License read https://www.s42m.de/license
  */
 package de.s42.mq.ui;
@@ -179,21 +179,25 @@ public class Button extends MeshGroup<UIAction> implements UIAction, UIComponent
 		this.textOptions = textOptions;
 	}
 
+	@Override
 	public Layout getLayout()
 	{
 		return layout;
 	}
 
+	@Override
 	public void setLayout(Layout layout)
 	{
 		this.layout = layout;
 	}
 
+	@Override
 	public LayoutOptions getLayoutOptions()
 	{
 		return layoutOptions;
 	}
 
+	@Override
 	public void setLayoutOptions(LayoutOptions layoutOptions)
 	{
 		this.layoutOptions = layoutOptions;
@@ -208,7 +212,9 @@ public class Button extends MeshGroup<UIAction> implements UIAction, UIComponent
 	public void setIdentifier(int identifier)
 	{
 		super.setIdentifier(identifier);
-		getPanelComponent().setIdentifier(identifier);
+
+		textComponent.setIdentifier(identifier);
+		panelComponent.setIdentifier(identifier);
 	}
 
 	@Override
@@ -216,8 +222,8 @@ public class Button extends MeshGroup<UIAction> implements UIAction, UIComponent
 	{
 		super.setCamera(camera);
 
-		getTextComponent().setCamera(camera);
-		getPanelComponent().setCamera(camera);
+		textComponent.setCamera(camera);
+		panelComponent.setCamera(camera);
 	}
 
 	@Override
@@ -225,8 +231,8 @@ public class Button extends MeshGroup<UIAction> implements UIAction, UIComponent
 	{
 		super.setModelMatrixDirty(modelMatrixDirty);
 
-		getTextComponent().setModelMatrixDirty(modelMatrixDirty);
-		getPanelComponent().setModelMatrixDirty(modelMatrixDirty);
+		textComponent.setModelMatrixDirty(modelMatrixDirty);
+		panelComponent.setModelMatrixDirty(modelMatrixDirty);
 	}
 
 	public PanelOptions getPanelOptions()
@@ -255,6 +261,5 @@ public class Button extends MeshGroup<UIAction> implements UIAction, UIComponent
 	{
 		this.uiManager = uiManager;
 	}
-
-	// "Getters/Setters" </editor-fold>	
+	// "Getters/Setters" </editor-fold>
 }

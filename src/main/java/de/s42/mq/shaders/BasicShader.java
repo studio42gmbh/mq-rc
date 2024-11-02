@@ -105,7 +105,7 @@ public class BasicShader extends Shader
 	@Override
 	public void afterRendering()
 	{
-		//setTexture(0, 0);
+		setTexture(0, 0);
 
 		super.afterRendering();
 	}

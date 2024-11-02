@@ -149,21 +149,25 @@ public class Panel extends Quad implements UIComponent
 	}
 
 	// <editor-fold desc="Getters/Setters" defaultstate="collapsed">
+	@Override
 	public Layout getLayout()
 	{
 		return layout;
 	}
 
+	@Override
 	public void setLayout(Layout layout)
 	{
 		this.layout = layout;
 	}
 
+	@Override
 	public LayoutOptions getLayoutOptions()
 	{
 		return layoutOptions;
 	}
 
+	@Override
 	public void setLayoutOptions(LayoutOptions layoutOptions)
 	{
 		this.layoutOptions = layoutOptions;

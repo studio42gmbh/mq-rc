@@ -15,6 +15,8 @@ import de.s42.dl.DLAttribute.AttributeDL;
 import de.s42.dl.exceptions.DLException;
 import de.s42.mq.core.Copyable;
 import de.s42.mq.core.Entity;
+import de.s42.mq.ui.layout.Layout;
+import de.s42.mq.ui.layout.LayoutOptions;
 
 /**
  *
@@ -34,4 +36,12 @@ public interface UIComponent extends Copyable, Entity
 	public void setUiManager(UIManager uiManager);
 
 	public void handleClick(int x, int y) throws DLException;
+
+	public Layout getLayout();
+
+	public void setLayout(Layout layout);
+
+	public LayoutOptions getLayoutOptions();
+
+	public void setLayoutOptions(LayoutOptions options);
 }

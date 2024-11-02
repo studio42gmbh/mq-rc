@@ -1,24 +1,21 @@
 /*
  * Copyright Studio 42 GmbH 2021. All rights reserved.
- *  
+ *
  * Unless required by applicable law or agreed to in writing, software
  * distributed under the License is distributed on an "AS IS" BASIS,
  * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
  * See the License for the specific language governing permissions and
  * limitations under the License.
- *  
+ *
  * For details to the License read https://www.s42m.de/license
  */
 package de.s42.mq.ui;
 
-import de.s42.dl.DLAnnotation.AnnotationDL;
 import de.s42.dl.DLAttribute.AttributeDL;
 import de.s42.dl.exceptions.DLException;
-import de.s42.mq.data.*;
-import de.s42.mq.dl.annotations.EditableDLAnnotation;
-import de.s42.mq.dl.annotations.MaxDLAnnotation;
-import de.s42.mq.dl.annotations.MinDLAnnotation;
-import de.s42.mq.dl.annotations.StepDLAnnotation;
+import de.s42.mq.data.ColorData;
+import de.s42.mq.data.FloatData;
+import de.s42.mq.data.Vector4Data;
 
 /**
  *
@@ -62,6 +59,8 @@ public class ComponentBackgroundShader extends UIShader
 	{
 		super.loadShader();
 
+		setUniform("baseSampler", 0);
+
 		borderRadiusUniform = getUniformLocationOpt("borderRadius");
 		borderColorUniform = getUniformLocationOpt("borderColor");
 		borderWidthUniform = getUniformLocationOpt("borderWidth");
@@ -76,20 +75,34 @@ public class ComponentBackgroundShader extends UIShader
 
 		super.beforeRendering();
 
-		if (mesh instanceof Panel) {
-
-			Panel panel = (Panel) mesh;
+		if (mesh instanceof Panel panel) {
 
 			setUniform(colorUniform, panel.getBackgroundColor());
 			setUniform(borderRadiusUniform, panel.getBorderRadius());
 			setUniform(borderColorUniform, panel.getBorderColor());
 			setUniform(borderWidthUniform, panel.getBorderWidth());
+		} else if (mesh instanceof Image image) {
+
+			setTextureOpt(image.getTexture(), 0);
+
+			setUniform(colorUniform, color);
+			setUniform(borderRadiusUniform, image.getBorderRadius());
+			setUniform(borderColorUniform, borderColor);
+			setUniform(borderWidthUniform, borderWidth);
 		} else {
 			setUniform(colorUniform, color);
 			setUniform(borderRadiusUniform, borderRadius);
 			setUniform(borderColorUniform, borderColor);
 			setUniform(borderWidthUniform, borderWidth);
 		}
+	}
+
+	@Override
+	public void afterRendering()
+	{
+		setTexture(0, 0);
+
+		super.afterRendering();
 	}
 
 	// <editor-fold desc="Getters/Setters" defaultstate="collapsed">
@@ -152,5 +165,5 @@ public class ComponentBackgroundShader extends UIShader
 	{
 		this.borderWidth = borderWidth;
 	}
-	// </editor-fold>	
+	// </editor-fold>
 }

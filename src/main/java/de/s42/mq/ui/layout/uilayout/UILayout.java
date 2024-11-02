@@ -1,18 +1,19 @@
 /*
  * Copyright Studio 42 GmbH 2021. All rights reserved.
- *  
+ *
  * Unless required by applicable law or agreed to in writing, software
  * distributed under the License is distributed on an "AS IS" BASIS,
  * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
  * See the License for the specific language governing permissions and
  * limitations under the License.
- *  
+ *
  * For details to the License read https://www.s42m.de/license
  */
 package de.s42.mq.ui.layout.uilayout;
 
-import de.s42.dl.DLAnnotation.AnnotationDL;
 import de.s42.dl.DLAttribute.AttributeDL;
+import de.s42.log.LogManager;
+import de.s42.log.Logger;
 import de.s42.mq.core.AbstractEntity;
 import de.s42.mq.data.Vector2Data;
 import de.s42.mq.materials.Texture;
@@ -22,9 +23,6 @@ import de.s42.mq.ui.Panel;
 import de.s42.mq.ui.layout.Layout;
 import static de.s42.mq.ui.layout.uilayout.UILayoutFit.*;
 import de.s42.mq.util.Transform;
-import de.s42.log.LogManager;
-import de.s42.log.Logger;
-import de.s42.mq.dl.annotations.EditableDLAnnotation;
 import org.joml.Vector2f;
 import org.joml.Vector3f;
 
@@ -77,9 +75,7 @@ public class UILayout extends AbstractEntity implements Layout<UILayoutOptions>
 		Vector2f screenSize = new Vector2f(deltaX, -deltaY); // the - is compensate for default quad already turning coordinates to support neutral scale image viewing
 
 		UILayoutFit imageFit = options.getFit();
-		if (mesh instanceof Image) {
-
-			Image image = (Image) mesh;
+		if (mesh instanceof Image image) {
 
 			// apply image fit rules
 			if (imageFit != UILayoutFit.NONE) {
@@ -110,15 +106,18 @@ public class UILayout extends AbstractEntity implements Layout<UILayoutOptions>
 
 				image.setUvs(leftUv, topUv, rightUv, bottomUv);
 			}
+
+			image.getDimensionUI().setValue(screenSize.x * displaySize.x * 0.5f, screenSize.y * displaySize.y * 0.5f);
 		}
 
 		meshScale.x = screenSize.x;
 		meshScale.y = screenSize.y;
 
-		if (mesh instanceof Panel) {
-			Panel panel = (Panel) mesh;
-
-			panel.getDimensionUI().setValue(screenSize.x * displaySize.x * 0.5f, screenSize.y * displaySize.y * 0.5f);
+		switch (mesh) {
+			case Panel panel ->
+				panel.getDimensionUI().setValue(screenSize.x * displaySize.x * 0.5f, screenSize.y * displaySize.y * 0.5f);
+			default -> {
+			}
 		}
 
 		meshTransform.setDirty(true);
@@ -135,5 +134,5 @@ public class UILayout extends AbstractEntity implements Layout<UILayoutOptions>
 	{
 		this.dimension = dimension;
 	}
-	// "Getters/Setters" </editor-fold>	
+	// "Getters/Setters" </editor-fold>
 }

@@ -16,6 +16,7 @@ import de.s42.mq.assets.AbstractAsset;
 import de.s42.mq.data.FloatData;
 import org.joml.Matrix4f;
 import org.joml.Vector3f;
+import org.joml.Vector4f;
 
 /**
  *
@@ -66,16 +67,18 @@ public abstract class Camera extends AbstractAsset
 	{
 		if (isUpdateViewMatrix()) {
 			viewMatrix.setLookAt(cameraPosition, cameraLookAt, cameraUp);
-			viewProjectionMatrix.set(viewMatrix).mul(projectionMatrix);
+			viewProjectionMatrix.set(projectionMatrix).mul(viewMatrix);
 			setUpdateViewMatrix(false);
 		}
 	}
 
 	public Vector3f toScreenPosition(Vector3f worldPosition)
 	{
-		Vector3f screenPosition = new Vector3f(worldPosition);
+		Vector4f screenPosition = new Vector4f(worldPosition, 1.0f);
 
-		return screenPosition.mulPosition(viewProjectionMatrix);
+		screenPosition.mul(viewProjectionMatrix);
+
+		return new Vector3f(screenPosition.x / screenPosition.w, screenPosition.y / screenPosition.w, screenPosition.z / screenPosition.w);
 	}
 
 	public void rotateAroundLookAt(float roationY, float distance, float y)

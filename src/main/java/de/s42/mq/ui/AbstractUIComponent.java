@@ -27,6 +27,8 @@ package de.s42.mq.ui;
 
 import de.s42.dl.DLAttribute.AttributeDL;
 import de.s42.mq.core.AbstractEntity;
+import de.s42.mq.ui.layout.Layout;
+import de.s42.mq.ui.layout.LayoutOptions;
 
 /**
  *
@@ -39,6 +41,10 @@ public abstract class AbstractUIComponent extends AbstractEntity implements UICo
 
 	@AttributeDL(ignore = true)
 	protected UIManager uiManager;
+
+	protected Layout layout;
+
+	protected LayoutOptions layoutOptions;
 
 	@Override
 	public int getIdentifier()
@@ -64,5 +70,29 @@ public abstract class AbstractUIComponent extends AbstractEntity implements UICo
 	public void setUiManager(UIManager uiManager)
 	{
 		this.uiManager = uiManager;
+	}
+
+	@Override
+	public Layout getLayout()
+	{
+		return layout;
+	}
+
+	@Override
+	public void setLayout(Layout layout)
+	{
+		this.layout = layout;
+	}
+
+	@Override
+	public LayoutOptions getLayoutOptions()
+	{
+		return layoutOptions;
+	}
+
+	@Override
+	public void setLayoutOptions(LayoutOptions layoutOptions)
+	{
+		this.layoutOptions = layoutOptions;
 	}
 }

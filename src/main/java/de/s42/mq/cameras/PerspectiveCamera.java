@@ -43,10 +43,9 @@ public class PerspectiveCamera extends Camera
 	@Override
 	public void update()
 	{
-		// @todo elegant way to make update of matrix smarter
 		if (isUpdateProjectionMatrix()) {
 			projectionMatrix.setPerspective((float) Math.toRadians(getFov().getFloatValue()), getAspectRatio(), getNear(), getFar());
-			viewProjectionMatrix.set(viewMatrix).mul(projectionMatrix);
+			viewProjectionMatrix.set(projectionMatrix).mul(viewMatrix);
 			setUpdateProjectionMatrix(false);
 		}
 

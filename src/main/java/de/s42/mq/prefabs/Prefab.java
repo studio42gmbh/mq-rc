@@ -13,6 +13,8 @@ package de.s42.mq.prefabs;
 
 import de.s42.mq.assets.Asset;
 import de.s42.mq.assets.Assets;
+import de.s42.mq.core.Copyable;
+import java.util.List;
 
 /**
  *
@@ -22,8 +24,20 @@ import de.s42.mq.assets.Assets;
 public class Prefab<ChildType extends Object> extends Assets<ChildType>
 {
 
-	public Asset instantiate()
+	public Assets instantiate()
 	{
-		return null;
+		// Copy first asset and create
+		Assets instance = new Assets();
+
+		// Copy or link assets
+		for (Asset asset : ((List<Asset>) getAssets())) {
+			if (asset instanceof Copyable copyable) {
+				instance.add(copyable.copy());
+			} else {
+				instance.add(asset);
+			}
+		}
+
+		return instance;
 	}
 }
