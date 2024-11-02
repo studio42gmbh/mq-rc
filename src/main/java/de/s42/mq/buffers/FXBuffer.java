@@ -1,12 +1,12 @@
 /*
  * Copyright Studio 42 GmbH 2021. All rights reserved.
- *  
+ *
  * Unless required by applicable law or agreed to in writing, software
  * distributed under the License is distributed on an "AS IS" BASIS,
  * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
  * See the License for the specific language governing permissions and
  * limitations under the License.
- *  
+ *
  * For details to the License read https://www.s42m.de/license
  */
 package de.s42.mq.buffers;
@@ -19,9 +19,9 @@ import de.s42.mq.materials.Texture.TextureFiltering;
 import de.s42.mq.materials.Texture.TextureFormat;
 import de.s42.mq.materials.Texture.TextureType;
 import de.s42.mq.materials.Texture.TextureWrap;
-import de.s42.log.LogManager;
-import de.s42.log.Logger;
-import static org.lwjgl.opengl.GL46.*;
+import static org.lwjgl.opengl.GL11.*;
+import static org.lwjgl.opengl.GL20.glDrawBuffers;
+import static org.lwjgl.opengl.GL30.*;
 
 /**
  *
@@ -30,8 +30,7 @@ import static org.lwjgl.opengl.GL46.*;
 public class FXBuffer extends FrameBuffer
 {
 
-	private final static Logger log = LogManager.getLogger(FXBuffer.class.getName());
-
+	//private final static Logger log = LogManager.getLogger(FXBuffer.class.getName());
 	@AttributeDL(required = false, defaultValue = "1.0")
 	protected float widthScale = 1.0f;
 
@@ -59,6 +58,18 @@ public class FXBuffer extends FrameBuffer
 	@AttributeDL(required = false, defaultValue = "false")
 	protected boolean generateMipMap = false;
 
+	@AttributeDL(required = false, defaultValue = "0")
+	protected int maxMipLevel = 0;
+
+	@AttributeDL(required = false, defaultValue = "0")
+	protected int minLod = 0;
+
+	@AttributeDL(required = false, defaultValue = "0")
+	protected int maxLod = 0;
+
+	@AttributeDL(required = false, defaultValue = "-0.5")
+	protected float lodBias = -0.5f; // little sharper
+
 	@AttributeDL(required = false)
 	protected Texture texture;
 
@@ -78,18 +89,22 @@ public class FXBuffer extends FrameBuffer
 	{
 		if (texture == null) {
 			texture = new Texture();
-			texture.setFormat(getFormat());
-			texture.setInternalFormat(getInternalFormat());
-			texture.setDataType(getDataType());
-			texture.setMinFilter(getMinFilter());
-			texture.setMagFilter(getMagFilter());
-			texture.setEnableAnisotropic(isEnableAnisotropic());
-			texture.setGenerateMipMap(isGenerateMipMap());
+			texture.setFormat(format);
+			texture.setInternalFormat(internalFormat);
+			texture.setDataType(dataType);
+			texture.setMinFilter(minFilter);
+			texture.setMagFilter(magFilter);
+			texture.setEnableAnisotropic(enableAnisotropic);
+			texture.setGenerateMipMap(generateMipMap);
 			texture.setWidth(getScaledWidth());
 			texture.setHeight(getScaledHeight());
 			texture.setWrapR(TextureWrap.CLAMP_TO_EDGE);
 			texture.setWrapS(TextureWrap.CLAMP_TO_EDGE);
 			texture.setWrapT(TextureWrap.CLAMP_TO_EDGE);
+			texture.setMaxLod(maxLod);
+			texture.setMinLod(minLod);
+			texture.setMaxMipLevel(maxMipLevel);
+			texture.setLodBias(lodBias);
 			textureCreated = true;
 		}
 
@@ -268,5 +283,45 @@ public class FXBuffer extends FrameBuffer
 	{
 		this.generateMipMap = generateMipMap;
 	}
-	// "Getters/Setters" </editor-fold>		
+
+	public int getMaxMipLevel()
+	{
+		return maxMipLevel;
+	}
+
+	public void setMaxMipLevel(int maxMipLevel)
+	{
+		this.maxMipLevel = maxMipLevel;
+	}
+
+	public int getMinLod()
+	{
+		return minLod;
+	}
+
+	public void setMinLod(int minLod)
+	{
+		this.minLod = minLod;
+	}
+
+	public int getMaxLod()
+	{
+		return maxLod;
+	}
+
+	public void setMaxLod(int maxLod)
+	{
+		this.maxLod = maxLod;
+	}
+
+	public float getLodBias()
+	{
+		return lodBias;
+	}
+
+	public void setLodBias(float lodBias)
+	{
+		this.lodBias = lodBias;
+	}
+	// "Getters/Setters" </editor-fold>
 }

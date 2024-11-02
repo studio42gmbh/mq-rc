@@ -1,12 +1,12 @@
 /*
  * Copyright Studio 42 GmbH 2021. All rights reserved.
- *  
+ *
  * Unless required by applicable law or agreed to in writing, software
  * distributed under the License is distributed on an "AS IS" BASIS,
  * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
  * See the License for the specific language governing permissions and
  * limitations under the License.
- *  
+ *
  * For details to the License read https://www.s42m.de/license
  */
 package de.s42.mq.materials;
@@ -14,16 +14,23 @@ package de.s42.mq.materials;
 import de.s42.dl.DLAttribute.AttributeDL;
 import de.s42.dl.annotations.files.IsFileDLAnnotation.isFile;
 import de.s42.dl.exceptions.DLException;
-import de.s42.mq.assets.AbstractAsset;
-import java.io.IOException;
-import java.nio.*;
-import java.nio.file.Path;
 import de.s42.log.LogManager;
 import de.s42.log.Logger;
+import de.s42.mq.assets.AbstractAsset;
+import java.io.IOException;
+import java.nio.Buffer;
+import java.nio.ByteBuffer;
+import java.nio.FloatBuffer;
+import java.nio.IntBuffer;
+import java.nio.file.Path;
 import org.joml.Vector2f;
 import static org.lwjgl.opengl.EXTTextureFilterAnisotropic.GL_TEXTURE_MAX_ANISOTROPY_EXT;
 import org.lwjgl.opengl.GL;
-import static org.lwjgl.opengl.GL46.*;
+import static org.lwjgl.opengl.GL11.*;
+import static org.lwjgl.opengl.GL12.*;
+import static org.lwjgl.opengl.GL13.*;
+import static org.lwjgl.opengl.GL14.*;
+import static org.lwjgl.opengl.GL30.*;
 import org.lwjgl.opengl.GLCapabilities;
 import static org.lwjgl.stb.STBImage.*;
 import org.lwjgl.system.MemoryStack;
@@ -199,7 +206,7 @@ public class Texture extends AbstractAsset
 
 		log.trace("Loading {}", getSource());
 
-		try ( MemoryStack frame = MemoryStack.stackPush()) {
+		try (MemoryStack frame = MemoryStack.stackPush()) {
 			IntBuffer widthB = frame.mallocInt(1);
 			IntBuffer heightB = frame.mallocInt(1);
 			IntBuffer components = frame.mallocInt(1);

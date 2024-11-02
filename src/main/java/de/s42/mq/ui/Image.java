@@ -1,21 +1,24 @@
 /*
  * Copyright Studio 42 GmbH 2021. All rights reserved.
- *  
+ *
  * Unless required by applicable law or agreed to in writing, software
  * distributed under the License is distributed on an "AS IS" BASIS,
  * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
  * See the License for the specific language governing permissions and
  * limitations under the License.
- *  
+ *
  * For details to the License read https://www.s42m.de/license
  */
 package de.s42.mq.ui;
 
 import de.s42.dl.DLAttribute.AttributeDL;
 import de.s42.dl.exceptions.DLException;
+import de.s42.log.LogManager;
+import de.s42.log.Logger;
 import de.s42.mq.buffers.FXBuffer;
 import de.s42.mq.data.ColorData;
-import de.s42.mq.materials.*;
+import de.s42.mq.materials.Material;
+import de.s42.mq.materials.Texture;
 import de.s42.mq.materials.Texture.TextureFiltering;
 import de.s42.mq.materials.Texture.TextureWrap;
 import de.s42.mq.meshes.Quad;
@@ -24,11 +27,10 @@ import de.s42.mq.shaders.Shader;
 import de.s42.mq.ui.layout.Layout;
 import de.s42.mq.ui.layout.LayoutOptions;
 import java.nio.file.Path;
-import de.s42.log.LogManager;
-import de.s42.log.Logger;
 
 /**
  * Represents a simple image in the scene.
+ *
  * @author Benjamin Schiller
  */
 public class Image extends Quad implements UIComponent
@@ -56,18 +58,17 @@ public class Image extends Quad implements UIComponent
 	@AttributeDL(required = false)
 	//@AnnotationDL(value = RequiredOrDLAnnotation.DEFAULT_SYMBOL, parameters = { "source", "buffer", "material" })
 	protected Texture texture;
-	
+
 	@AttributeDL(required = false)
 	//@AnnotationDL(value = EditableDLAnnotation.DEFAULT_SYMBOL)
 	protected ColorData tint = new ColorData();
-	
+
 	@AttributeDL(required = false)
 	protected Layout layout;
-	
+
 	@AttributeDL(required = false)
 	protected LayoutOptions layoutOptions;
-	
-	
+
 	/**
 	 * if set to true its generating mipmaps and using LINEAR_MIP_LINEAR etc; smooth = false is good for precise pixel
 	 * graphics
@@ -84,7 +85,7 @@ public class Image extends Quad implements UIComponent
 
 	@AttributeDL(required = false)
 	protected UIManager uiManager;
-	
+
 	protected boolean textureLoaded;
 	protected float originalWidth;
 
@@ -197,7 +198,7 @@ public class Image extends Quad implements UIComponent
 			texture = buffer.getTexture();
 		}
 
-		//set texture into shader if given BasicShade		
+		//set texture into shader if given BasicShade
 		Texture tex = getTexture();
 		if (tex != null) {
 
@@ -208,9 +209,9 @@ public class Image extends Quad implements UIComponent
 			Shader shader = mat.getShader();
 
 			//@todo how to make sharing of a texture into shading/materials more generic?
-			if (shader instanceof BasicShader) {
-				((BasicShader) shader).setBaseTexture(tex);
-				((BasicShader) shader).setTint(getTint());
+			if (shader instanceof BasicShader basicShader) {
+				basicShader.setBaseTexture(tex);
+				basicShader.setTint(getTint());
 			}
 		}
 
@@ -221,6 +222,12 @@ public class Image extends Quad implements UIComponent
 		}
 
 		super.render();
+	}
+
+	@Override
+	public void handleClick(int x, int y) throws DLException
+	{
+		// do nothing
 	}
 
 	// <editor-fold desc="Getters/Setters" defaultstate="collapsed">
@@ -320,5 +327,6 @@ public class Image extends Quad implements UIComponent
 	{
 		this.uiManager = uiManager;
 	}
-	// "Getters/Setters" </editor-fold>	
+	// "Getters/Setters" </editor-fold>
+
 }

@@ -31,7 +31,6 @@ public class FrameBuffer extends AbstractAsset
 	protected boolean clearBuffer = false;
 
 	@AttributeDL(required = false)
-	//@AnnotationDL(value = EditableDLAnnotation.DEFAULT_SYMBOL)
 	protected ColorData clearColor = new ColorData(new MQColor(0.0f, 0.0f, 0.0f, 0.0f));
 
 	@AttributeDL(required = false, defaultValue = "1")
@@ -152,6 +151,8 @@ public class FrameBuffer extends AbstractAsset
 	public void endRender()
 	{
 		glBindFramebuffer(GL_FRAMEBUFFER, 0);
+
+		glDrawBuffers(new int[]{});
 	}
 
 	public int getFbo()

@@ -182,10 +182,13 @@ public class MeshGroup<ChildType extends Object> extends Mesh<ChildType>
 	@Override
 	public void addChild(String name, ChildType child)
 	{
-		if (child instanceof Mesh mesh) {
-			addMesh(mesh);
-		} else if (child instanceof MeshReference meshReference) {
-			addMesh(meshReference.getMesh());
+		switch (child) {
+			case Mesh mesh ->
+				addMesh(mesh);
+			case MeshReference meshReference ->
+				addMesh(meshReference.getMesh());
+			default -> {
+			}
 		}
 
 		super.addChild(name, child);

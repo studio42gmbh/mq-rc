@@ -16,7 +16,9 @@ import de.s42.log.LogManager;
 import de.s42.log.Logger;
 import de.s42.mq.assets.Updateable;
 import de.s42.mq.core.AbstractEntity;
-import java.util.*;
+import java.util.ArrayList;
+import java.util.Collections;
+import java.util.List;
 
 /**
  *
@@ -27,6 +29,8 @@ public class Input extends AbstractEntity implements Updateable, DLContainer, In
 
 	private final static Logger log = LogManager.getLogger(Input.class.getName());
 
+	protected boolean debug;
+
 	protected final List<MouseCursorInputHandler> mouseCursors = Collections.synchronizedList(new ArrayList<>());
 	protected final List<MouseButtonInputHandler> mouseButtons = Collections.synchronizedList(new ArrayList<>());
 	protected final List<KeyInputHandler> keys = Collections.synchronizedList(new ArrayList<>());
@@ -36,7 +40,10 @@ public class Input extends AbstractEntity implements Updateable, DLContainer, In
 	@Override
 	public void handleKey(int key, int scancode, int action, int mods)
 	{
-		//log.debug("Key {} {}", key, scancode);
+		if (debug) {
+			log.debug("Key", key, scancode, action, mods);
+		}
+
 		for (KeyInputHandler iKey : keys) {
 			iKey.handleKey(key, scancode, action, mods);
 		}
@@ -105,5 +112,15 @@ public class Input extends AbstractEntity implements Updateable, DLContainer, In
 	public List getChildren()
 	{
 		return Collections.unmodifiableList(handlers);
+	}
+
+	public boolean isDebug()
+	{
+		return debug;
+	}
+
+	public void setDebug(boolean debug)
+	{
+		this.debug = debug;
 	}
 }

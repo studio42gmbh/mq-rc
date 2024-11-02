@@ -11,7 +11,12 @@
  */
 package de.s42.mq.shaders.postfx;
 
-import de.s42.mq.data.*;
+import de.s42.dl.DLAttribute.AttributeDL;
+import de.s42.dl.exceptions.DLException;
+import de.s42.mq.data.ColorData;
+import de.s42.mq.data.FloatData;
+import de.s42.mq.data.IntegerData;
+import de.s42.mq.materials.Texture;
 import de.s42.mq.shaders.Shader;
 
 /**
@@ -32,21 +37,38 @@ public class PostFXShader extends Shader
 	protected int vignetteColorUniform;
 	protected int chromaticAbberationStrengthUniform;
 	protected int inBufferResolutionUniform;
+	protected int lookupIntensityUniform;
+	protected int barrelPowerUniform;
+
+	@AttributeDL(defaultValue = "DEFAULT")
 	protected BlitMode blitMode = BlitMode.DEFAULT;
+
+	@AttributeDL(required = true)
 	protected IntegerData inBufferId = new IntegerData(-1);
+
+	protected Texture lookup;
+
 	protected FloatData exposure = new FloatData();
 
 	// VIGNETTE
 	protected FloatData vignetteStart = new FloatData();
 	protected FloatData vignetteEnd = new FloatData();
 	protected ColorData vignetteColor = new ColorData();
+	protected FloatData lookupIntensity = new FloatData();
+	protected FloatData barrelPower = new FloatData(1.0f);
 
 	// CHROMATIC ABBERATION
 	protected FloatData chromaticAbberationStrength = new FloatData();
 
 	@Override
-	protected void loadShader()
+	protected void loadShader() throws DLException
 	{
+		super.loadShader();
+
+		setUniform("inBuffer", 0);
+		setUniform("identifierBuffer", 1);
+		setUniform("inLookup", 2);
+
 		blitModeUniform = getUniformLocation("blitMode");
 		exposureUniform = getUniformLocation("exposure");
 		vignetteStartUniform = getUniformLocation("vignetteStart");
@@ -54,13 +76,13 @@ public class PostFXShader extends Shader
 		vignetteColorUniform = getUniformLocation("vignetteColor");
 		chromaticAbberationStrengthUniform = getUniformLocation("chromaticAbberationStrength");
 		inBufferResolutionUniform = getUniformLocation("inBufferResolution");
+		lookupIntensityUniform = getUniformLocation("lookupIntensity");
+		barrelPowerUniform = getUniformLocation("barrelPower");
 	}
 
 	@Override
 	public void beforeRendering()
 	{
-		super.beforeRendering();
-
 		assert blitMode != null;
 		assert exposure != null;
 		assert exposure.getValue() != null;
@@ -75,6 +97,8 @@ public class PostFXShader extends Shader
 		assert inBufferId != null;
 		assert inBufferId.getIntegerValue() != -1;
 
+		super.beforeRendering();
+
 		setUniform(blitModeUniform, blitMode.blitModeId);
 		setUniform(exposureUniform, exposure);
 		setUniform(vignetteStartUniform, vignetteStart);
@@ -82,9 +106,14 @@ public class PostFXShader extends Shader
 		setUniform(vignetteColorUniform, vignetteColor);
 		setUniform(chromaticAbberationStrengthUniform, chromaticAbberationStrength);
 		setUniform(inBufferResolutionUniform, 1.0f / (float) getWidth(), 1.0f / (float) getHeight());
+		setUniform(lookupIntensityUniform, lookupIntensity);
+		setUniform(barrelPowerUniform, barrelPower);
 
 		setTexture(inBufferId.getIntegerValue(), 0);
 		setTexture(inBufferId.getIntegerValue(), 1);
+		if (lookup != null) {
+			setTexture(lookup.getTextureId(), 2);
+		}
 
 		// @todo -> causes 1281 OpenGL error in default buffer as glfw uses GL_BACK_LEFT
 		// see https://www.glfw.org/docs/3.3/window_guide.html#window_attributes
@@ -95,8 +124,10 @@ public class PostFXShader extends Shader
 	@Override
 	public void afterRendering()
 	{
-		setTexture(0, 0);
 		super.afterRendering();
+		setTexture(0, 0);
+		setTexture(1, 0);
+		setTexture(2, 0);
 	}
 
 	// <editor-fold desc="Getters/Setters" defaultstate="collapsed">
@@ -232,5 +263,34 @@ public class PostFXShader extends Shader
 		this.height = height;
 	}
 
+	public FloatData getLookupIntensity()
+	{
+		return lookupIntensity;
+	}
+
+	public void setLookupIntensity(FloatData lookupIntensity)
+	{
+		this.lookupIntensity = lookupIntensity;
+	}
+
+	public Texture getLookup()
+	{
+		return lookup;
+	}
+
+	public void setLookup(Texture lookup)
+	{
+		this.lookup = lookup;
+	}
+
+	public FloatData getBarrelPower()
+	{
+		return barrelPower;
+	}
+
+	public void setBarrelPower(FloatData barrelPower)
+	{
+		this.barrelPower = barrelPower;
+	}
 	// </editor-fold>
 }

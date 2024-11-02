@@ -13,7 +13,7 @@
 		<joml.version>1.10.8</joml.version>
 		<platform>windows</platform>
 		<maven.compiler.release>21</maven.compiler.release>
-	</properties>		
+	</properties>
 	<dependencies>
 		<dependency>
 			<groupId>org.testng</groupId>
@@ -25,7 +25,7 @@
 			<groupId>de.s42</groupId>
 			<artifactId>dlt</artifactId>
 			<version>1.0.4-DEV</version>
-		</dependency>		
+		</dependency>
 		<dependency>
 			<groupId>org.joml</groupId>
 			<artifactId>joml</artifactId>
@@ -101,8 +101,8 @@
 			<artifactId>lwjgl-stb</artifactId>
 			<version>${lwjgl.version}</version>
 			<classifier>natives-${platform}</classifier>
-		</dependency>		
-	</dependencies>	
+		</dependency>
+	</dependencies>
 	<build>
 		<plugins>
 			<plugin>
@@ -133,9 +133,9 @@
 									<arg value="--abbrev=11"/>
 									<arg value="HEAD"/>
 								</exec>
-								<property name="versionFile" value="${project.basedir}/src/main/resources/de/s42/mq/rc/${project.artifactId}.version"/>	
-								<property name="fullVersion" value="${project.version} #${git.revision} ${maven.build.timestamp}"/>								
-								<echo file="${versionFile}">${fullVersion}</echo>													
+								<property name="versionFile" value="${project.basedir}/src/main/resources/de/s42/mq/rc/${project.artifactId}.version"/>
+								<property name="fullVersion" value="${project.version} #${git.revision} ${maven.build.timestamp}"/>
+								<echo file="${versionFile}">${fullVersion}</echo>
 								<echo>New version is ${fullVersion}</echo>
 							</target>
 						</configuration>
@@ -144,8 +144,8 @@
 						</goals>
 					</execution>
 				</executions>
-			</plugin>			
-			
+			</plugin>
+
 			<plugin>
 				<!-- https://maven.apache.org/surefire/maven-surefire-plugin/examples/testng.html -->
 				<groupId>org.apache.maven.plugins</groupId>
@@ -153,11 +153,11 @@
 				<version>3.5.0</version>
 				<configuration>
 					<!-- https://stackoverflow.com/questions/64688896/how-to-make-testng-print-detail-message-about-the-failure -->
-					<trimStackTrace>false</trimStackTrace> 
+					<trimStackTrace>false</trimStackTrace>
 					<argLine>--add-modules de.sft.mq.rc -Dfile.encoding=UTF-8</argLine>
 					<workingDirectory>${project.basedir}/data/</workingDirectory>
 				</configuration>
-			</plugin>		
+			</plugin>
 			<plugin>
 				<!-- https://maven.apache.org/plugins/maven-compiler-plugin/ -->
 				<groupId>org.apache.maven.plugins</groupId>
@@ -187,7 +187,7 @@
 						</configuration>
 					</execution>
 				</executions>
-			</plugin>			
+			</plugin>
 			<plugin>
 				<!-- https://maven.apache.org/plugins/maven-jar-plugin/ -->
 				<groupId>org.apache.maven.plugins</groupId>
@@ -197,28 +197,26 @@
 					<archive>
 						<manifest>
 							<addClasspath>true</addClasspath>
-							<classpathPrefix>libs/</classpathPrefix>						
-							<mainClass>de.s42.mq.rc.Main</mainClass>
+							<classpathPrefix>libs/</classpathPrefix>
 						</manifest>
 						<manifestEntries>
 							<Automatic-Module-Name>de.sft.mq.rc</Automatic-Module-Name>
-							<!--SplashScreen-Image>splash.jpg</SplashScreen-Image//-->
 						</manifestEntries>
 					</archive>
 				</configuration>
-			</plugin>		
+			</plugin>
 			<plugin>
 				<!-- https://maven.apache.org/plugins/maven-javadoc-plugin/aggregate-mojo.html -->
 				<groupId>org.apache.maven.plugins</groupId>
 				<artifactId>maven-javadoc-plugin</artifactId>
-				<version>3.10.0</version>
+				<version>3.10.1</version>
 				<configuration>
 					<outputDirectory>${project.basedir}/docs</outputDirectory>
 					<reportOutputDirectory>${project.basedir}/docs</reportOutputDirectory>
 					<destDir>javadoc</destDir>
 					<show>private</show>
-				</configuration>				
-			</plugin>			
+				</configuration>
+			</plugin>
 		</plugins>
 	</build>
 </project>

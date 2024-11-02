@@ -1,34 +1,25 @@
 /*
  * Copyright Studio 42 GmbH 2021. All rights reserved.
- *  
+ *
  * Unless required by applicable law or agreed to in writing, software
  * distributed under the License is distributed on an "AS IS" BASIS,
  * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
  * See the License for the specific language governing permissions and
  * limitations under the License.
- *  
+ *
  * For details to the License read https://www.s42m.de/license
  */
 package de.s42.mq.dl;
 
-import de.s42.dl.*;
+import de.s42.dl.DLInstance;
+import de.s42.dl.DLType;
 import de.s42.dl.core.DefaultCore;
 import de.s42.dl.exceptions.DLException;
-import de.s42.dl.types.*;
+import de.s42.dl.types.DefaultDLType;
 import de.s42.dl.types.collections.MapDLType;
 import de.s42.dl.types.primitive.ObjectDLType;
 import de.s42.mq.MQColor;
-import de.s42.mq.assets.AbstractAsset;
-import de.s42.mq.assets.AbstractAssetsTask;
-import de.s42.mq.assets.Asset;
-import de.s42.mq.assets.AssetManager;
-import de.s42.mq.assets.Assets;
-import de.s42.mq.assets.LoadAssetTask;
-import de.s42.mq.assets.LoadAssetsTask;
-import de.s42.mq.assets.UnloadAssetTask;
-import de.s42.mq.assets.UnloadAssetsTask;
-import de.s42.mq.assets.UpdateUpdateable;
-import de.s42.mq.assets.Updateable;
+import de.s42.mq.assets.*;
 import de.s42.mq.buffers.FXBuffer;
 import de.s42.mq.buffers.FrameBuffer;
 import de.s42.mq.buffers.GBuffer;
@@ -37,53 +28,24 @@ import de.s42.mq.cameras.OrthographicCamera;
 import de.s42.mq.cameras.PerspectiveCamera;
 import de.s42.mq.core.AbstractEntity;
 import de.s42.mq.core.Entity;
-import de.s42.mq.data.AbstractData;
-import de.s42.mq.data.AbstractNumberData;
-import de.s42.mq.data.BooleanData;
-import de.s42.mq.data.ColorData;
-import de.s42.mq.data.Data;
-import de.s42.mq.data.FloatData;
-import de.s42.mq.data.IntegerData;
-import de.s42.mq.data.LongData;
-import de.s42.mq.data.PathData;
-import de.s42.mq.data.StringData;
-import de.s42.mq.data.Vector2Data;
-import de.s42.mq.data.Vector3Data;
-import de.s42.mq.data.Vector4Data;
+import de.s42.mq.data.*;
 import de.s42.mq.debug.Log;
 import de.s42.mq.debug.LogLevel;
-import de.s42.mq.dl.types.*;
+import de.s42.mq.dl.types.ColorDLType;
+import de.s42.mq.dl.types.Vector2DLType;
+import de.s42.mq.dl.types.Vector3DLType;
+import de.s42.mq.dl.types.Vector4DLType;
 import de.s42.mq.editor.AbstractDataEditor;
 import de.s42.mq.editor.DataEditor;
-import de.s42.mq.editor.dataeditors.BooleanDataEditor;
-import de.s42.mq.editor.dataeditors.ColorDataEditor;
-import de.s42.mq.editor.dataeditors.FloatDataEditor;
-import de.s42.mq.editor.dataeditors.IntegerDataEditor;
-import de.s42.mq.editor.dataeditors.StringDataEditor;
-import de.s42.mq.editor.dataeditors.Vector2DataEditor;
-import de.s42.mq.editor.dataeditors.Vector3DataEditor;
-import de.s42.mq.editor.dataeditors.Vector4DataEditor;
-import de.s42.mq.fonts.Font;
-import de.s42.mq.fonts.Fonts;
-import de.s42.mq.fonts.Glyph;
-import de.s42.mq.fonts.GlyphPage;
-import de.s42.mq.fonts.Text;
+import de.s42.mq.editor.dataeditors.*;
 import de.s42.mq.fonts.Text.HorizontalAlignment;
 import de.s42.mq.fonts.Text.VerticalAlignment;
-import de.s42.mq.fonts.TextOptions;
+import de.s42.mq.fonts.*;
 import de.s42.mq.i18n.L10N;
 import de.s42.mq.i18n.Language;
 import de.s42.mq.i18n.LocalizedStringData;
-import de.s42.mq.input.AbstractInputAxis;
-import de.s42.mq.input.AbstractInputKey;
-import de.s42.mq.input.AbstractInputTask;
-import de.s42.mq.input.Input;
-import de.s42.mq.input.InputAxis;
 import de.s42.mq.input.InputAxis.InputAxisOverflowMode;
-import de.s42.mq.input.InputHandler;
-import de.s42.mq.input.InputKey;
-import de.s42.mq.input.InputTask;
-import de.s42.mq.input.PrepareInputTask;
+import de.s42.mq.input.*;
 import de.s42.mq.input.keys.KeyInputAxis;
 import de.s42.mq.input.keys.KeyInputKey;
 import de.s42.mq.input.mouse.MouseButtonKey;
@@ -93,76 +55,26 @@ import de.s42.mq.input.mouse.MouseScrollWheelKey.ScrollKey;
 import de.s42.mq.input.mouse.ScrollInputAxis;
 import de.s42.mq.loaders.fbx.FbxMesh;
 import de.s42.mq.loaders.obj.ObjMesh;
-import de.s42.mq.materials.CubeTexture;
-import de.s42.mq.materials.Material;
-import de.s42.mq.materials.PBRMaterial;
-import de.s42.mq.materials.ShaderMaterial;
-import de.s42.mq.materials.Texture;
+import de.s42.mq.materials.*;
 import de.s42.mq.materials.Texture.TextureFiltering;
 import de.s42.mq.materials.Texture.TextureFormat;
 import de.s42.mq.materials.Texture.TextureType;
 import de.s42.mq.materials.Texture.TextureWrap;
-import de.s42.mq.meshes.AbstractMeshAnimation;
-import de.s42.mq.meshes.Cube;
-import de.s42.mq.meshes.Mesh;
-import de.s42.mq.meshes.MeshAnimation;
-import de.s42.mq.meshes.MeshGroup;
-import de.s42.mq.meshes.MeshReference;
-import de.s42.mq.meshes.Particles;
-import de.s42.mq.meshes.Quad;
-import de.s42.mq.meshes.ScreenQuad;
-import de.s42.mq.meshes.Sphere;
-import de.s42.mq.meshes.UpdateMeshes;
+import de.s42.mq.meshes.*;
 import de.s42.mq.prefabs.Prefab;
-import de.s42.mq.rendering.ClearBufferTask;
-import de.s42.mq.rendering.RenderMeshesTask;
+import de.s42.mq.rendering.*;
 import de.s42.mq.scenes.RunScenes;
 import de.s42.mq.scenes.Scene;
 import de.s42.mq.scenes.SceneTransition;
 import de.s42.mq.scenes.Scenes;
-import de.s42.mq.shaders.BasicShader;
-import de.s42.mq.shaders.SSRRShader;
-import de.s42.mq.shaders.Shader;
 import de.s42.mq.shaders.Shader.BlendFunc;
 import de.s42.mq.shaders.Shader.CullType;
 import de.s42.mq.shaders.Shader.DepthFunc;
+import de.s42.mq.shaders.*;
 import de.s42.mq.shaders.postfx.BlitMode;
-import de.s42.mq.sound.AudioClip;
-import de.s42.mq.sound.Sound;
-import de.s42.mq.sound.SoundReceiver;
-import de.s42.mq.sound.Sounds;
-import de.s42.mq.sound.UpdateSound;
-import de.s42.mq.sound.UpdateSoundReceiver;
-import de.s42.mq.tasks.AbstractTask;
-import de.s42.mq.tasks.DebouncedSequenceTask;
-import de.s42.mq.tasks.DefaultTaskManager;
-import de.s42.mq.tasks.ReferenceTask;
-import de.s42.mq.tasks.SequenceTask;
-import de.s42.mq.tasks.SetData;
-import de.s42.mq.tasks.Task;
-import de.s42.mq.tasks.TaskManager;
-import de.s42.mq.tasks.TaskQueue;
-import de.s42.mq.tasks.Tasks;
-import de.s42.mq.tasks.Worker;
-import de.s42.mq.ui.AbstractWindowTask;
-import de.s42.mq.ui.ActivateForRenderingTask;
-import de.s42.mq.ui.Button;
-import de.s42.mq.ui.CloseWindowTask;
-import de.s42.mq.ui.ComponentBackgroundShader;
-import de.s42.mq.ui.Cursor;
-import de.s42.mq.ui.Cursors;
-import de.s42.mq.ui.HandleWindowEventsTask;
-import de.s42.mq.ui.Image;
-import de.s42.mq.ui.ImageOptions;
-import de.s42.mq.ui.Panel;
-import de.s42.mq.ui.PanelOptions;
-import de.s42.mq.ui.PrepareWindowTask;
-import de.s42.mq.ui.SwapBufferWindowTask;
-import de.s42.mq.ui.UIComponent;
-import de.s42.mq.ui.UIManager;
-import de.s42.mq.ui.UIShader;
-import de.s42.mq.ui.Window;
-import de.s42.mq.ui.WindowTask;
+import de.s42.mq.sound.*;
+import de.s42.mq.tasks.*;
+import de.s42.mq.ui.*;
 import de.s42.mq.ui.actions.UIAction;
 import de.s42.mq.ui.animations.FadeTintOnMouseOver;
 import de.s42.mq.ui.layout.Layout;
@@ -176,11 +88,7 @@ import java.nio.file.Files;
 import java.nio.file.Path;
 import java.util.Map;
 import java.util.concurrent.atomic.AtomicInteger;
-import org.joml.Matrix4f;
-import org.joml.Quaternionf;
-import org.joml.Vector2f;
-import org.joml.Vector3f;
-import org.joml.Vector4f;
+import org.joml.*;
 
 /**
  *
@@ -261,7 +169,7 @@ public class MQDLCore extends DefaultCore
 		defineType(createType(Vector3Data.class), "Vector3Data");
 		defineType(createType(Vector4Data.class), "Vector4Data");
 		defineType(createType(PathData.class), "PathData");
-		
+
 		// Assets
 		defineType(createType(AssetManager.class), "AssetManager");
 		defineType(createType(Updateable.class), "Updateable");
@@ -327,6 +235,21 @@ public class MQDLCore extends DefaultCore
 
 		// Shaders
 		defineType(createType(Shader.class), "Shader");
+		defineType(createType(BasicFXShader.class), "BasicFXShader");
+		defineType(createType(CombineFXShader.class), "CombineFXShader");
+		defineType(createType(EquirectangularToCubemapShader.class), "EquirectangularToCubemapShader");
+		defineType(createType(HighPassFilterShader.class), "HighPassFilterShader");
+		defineType(createType(BlurShader.class), "BlurShader");
+		defineType(createType(TaaShader.class), "TaaShader");
+		defineType(createType(SkyShader.class), "SkyShader");
+		defineType(createType(DenoiseShader.class), "DenoiseShader");
+		defineType(createType(UpscaleShader.class), "UpscaleShader");
+		defineType(createType(SSLFShader.class), "SSLFShader");
+		//defineType(createType(PostFXShader.class), "PostFXShader");
+		//defineType(createType(ParticlesShader.class), "ParticlesShader");
+		defineType(createType(SSAOShader.class), "SSAOShader");
+		defineType(createType(PBRShader.class), "PBRShader");
+		defineType(createType(FogShader.class), "FogShader");
 
 		// Materials
 		defineType(createType(Material.class), "Material");
@@ -382,7 +305,8 @@ public class MQDLCore extends DefaultCore
 
 		// UI
 		defineType(createType(UIAction.class), "UIAction");
-		defineType(createType(UIComponent.class), "UIComponent");
+		defineType(UIComponent.class, "UIComponent");
+		defineType(AbstractUIComponent.class, "AbstractUIComponent");
 		defineType(createType(UIManager.class), "UIManager");
 		defineType(createType(PanelOptions.class), "PanelOptions");
 		defineType(createType(Panel.class), "Panel");
@@ -424,6 +348,11 @@ public class MQDLCore extends DefaultCore
 		// Default Shaders
 		defineType(createType(SSRRShader.class), "SSRRShader");
 		defineType(createType(BasicShader.class), "BasicShader");
+
+		// Tasks
+		defineType(createType(RenderShaderTask.class), "RenderShaderTask");
+		defineType(createType(RenderFXShaderTask.class), "RenderFXShaderTask");
+		defineType(createType(RenderCombineFXShaderTask.class), "RenderCombineFXShaderTask");
 
 		// Data Maps
 		DLInstance colors = createInstance(getType(MapDLType.DEFAULT_SYMBOL).orElseThrow(), "Colors");

@@ -1,12 +1,12 @@
 /*
  * Copyright Studio 42 GmbH 2021. All rights reserved.
- *  
+ *
  * Unless required by applicable law or agreed to in writing, software
  * distributed under the License is distributed on an "AS IS" BASIS,
  * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
  * See the License for the specific language governing permissions and
  * limitations under the License.
- *  
+ *
  * For details to the License read https://www.s42m.de/license
  */
 package de.s42.mq.ui;
@@ -14,20 +14,21 @@ package de.s42.mq.ui;
 import de.s42.dl.DLAttribute.AttributeDL;
 import de.s42.dl.annotations.files.IsFileDLAnnotation.isFile;
 import de.s42.dl.exceptions.DLException;
+import de.s42.log.LogManager;
+import de.s42.log.Logger;
 import de.s42.mq.assets.AbstractAsset;
 import de.s42.mq.data.Vector2Data;
 import static de.s42.mq.util.GLFWHelper.getImageBufferFromImagePath;
 import java.io.IOException;
 import java.nio.file.Path;
-import de.s42.log.LogManager;
-import de.s42.log.Logger;
 import org.joml.Vector2f;
 import static org.lwjgl.glfw.GLFW.*;
 import org.lwjgl.glfw.GLFWImage;
 import org.lwjgl.opengl.GL;
-import static org.lwjgl.opengl.GL11.GL_BACK_LEFT;
+import static org.lwjgl.opengl.GL11.*;
 import static org.lwjgl.opengl.GL20.glDrawBuffers;
-import static org.lwjgl.opengl.GL46.*;
+import static org.lwjgl.opengl.GL30.GL_FRAMEBUFFER;
+import static org.lwjgl.opengl.GL30.glBindFramebuffer;
 import org.lwjgl.opengl.GLCapabilities;
 
 /**
@@ -164,6 +165,7 @@ public class Window extends AbstractAsset
 		return (float) getWidth() / getHeight();
 	}
 
+	@AttributeDL(ignore = true)
 	public GLFWImage.Buffer getImageBufferFromIcon() throws IOException
 	{
 		return getImageBufferFromImagePath(getIcon());

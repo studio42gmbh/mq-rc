@@ -14,16 +14,19 @@ package de.s42.mq.meshes;
 import de.s42.dl.DLAttribute.AttributeDL;
 import de.s42.dl.exceptions.DLException;
 import de.s42.dl.types.DLContainer;
-import de.s42.log.LogManager;
-import de.s42.log.Logger;
 import de.s42.mq.assets.AbstractAsset;
 import de.s42.mq.cameras.Camera;
 import de.s42.mq.core.Copyable;
 import de.s42.mq.materials.Material;
 import de.s42.mq.util.Transform;
 import java.lang.reflect.InvocationTargetException;
-import java.util.*;
-import org.joml.*;
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.Collections;
+import java.util.List;
+import org.joml.Matrix4f;
+import org.joml.Quaternionf;
+import org.joml.Vector3f;
 
 /**
  *
@@ -33,8 +36,7 @@ import org.joml.*;
 public abstract class Mesh<ChildType extends Object> extends AbstractAsset implements DLContainer<ChildType>, Copyable
 {
 
-	private final static Logger log = LogManager.getLogger(Mesh.class.getName());
-
+	//private final static Logger log = LogManager.getLogger(Mesh.class.getName());
 	@AttributeDL(required = false, defaultValue = "false")
 	protected boolean flipNormals = false;
 

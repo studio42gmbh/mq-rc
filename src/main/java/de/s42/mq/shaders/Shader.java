@@ -1,12 +1,12 @@
 /*
  * Copyright Studio 42 GmbH 2021. All rights reserved.
- *  
+ *
  * Unless required by applicable law or agreed to in writing, software
  * distributed under the License is distributed on an "AS IS" BASIS,
  * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
  * See the License for the specific language governing permissions and
  * limitations under the License.
- *  
+ *
  * For details to the License read https://www.s42m.de/license
  */
 package de.s42.mq.shaders;
@@ -15,6 +15,8 @@ import de.s42.base.files.FilesHelper;
 import de.s42.dl.DLAttribute.AttributeDL;
 import de.s42.dl.annotations.files.IsFileDLAnnotation.isFile;
 import de.s42.dl.exceptions.DLException;
+import de.s42.log.LogManager;
+import de.s42.log.Logger;
 import de.s42.mq.MQColor;
 import de.s42.mq.assets.AbstractAsset;
 import de.s42.mq.buffers.FXBuffer;
@@ -24,16 +26,28 @@ import de.s42.mq.materials.CubeTexture;
 import de.s42.mq.materials.Texture;
 import de.s42.mq.meshes.Mesh;
 import java.io.IOException;
-import java.nio.*;
+import java.nio.ByteBuffer;
+import java.nio.FloatBuffer;
+import java.nio.IntBuffer;
 import java.nio.file.Files;
 import java.nio.file.Path;
-import java.util.*;
-import de.s42.log.LogManager;
-import de.s42.log.Logger;
-import org.joml.*;
+import java.util.Collections;
+import java.util.HashMap;
+import java.util.Map;
+import org.joml.Matrix4f;
+import org.joml.Vector2f;
+import org.joml.Vector3f;
 import org.lwjgl.BufferUtils;
 import org.lwjgl.PointerBuffer;
-import static org.lwjgl.opengl.GL46.*;
+import static org.lwjgl.opengl.GL11.*;
+import static org.lwjgl.opengl.GL13.*;
+import static org.lwjgl.opengl.GL14.*;
+import static org.lwjgl.opengl.GL15.GL_SRC1_ALPHA;
+import static org.lwjgl.opengl.GL20.*;
+import static org.lwjgl.opengl.GL30.*;
+import static org.lwjgl.opengl.GL31.glGetActiveUniformName;
+import static org.lwjgl.opengl.GL32.GL_TEXTURE_CUBE_MAP_SEAMLESS;
+import static org.lwjgl.opengl.GL33.*;
 import org.lwjgl.system.MemoryUtil;
 
 /**
@@ -300,9 +314,13 @@ public abstract class Shader extends AbstractAsset
 
 	public void afterRendering()
 	{
-		//glPolygonMode(GL_FRONT_AND_BACK, GL_FILL);
-		//glDisablei(GL_BLEND, 0);
-		//glUseProgram(0);
+		glPolygonMode(GL_FRONT_AND_BACK, GL_FILL);
+		glUseProgram(0);
+
+		if (isRenderTransparent()) {
+			glDisablei(GL_BLEND, 0);
+			glBlendFunc(BlendFunc.ONE.glFormat, BlendFunc.ZERO.glFormat);
+		}
 	}
 
 	protected int createShader(Path source, int type) throws IOException

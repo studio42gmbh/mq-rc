@@ -13,8 +13,6 @@ package de.s42.mq.assets;
 
 import de.s42.dl.exceptions.DLException;
 import de.s42.dl.types.DLContainer;
-import de.s42.log.LogManager;
-import de.s42.log.Logger;
 import de.s42.mq.materials.Material;
 import java.util.ArrayList;
 import java.util.Collections;
@@ -28,8 +26,7 @@ import java.util.List;
 public class Assets<ChildType extends Object> extends AbstractAsset implements DLContainer<ChildType>
 {
 
-	private final static Logger log = LogManager.getLogger(Assets.class.getName());
-
+	//private final static Logger log = LogManager.getLogger(Assets.class.getName());
 	protected final List<Asset> assets = new ArrayList();
 
 	@Override
@@ -73,6 +70,11 @@ public class Assets<ChildType extends Object> extends AbstractAsset implements D
 		if (child instanceof Asset asset) {
 			add(asset);
 		}
+	}
+
+	public List<Asset> getAssets()
+	{
+		return Collections.unmodifiableList(assets);
 	}
 
 	@Override

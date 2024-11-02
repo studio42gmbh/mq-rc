@@ -1,20 +1,21 @@
 /*
  * Copyright Studio 42 GmbH 2021. All rights reserved.
- *  
+ *
  * Unless required by applicable law or agreed to in writing, software
  * distributed under the License is distributed on an "AS IS" BASIS,
  * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
  * See the License for the specific language governing permissions and
  * limitations under the License.
- *  
+ *
  * For details to the License read https://www.s42m.de/license
  */
 package de.s42.mq.rendering;
 
 import de.s42.dl.exceptions.DLException;
-import de.s42.mq.buffers.*;
+import de.s42.mq.buffers.FXBuffer;
+import de.s42.mq.buffers.FrameBuffer;
 import de.s42.mq.materials.ShaderMaterial;
-import de.s42.mq.meshes.*;
+import de.s42.mq.meshes.ScreenQuad;
 import de.s42.mq.shaders.CombineFXShader;
 import de.s42.mq.ui.AbstractWindowTask;
 
@@ -33,17 +34,13 @@ public class RenderCombineFXShaderTask extends AbstractWindowTask
 	protected FXBuffer inBuffer2;
 
 	@Override
-	protected void runTaskFirstTime()
+	protected void runTaskFirstTime() throws DLException
 	{
 		if (shaderMaterial == null) {
 			shaderMaterial = new ShaderMaterial();
 		}
 
-		try {
-			shaderMaterial.load();
-		} catch (DLException ex) {
-			throw new RuntimeException(ex);
-		}
+		shaderMaterial.load();
 	}
 
 	@Override
@@ -55,9 +52,6 @@ public class RenderCombineFXShaderTask extends AbstractWindowTask
 		// render main scene into gbuffer
 		if (buffer != null) {
 			buffer.startRender();
-		} // reset to screen size
-		else {
-			window.setRenderViewportToWindow();
 		}
 
 		shaderMaterial.setShader(shader);
@@ -67,9 +61,16 @@ public class RenderCombineFXShaderTask extends AbstractWindowTask
 		shader.setMesh(screenQuad);
 		shader.beforeRendering();
 
+		// reset to screen size
+		if (buffer == null) {
+			window.setRenderViewportToWindow();
+		}
+
 		screenQuad.render();
 
 		shader.afterRendering();
+		shader.setInBuffer(null);
+		shader.setInBuffer2(null);
 		shaderMaterial.afterRendering();
 
 		if (buffer != null) {
@@ -137,5 +138,5 @@ public class RenderCombineFXShaderTask extends AbstractWindowTask
 	{
 		this.shaderMaterial = shaderMaterial;
 	}
-	// "Getters/Setters" </editor-fold>	
+	// "Getters/Setters" </editor-fold>
 }

@@ -1,5 +1,5 @@
 /*
- * Copyright Studio 42 GmbH 2021. All rights reserved.
+ * Copyright Studio 42 GmbH 2024. All rights reserved.
  *
  * Unless required by applicable law or agreed to in writing, software
  * distributed under the License is distributed on an "AS IS" BASIS,
@@ -19,39 +19,19 @@ import de.s42.mq.buffers.GBuffer;
 import de.s42.mq.data.FloatData;
 import de.s42.mq.data.IntegerData;
 import de.s42.mq.materials.Texture;
-import de.s42.mq.util.HaltonSequenceGenerator;
 
 /**
  *
  * @author Benjamin Schiller
  */
-
-/* useful defaults
-intensity = 1.0;
-bias = 0.0;
-scale = 1.0;
-radius = 1.0;
-randomSize = 12.843;
-iterations = 4;
-clampThreshold = -0.003;
- */
-public class SSAOShader extends Shader
+public class FogShader extends Shader
 {
 
-	private final static Logger log = LogManager.getLogger(SSAOShader.class.getName());
+	private final static Logger log = LogManager.getLogger(FogShader.class.getName());
 
-	protected Texture noiseTexture;
-	protected GBuffer inBuffer;
 	protected int inBufferResolutionUniform = -1;
-
 	protected int timeUniform = -1;
-	protected int intensityUniform = -1;
-	protected int biasUniform = -1;
-	protected int scaleUniform = -1;
-	protected int radiusUniform = -1;
-	protected int randomSizeUniform = -1;
 	protected int iterationsUniform = -1;
-	protected int pointsUniform = -1;
 	protected int cameraPositionUniform = -1;
 	protected int cameraNearUniform = -1;
 	protected int cameraFarUniform = -1;
@@ -61,24 +41,13 @@ public class SSAOShader extends Shader
 	protected FloatData time = new FloatData();
 
 	@AttributeDL(required = true)
-	protected FloatData intensity = new FloatData();
+	protected Texture noiseTexture;
 
 	@AttributeDL(required = true)
-	protected FloatData bias = new FloatData();
-
-	@AttributeDL(required = true)
-	protected FloatData scale = new FloatData();
-
-	@AttributeDL(required = true)
-	protected FloatData radius = new FloatData();
-
-	@AttributeDL(required = true)
-	protected FloatData randomSize = new FloatData();
+	protected GBuffer inBuffer;
 
 	@AttributeDL(required = true)
 	protected IntegerData iterations = new IntegerData();
-
-	protected float[] points;
 
 	@Override
 	protected void loadShader() throws DLException
@@ -87,36 +56,18 @@ public class SSAOShader extends Shader
 
 		setUniform("inPosition", 0);
 		setUniform("inNormals", 1);
-		setUniform("inNoise", 2);
+		setUniform("inColor", 2);
+		setUniform("inDepth", 3);
+		setUniform("inNoise", 4);
 
 		viewMatrixUniform = getUniformLocationOpt("viewMatrix");
 		projectionMatrixUniform = getUniformLocationOpt("projectionMatrix");
 		inBufferResolutionUniform = getUniformLocationOpt("inBufferResolution");
-		intensityUniform = getUniformLocationOpt("intensity");
-		biasUniform = getUniformLocationOpt("bias");
-		scaleUniform = getUniformLocationOpt("scale");
-		radiusUniform = getUniformLocationOpt("radius");
-		randomSizeUniform = getUniformLocationOpt("randomSize");
 		iterationsUniform = getUniformLocationOpt("iterations");
 		timeUniform = getUniformLocationOpt("time");
 		cameraPositionUniform = getUniformLocationOpt("cameraPosition");
 		cameraNearUniform = getUniformLocationOpt("cameraNear");
 		cameraFarUniform = getUniformLocationOpt("cameraFar");
-
-		pointsUniform = getUniformLocationOpt("points[0]");
-
-		HaltonSequenceGenerator gen = new HaltonSequenceGenerator(2);
-
-		points = new float[100];
-		for (int i = 0; i < 20; ++i) {
-
-			double[] vec = gen.nextVector();
-
-			log.trace("Halton " + vec[0] + " " + vec[1]);
-
-			points[i * 2] = ((float) vec[0] * 2.0f - 1.0f);
-			points[i * 2 + 1] = ((float) vec[1] * 2.0f - 1.0f);
-		}
 	}
 
 	@Override
@@ -131,17 +82,12 @@ public class SSAOShader extends Shader
 		setUniform(inBufferResolutionUniform, 1.0f / (float) inBuffer.getWidth(), 1.0f / (float) inBuffer.getWidth());
 		setTexture(inBuffer.getPositionRenderBuffer(), 0);
 		setTexture(inBuffer.getNormalRenderBuffer(), 1);
-		setTexture(noiseTexture.getTextureId(), 2);
+		setTexture(inBuffer.getColorRenderBuffer(), 2);
+		setTexture(inBuffer.getDepthRenderBuffer(), 3);
+		setTexture(noiseTexture.getTextureId(), 4);
 
-		setUniform(intensityUniform, intensity);
-		setUniform(biasUniform, bias);
-		setUniform(scaleUniform, scale);
-		setUniform(radiusUniform, radius);
-		setUniform(randomSizeUniform, randomSize);
 		setUniform(iterationsUniform, iterations);
 		setUniform(timeUniform, time);
-		setUniform2(pointsUniform, points);
-
 		setUniform(cameraNearUniform, getCamera().getNear());
 		setUniform(cameraFarUniform, getCamera().getFar());
 		setUniform(cameraPositionUniform, getCamera().getPosition());
@@ -154,10 +100,14 @@ public class SSAOShader extends Shader
 	@Override
 	public void afterRendering()
 	{
-		super.afterRendering();
 		setTexture(0, 0);
-		setTexture(1, 0);
-		setTexture(2, 0);
+		setTexture(0, 1);
+		setTexture(0, 2);
+		setTexture(0, 3);
+		setTexture(0, 4);
+		super.afterRendering();
+
+		setDraw0ColorAttachment();
 	}
 
 	// <editor-fold desc="Getters/Setters" defaultstate="collapsed">
@@ -186,89 +136,9 @@ public class SSAOShader extends Shader
 		return inBufferResolutionUniform;
 	}
 
-	public int getIntensityUniform()
-	{
-		return intensityUniform;
-	}
-
-	public int getBiasUniform()
-	{
-		return biasUniform;
-	}
-
-	public int getScaleUniform()
-	{
-		return scaleUniform;
-	}
-
-	public int getRadiusUniform()
-	{
-		return radiusUniform;
-	}
-
-	public int getRandomSizeUniform()
-	{
-		return randomSizeUniform;
-	}
-
 	public int getIterationsUniform()
 	{
 		return iterationsUniform;
-	}
-
-	public int getPointsUniform()
-	{
-		return pointsUniform;
-	}
-
-	public FloatData getIntensity()
-	{
-		return intensity;
-	}
-
-	public void setIntensity(FloatData intensity)
-	{
-		this.intensity = intensity;
-	}
-
-	public FloatData getBias()
-	{
-		return bias;
-	}
-
-	public void setBias(FloatData bias)
-	{
-		this.bias = bias;
-	}
-
-	public FloatData getScale()
-	{
-		return scale;
-	}
-
-	public void setScale(FloatData scale)
-	{
-		this.scale = scale;
-	}
-
-	public FloatData getRadius()
-	{
-		return radius;
-	}
-
-	public void setRadius(FloatData radius)
-	{
-		this.radius = radius;
-	}
-
-	public FloatData getRandomSize()
-	{
-		return randomSize;
-	}
-
-	public void setRandomSize(FloatData randomSize)
-	{
-		this.randomSize = randomSize;
 	}
 
 	public IntegerData getIterations()
@@ -279,11 +149,6 @@ public class SSAOShader extends Shader
 	public void setIterations(IntegerData iterations)
 	{
 		this.iterations = iterations;
-	}
-
-	public float[] getPoints()
-	{
-		return points;
 	}
 
 	public int getTimeUniform()

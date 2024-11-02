@@ -1,29 +1,27 @@
 /*
  * Copyright Studio 42 GmbH 2021. All rights reserved.
- *  
+ *
  * Unless required by applicable law or agreed to in writing, software
  * distributed under the License is distributed on an "AS IS" BASIS,
  * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
  * See the License for the specific language governing permissions and
  * limitations under the License.
- *  
+ *
  * For details to the License read https://www.s42m.de/license
  */
 package de.s42.mq.ui;
 
-import de.s42.dl.DLAnnotation.AnnotationDL;
 import de.s42.dl.DLAttribute.AttributeDL;
 import de.s42.dl.exceptions.DLException;
-import de.s42.mq.data.*;
+import de.s42.log.LogManager;
+import de.s42.log.Logger;
+import de.s42.mq.data.ColorData;
+import de.s42.mq.data.FloatData;
+import de.s42.mq.data.Vector2Data;
+import de.s42.mq.data.Vector4Data;
 import de.s42.mq.meshes.Quad;
 import de.s42.mq.ui.layout.Layout;
 import de.s42.mq.ui.layout.LayoutOptions;
-import de.s42.log.LogManager;
-import de.s42.log.Logger;
-import de.s42.mq.dl.annotations.EditableDLAnnotation;
-import de.s42.mq.dl.annotations.MaxDLAnnotation;
-import de.s42.mq.dl.annotations.MinDLAnnotation;
-import de.s42.mq.dl.annotations.StepDLAnnotation;
 
 /**
  * Represents a simple panel in the scene.
@@ -144,6 +142,12 @@ public class Panel extends Quad implements UIComponent
 		super.render();
 	}
 
+	@Override
+	public void handleClick(int x, int y) throws DLException
+	{
+		// do nothing
+	}
+
 	// <editor-fold desc="Getters/Setters" defaultstate="collapsed">
 	public Layout getLayout()
 	{
@@ -226,5 +230,5 @@ public class Panel extends Quad implements UIComponent
 	{
 		this.uiManager = uiManager;
 	}
-	// "Getters/Setters" </editor-fold>	
+	// "Getters/Setters" </editor-fold>
 }

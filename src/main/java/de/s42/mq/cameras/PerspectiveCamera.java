@@ -1,24 +1,18 @@
 /*
  * Copyright Studio 42 GmbH 2021. All rights reserved.
- *  
+ *
  * Unless required by applicable law or agreed to in writing, software
  * distributed under the License is distributed on an "AS IS" BASIS,
  * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
  * See the License for the specific language governing permissions and
  * limitations under the License.
- *  
+ *
  * For details to the License read https://www.s42m.de/license
  */
 package de.s42.mq.cameras;
 
-import de.s42.dl.DLAnnotation.AnnotationDL;
 import de.s42.dl.DLAttribute.AttributeDL;
-import de.s42.mq.data.*;
-import de.s42.mq.dl.annotations.EditableDLAnnotation;
-import de.s42.mq.dl.annotations.InDegreesDLAnnotation;
-import de.s42.mq.dl.annotations.MaxDLAnnotation;
-import de.s42.mq.dl.annotations.MinDLAnnotation;
-import de.s42.mq.dl.annotations.StepDLAnnotation;
+import de.s42.mq.data.FloatData;
 
 /**
  *
@@ -50,10 +44,11 @@ public class PerspectiveCamera extends Camera
 	public void update()
 	{
 		// @todo elegant way to make update of matrix smarter
-		//if (isUpdateProjectionMatrix()) {
-		projectionMatrix.setPerspective((float) Math.toRadians(getFov().getFloatValue()), getAspectRatio(), getNear(), getFar());
-		setUpdateProjectionMatrix(false);
-		//}
+		if (isUpdateProjectionMatrix()) {
+			projectionMatrix.setPerspective((float) Math.toRadians(getFov().getFloatValue()), getAspectRatio(), getNear(), getFar());
+			viewProjectionMatrix.set(viewMatrix).mul(projectionMatrix);
+			setUpdateProjectionMatrix(false);
+		}
 
 		super.update();
 	}

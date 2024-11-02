@@ -1,19 +1,17 @@
 /*
  * Copyright Studio 42 GmbH 2021. All rights reserved.
- *  
+ *
  * Unless required by applicable law or agreed to in writing, software
  * distributed under the License is distributed on an "AS IS" BASIS,
  * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
  * See the License for the specific language governing permissions and
  * limitations under the License.
- *  
+ *
  * For details to the License read https://www.s42m.de/license
  */
 package de.s42.mq.shaders;
 
 import de.s42.mq.data.FloatData;
-import de.s42.log.LogManager;
-import de.s42.log.Logger;
 
 /**
  *
@@ -22,8 +20,7 @@ import de.s42.log.Logger;
 public class HighPassFilterShader extends BasicFXShader
 {
 
-	private final static Logger log = LogManager.getLogger(HighPassFilterShader.class.getName());
-
+	//private final static Logger log = LogManager.getLogger(HighPassFilterShader.class.getName());
 	protected int thresholdLowUniform = -1;
 	protected int thresholdHighUniform = -1;
 	protected int intensityUniform = -1;
@@ -45,11 +42,11 @@ public class HighPassFilterShader extends BasicFXShader
 	@Override
 	public void beforeRendering()
 	{
-		super.beforeRendering();
-
 		assert thresholdLow != null;
 		assert thresholdHigh != null;
 		assert intensity != null;
+
+		super.beforeRendering();
 
 		setUniform(thresholdLowUniform, thresholdLow);
 		setUniform(thresholdHighUniform, thresholdHigh);
@@ -101,5 +98,5 @@ public class HighPassFilterShader extends BasicFXShader
 	{
 		this.intensity = intensity;
 	}
-	// </editor-fold>	
+	// </editor-fold>
 }

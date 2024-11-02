@@ -1,12 +1,12 @@
 /*
  * Copyright Studio 42 GmbH 2021. All rights reserved.
- *  
+ *
  * Unless required by applicable law or agreed to in writing, software
  * distributed under the License is distributed on an "AS IS" BASIS,
  * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
  * See the License for the specific language governing permissions and
  * limitations under the License.
- *  
+ *
  * For details to the License read https://www.s42m.de/license
  */
 package de.s42.mq.data;
@@ -17,25 +17,26 @@ package de.s42.mq.data;
  */
 public class FloatData extends AbstractNumberData<Float>
 {
+
 	protected float value;
 	protected float min;
 	protected float max;
 	protected float step;
-	
+
 	public FloatData()
 	{
 	}
-	
+
 	public FloatData(float value)
 	{
 		this.value = value;
 	}
-	
+
 	public float getFloatValue()
 	{
 		return value;
 	}
-	
+
 	public void setFloatValue(float value)
 	{
 		if (this.value != value) {
@@ -43,7 +44,7 @@ public class FloatData extends AbstractNumberData<Float>
 		}
 		this.value = value;
 	}
-	
+
 	@Override
 	public Float getValue()
 	{
@@ -51,26 +52,40 @@ public class FloatData extends AbstractNumberData<Float>
 	}
 
 	@Override
-	public void setValue(Float value)	
+	public void setValue(Float value)
 	{
 		assert value != null;
-		
+
 		setFloatValue(value);
 	}
-	
+
 	@Override
 	public Class<Float> getDataType()
 	{
 		return Float.class;
 	}
 
+	public float add(float add)
+	{
+		value += add;
+
+		return value;
+	}
+
 	@Override
 	public Float add(Float add)
 	{
 		assert add != null;
-		
+
 		value += add;
-		
+
+		return value;
+	}
+
+	public float subtract(float sub)
+	{
+		value -= sub;
+
 		return value;
 	}
 
@@ -78,9 +93,9 @@ public class FloatData extends AbstractNumberData<Float>
 	public Float subtract(Float sub)
 	{
 		assert sub != null;
-		
+
 		value -= sub;
-		
+
 		return value;
 	}
 
@@ -88,9 +103,9 @@ public class FloatData extends AbstractNumberData<Float>
 	public Float multiply(Float mul)
 	{
 		assert mul != null;
-		
+
 		value *= mul;
-		
+
 		return value;
 	}
 
@@ -98,9 +113,9 @@ public class FloatData extends AbstractNumberData<Float>
 	public Float divide(Float divide)
 	{
 		assert divide != null;
-		
+
 		value /= divide;
-		
+
 		return value;
 	}
 
@@ -108,7 +123,7 @@ public class FloatData extends AbstractNumberData<Float>
 	public Float inc()
 	{
 		value++;
-		
+
 		return value;
 	}
 
@@ -116,7 +131,7 @@ public class FloatData extends AbstractNumberData<Float>
 	public Float dec()
 	{
 		value--;
-		
+
 		return value;
 	}
 

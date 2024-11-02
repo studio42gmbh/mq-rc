@@ -1,88 +1,21 @@
 /*^ Studio 42 License
  * Copyright Studio 42 GmbH 2021. All rights reserved.
- *  
+ *
  * Unless required by applicable law or agreed to in writing, software
  * distributed under the License is distributed on an "AS IS" BASIS,
  * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
  * See the License for the specific language governing permissions and
  * limitations under the License.
- *  
+ *
  * For details to the License read https://www.s42m.de/license
  */
-
-require "dl:standard/base.dl";
-
-extern type de.s42.mq.shaders.Shader alias Shader;
-extern type de.s42.mq.materials.CubeTexture alias CubeTexture;
-extern type FloatData;
-extern type FXBuffer;
-extern type Vector2Data;
-extern type IntegerData;
-extern type ColorData;
-extern type BlitMode;
-extern type Texture;
-extern type Vector3Data;
-extern type Vector3 alias vec3;
-extern type GBuffer;
-extern type Window;
-extern type AbstractWindowTask;
-extern type FrameBuffer;
-extern type ScreenQuad;
-
-type de.s42.mq.shaders.BasicFXShader @java extends de.s42.mq.shaders.Shader alias BasicFXShader
-{
-	FXBuffer inBuffer;
-	boolean depthTest : false;
-	boolean depthWrite : false;		
-	boolean renderTransparent : false;
-	boolean cullFace : false;
-	boolean samplerActive : false;
-}
-
-type de.s42.mq.shaders.CombineFXShader @java extends de.s42.mq.shaders.BasicFXShader alias CombineFXShader
-{
-	FXBuffer inBuffer2;
-}
-
-type de.s42.mq.shaders.EquirectangularToCubemapShader @java extends de.s42.mq.shaders.Shader alias EquirectangularToCubemapShader
-{
-	Path vertexShaderSource @required @isFile;
-	Path fragmentShaderSource @required @isFile;
-	boolean depthTest : false;
-	boolean depthWrite : false;
-	boolean cullFace : false;
-	float filterStrength : 0.0;
-}
 
 type de.s42.mq.materials.DefaultCubeTexture extends de.s42.mq.materials.CubeTexture alias DefaultCubeTexture
 {
 	de.s42.mq.shaders.EquirectangularToCubemapShader equirectangularToCubemapShader;
 }
 
-type de.s42.mq.shaders.SkyShader @java extends de.s42.mq.shaders.Shader alias SkyShader
-{
-	Path vertexShaderSource @required @isFile;
-	Path fragmentShaderSource @required @isFile;
-	boolean depthTest : false;
-	boolean depthWrite : false;	
-	boolean cullFace : false;
-}
-
 type de.s42.mq.shaders.FxaaShader @java(de.s42.mq.shaders.CombineFXShader) extends de.s42.mq.shaders.CombineFXShader alias FxaaShader;
-
-type de.s42.mq.shaders.TaaShader @java extends de.s42.mq.shaders.CombineFXShader alias TaaShader;
-
-type de.s42.mq.shaders.HighPassFilterShader @java extends de.s42.mq.shaders.BasicFXShader alias HighPassFilterShader
-{
-	FloatData thresholdLow /*@editable*/ /*@min(0.0)*/ /*@max(10000.0)*/ /*@step(0.1)*/;
-	FloatData thresholdHigh /*@editable*/ /*@min(0.0)*/ /*@max(10000.0)*/ /*@step(0.1)*/;
-	FloatData intensity /*@editable*/ /*@min(0.0)*/ /*@max(100.0)*/ /*@step(0.1)*/;
-}
-
-type de.s42.mq.shaders.BlurShader @java extends de.s42.mq.shaders.BasicFXShader alias BlurShader
-{
-	Vector2Data direction @required;
-}
 
 type de.s42.mq.shaders.AddShader @java(de.s42.mq.shaders.BasicFXShader) extends de.s42.mq.shaders.BasicFXShader alias AddShader
 {
@@ -102,35 +35,11 @@ type de.s42.mq.shaders.IrradianceShader @java(de.s42.mq.shaders.BasicFXShader) e
 
 type de.s42.mq.shaders.DownscaleShader @java(de.s42.mq.shaders.BasicFXShader) extends de.s42.mq.shaders.BasicFXShader alias DownscaleShader;
 
-type de.s42.mq.shaders.DenoiseShader @java extends de.s42.mq.shaders.BasicFXShader alias DenoiseShader
-{
-	// @todo add options
-}
-
-type de.s42.mq.shaders.UpscaleShader @java extends de.s42.mq.shaders.BasicFXShader alias UpscaleShader
-{
-	boolean renderTransparent : true;
-	FloatData sampleScale @required /*@editable*/ /*@min(0.0)*/ /*@max(5.0)*/ /*@step(0.01)*/;
-	FloatData intensity @required /*@editable*/ /*@min(0.0)*/ /*@max(10.0)*/ /*@step(0.01)*/;
-}
-
-type de.s42.mq.shaders.SSLFShader @java extends de.s42.mq.shaders.BasicFXShader alias SSLFShader
-{
-	FloatData intensity /*@editable*/ /*@min(0.0)*/ /*@max(10.0)*/ /*@step(0.05)*/;
-	FloatData haloIntensity /*@editable*/ /*@min(0.0)*/ /*@max(10.0)*/ /*@step(0.01)*/;
-	FloatData haloRadius /*@editable*/ /*@min(0.0)*/ /*@max(2.0)*/ /*@step(0.01)*/;
-	FloatData ghostStepDistance /*@editable*/ /*@min(0.0)*/ /*@max(10.0)*/ /*@step(0.01)*/;
-	FloatData chromaticDistorsionScale /*@editable*/ /*@min(0.0)*/ /*@max(10.0)*/ /*@step(0.1)*/;
-	FloatData flareFade /*@editable*/ /*@min(0.0)*/ /*@max(1000.0)*/ /*@step(1.0)*/;
-	FloatData haloFade /*@editable*/ /*@min(0.0)*/ /*@max(1000.0)*/ /*@step(1.0)*/;
-	IntegerData samples /*@editable*/ /*@min(0)*/ /*@max(10)*/ /*@step(1)*/;
-}
-
 type de.s42.mq.shaders.postfx.PostFXShader @java extends de.s42.mq.shaders.Shader alias PostFXShader
 {
 	IntegerData inBufferId @required;
 	boolean depthTest : false;
-	boolean depthWrite : false;		
+	boolean depthWrite : false;
 	boolean renderTransparent : false;
 	FloatData exposure /*@editable*/ /*@min(0.0)*/ /*@max(100.0)*/ /*@step(0.1)*/;
 	FloatData vignetteStart  /*@editable*/ /*@min(0.0)*/ /*@max(2.0)*/ /*@step(0.05)*/;
@@ -138,24 +47,9 @@ type de.s42.mq.shaders.postfx.PostFXShader @java extends de.s42.mq.shaders.Shade
 	ColorData vignetteColor /*@editable*/;
 	FloatData chromaticAbberationStrength /*@editable*/ /*@min(0.0)*/ /*@max(1000.0)*/ /*@step(0.1)*/;
 	BlitMode blitMode : DEFAULT;
-}
-
-type de.s42.mq.shaders.PBRShader @java extends de.s42.mq.shaders.Shader alias PBRShader
-{
-	Texture baseTexture;
-	Texture heromeaoTexture;
-	Texture normalTexture;
-	Texture emtrTexture;
-	CubeTexture environmentTexture;
-	CubeTexture irradianceTexture;
-	Texture brdfLUTTexture;
-	ColorData tint /*@editable*/;
-	Vector2Data normalScale /*@editable*/ /*@min(-10.0)*/ /*@max(10.0)*/ /*@step(0.1)*/;
-	FloatData roughnessScale /*@editable*/ /*@min(0.0)*/ /*@max(10.0)*/ /*@step(0.1)*/;
-	FloatData roughnessOffset /*@editable*/ /*@min(-10.0)*/ /*@max(10.0)*/ /*@step(0.1)*/;
-	FloatData metalnessScale /*@editable*/ /*@min(0.0)*/ /*@max(10.0)*/ /*@step(0.1)*/;
-	FloatData metalnessOffset /*@editable*/ /*@min(-10.0)*/ /*@max(10.0)*/ /*@step(0.1)*/;
-	Vector3Data emissiveScale;
+	FloatData lookupIntensity /*@editable*/ /*@min(0.0)*/ /*@max(1000.0)*/ /*@step(0.1)*/;
+	FloatData barrelPower /*@editable*/ /*@min(0.0)*/ /*@max(1000.0)*/ /*@step(0.1)*/;
+	Texture lookup;
 }
 
 type de.s42.mq.shaders.ParticlesShader @java extends de.s42.mq.shaders.Shader alias ParticlesShader
@@ -192,45 +86,4 @@ type de.s42.mq.fonts.FontShader @java extends Shader alias FontShader
 	FloatData tint2Multiplier @required /*@editable*/ /*@min(0.0)*/ /*@max(10000.0)*/ /*@step(0.01)*/;
 	FloatData edgeSize /*@editable*/ /*@min(0.0)*/ /*@max(0.5)*/ /*@step(0.01)*/;
 	FloatData edge2Size /*@editable*/ /*@min(0.0)*/ /*@max(0.5)*/ /*@step(0.01)*/;
-}
-
-type de.s42.mq.shaders.SSAOShader @java extends Shader alias SSAOShader
-{
-	GBuffer inBuffer @required;
-	Texture noiseTexture @required;
-	FloatData time;
-
-	FloatData intensity @required /*@editable*/ /*@min(0.0)*/ /*@max(100.0)*/ /*@step(0.1)*/;
-	FloatData bias @required /*@editable*/ /*@min(-3.0)*/ /*@max(3.0)*/ /*@step(0.01)*/;
-	FloatData scale @required /*@editable*/ /*@min(0.1)*/ /*@max(100.0)*/ /*@step(0.1)*/;
-	FloatData radius @required /*@editable*/ /*@min(0.01)*/ /*@max(100.0)*/ /*@step(0.01)*/;
-	FloatData randomSize @required /*@editable*/ /*@min(0.1)*/ /*@max(100.0)*/ /*@step(0.1)*/;
-	IntegerData iterations @required /*@editable*/ /*@min(1)*/ /*@max(100)*/ /*@step(1)*/;
-}
-
-type de.s42.mq.rendering.RenderShaderTask @java extends AbstractWindowTask alias RenderShaderTask
-{
-	Window window /*@requiredOr(buffer)*/;
-	FrameBuffer buffer /*@requiredOr(window)*/;
-	de.s42.mq.shaders.Shader shader @required;
-	ScreenQuad screenQuad @required; 
-}
-
-type de.s42.mq.rendering.RenderFXShaderTask @java extends AbstractWindowTask alias RenderFXShaderTask
-{
-	Window window /*@requiredOr(buffer)*/;
-	FrameBuffer buffer /*@requiredOr(window)*/;
-	de.s42.mq.shaders.BasicFXShader shader @required;
-	ScreenQuad screenQuad @required; 
-	FXBuffer inBuffer;	
-}
-
-type de.s42.mq.rendering.RenderCombineFXShaderTask @java extends AbstractWindowTask alias RenderCombineFXShaderTask
-{
-	Window window /*@requiredOr(buffer)*/;
-	FrameBuffer buffer /*@requiredOr(window)*/;
-	de.s42.mq.shaders.CombineFXShader shader @required;
-	ScreenQuad screenQuad @required; 
-	FXBuffer inBuffer;	
-	FXBuffer inBuffer2;	
 }

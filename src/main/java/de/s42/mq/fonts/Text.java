@@ -1,32 +1,41 @@
 /*
  * Copyright Studio 42 GmbH 2021. All rights reserved.
- *  
+ *
  * Unless required by applicable law or agreed to in writing, software
  * distributed under the License is distributed on an "AS IS" BASIS,
  * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
  * See the License for the specific language governing permissions and
  * limitations under the License.
- *  
+ *
  * For details to the License read https://www.s42m.de/license
  */
 package de.s42.mq.fonts;
 
 import de.s42.dl.DLAttribute.AttributeDL;
 import de.s42.dl.exceptions.DLException;
+import de.s42.log.LogManager;
+import de.s42.log.Logger;
+import de.s42.mq.MQColor;
 import de.s42.mq.buffers.FrameBuffer;
 import de.s42.mq.core.Copyable;
-import de.s42.mq.data.*;
+import de.s42.mq.data.ColorData;
+import de.s42.mq.data.FloatData;
+import de.s42.mq.data.StringData;
 import de.s42.mq.meshes.Mesh;
 import de.s42.mq.ui.UIComponent;
 import de.s42.mq.ui.UIManager;
 import de.s42.mq.ui.layout.Layout;
 import de.s42.mq.ui.layout.LayoutOptions;
-import de.s42.log.LogManager;
-import de.s42.log.Logger;
-import de.s42.mq.MQColor;
 import org.joml.Vector2f;
 import org.joml.Vector3f;
-import static org.lwjgl.opengl.GL46.*;
+import static org.lwjgl.opengl.GL11.GL_FLOAT;
+import static org.lwjgl.opengl.GL11.GL_TRIANGLES;
+import static org.lwjgl.opengl.GL15.*;
+import static org.lwjgl.opengl.GL20.glEnableVertexAttribArray;
+import static org.lwjgl.opengl.GL20.glVertexAttribPointer;
+import static org.lwjgl.opengl.GL30.*;
+import static org.lwjgl.opengl.GL31.glDrawArraysInstanced;
+import static org.lwjgl.opengl.GL33.glVertexAttribDivisor;
 
 /**
  *
@@ -221,7 +230,7 @@ public class Text extends Mesh implements UIComponent, Copyable
 		glBufferData(GL_ARRAY_BUFFER, charData, GL_DYNAMIC_DRAW);
 		glBindBuffer(GL_ARRAY_BUFFER, 0);
 
-		// Generate vertex buffer		
+		// Generate vertex buffer
 		vbo = glGenBuffers();
 		glBindBuffer(GL_ARRAY_BUFFER, vbo);
 		glBufferData(GL_ARRAY_BUFFER, quadVertices, GL_STATIC_DRAW);
@@ -258,7 +267,7 @@ public class Text extends Mesh implements UIComponent, Copyable
 
 		float dpiCorrect = 72.0f / 96.0f;// ((float) Toolkit.getDefaultToolkit().getScreenResolution()) / 72.0f;
 
-		// @todo find solution for making text scale properly with parent scalings		
+		// @todo find solution for making text scale properly with parent scalings
 		float screenWidth = buffer.getWidth();
 		float screenHeight = buffer.getHeight();
 
@@ -399,9 +408,8 @@ public class Text extends Mesh implements UIComponent, Copyable
 				x = 0;
 				y -= (fontLineHeight - f.getPaddingTop() - f.getPaddingBottom()) * fontSizeY;
 				line++;
-				
-				// @todo solve issue with newline right at the end of a text
 
+				// @todo solve issue with newline right at the end of a text
 				lineDimensions = getDimensions(lines[line]);
 				if (horizontalAlignment == HorizontalAlignment.LEFT) {
 					lineAlignmentOffsetX = 0;
@@ -555,6 +563,12 @@ public class Text extends Mesh implements UIComponent, Copyable
 		glBindVertexArray(0);
 
 		shader.afterRendering();
+	}
+
+	@Override
+	public void handleClick(int x, int y) throws DLException
+	{
+		// do nothing
 	}
 
 	// <editor-fold desc="Getters/Setters" defaultstate="collapsed">
@@ -733,5 +747,5 @@ public class Text extends Mesh implements UIComponent, Copyable
 	{
 		this.uiManager = uiManager;
 	}
-	// "Getters/Setters" </editor-fold>	
+	// "Getters/Setters" </editor-fold>
 }
