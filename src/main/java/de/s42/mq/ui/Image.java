@@ -115,7 +115,7 @@ public class Image extends Quad implements UIComponent
 		copy.buffer = buffer;
 		copy.texture = texture;
 		copy.layout = layout;
-		copy.layoutOptions = layoutOptions;
+		copy.layoutOptions = (layoutOptions != null) ? layoutOptions.copy() : null;
 		copy.smooth = smooth;
 		copy.screenUvs = screenUvs;
 		copy.borderRadius.setValue(borderRadius.getValue());

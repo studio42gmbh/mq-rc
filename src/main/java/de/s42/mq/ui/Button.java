@@ -65,7 +65,7 @@ public class Button extends MeshGroup<UIAction> implements UIAction, UIComponent
 			// @todo finalize proper copying
 			copy.text.setValue(text.getValue());
 			copy.layout = layout;
-			copy.layoutOptions = layoutOptions;
+			copy.layoutOptions = (layoutOptions != null) ? layoutOptions.copy() : null;
 			copy.uiManager = uiManager;
 			copy.textOptions = textOptions;
 			copy.panelOptions = panelOptions;

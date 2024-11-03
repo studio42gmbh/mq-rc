@@ -27,6 +27,11 @@ public class FloatData extends AbstractNumberData<Float>
 	{
 	}
 
+	public FloatData(String name)
+	{
+		super(name);
+	}
+
 	public FloatData(float value)
 	{
 		this.value = value;

@@ -93,7 +93,7 @@ public class Panel extends Quad implements UIComponent
 		// @todo finalize proper copying
 		copy.uiManager = uiManager;
 		copy.layout = layout;
-		copy.layoutOptions = layoutOptions;
+		copy.layoutOptions = (layoutOptions != null) ? layoutOptions.copy() : null;
 		copy.dimensionUI.setValue(dimensionUI.getValue());
 		copy.backgroundColor.setValue(backgroundColor.getValue());
 		copy.borderRadius.setValue(borderRadius.getValue());

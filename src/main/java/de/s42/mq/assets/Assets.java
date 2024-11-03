@@ -59,14 +59,23 @@ public class Assets<ChildType extends Object> extends AbstractAsset implements D
 
 	public void add(Asset asset)
 	{
-		assert asset != null;
+		assert asset != null : "asset != null";
 
 		assets.add(asset);
+	}
+
+	public void remove(Asset asset)
+	{
+		assert asset != null : "asset != null";
+
+		assets.remove(asset);
 	}
 
 	@Override
 	public void addChild(String name, ChildType child)
 	{
+		assert child != null : "child != null";
+
 		if (child instanceof Asset asset) {
 			add(asset);
 		}
@@ -85,8 +94,8 @@ public class Assets<ChildType extends Object> extends AbstractAsset implements D
 
 	protected Material findMaterial(Assets container, String name)
 	{
-		assert name != null;
-		assert container != null;
+		assert name != null : "name != null";
+		assert container != null : "container != null";
 
 		// @todo optimize retrieval of material
 		for (Asset asset : (List<Asset>) container.assets) {
@@ -108,12 +117,14 @@ public class Assets<ChildType extends Object> extends AbstractAsset implements D
 
 	public Material findMaterial(String name)
 	{
+		assert name != null : "name != null";
+
 		return findMaterial(this, name);
 	}
 
 	public <AssetType extends Asset> AssetType findAssetOfType(Class<AssetType> type)
 	{
-		assert type != null;
+		assert type != null : "type != null";
 
 		for (Asset asset : assets) {
 			if (type.isAssignableFrom(asset.getClass())) {
@@ -126,7 +137,7 @@ public class Assets<ChildType extends Object> extends AbstractAsset implements D
 
 	public <AssetType extends Asset> List<AssetType> findAssetsOfType(Class<AssetType> type)
 	{
-		assert type != null;
+		assert type != null : "type != null";
 
 		List<AssetType> result = new ArrayList<>(assets.size());
 
@@ -141,7 +152,7 @@ public class Assets<ChildType extends Object> extends AbstractAsset implements D
 
 	public <AssetType extends Asset> AssetType findAssetOfName(String assetName)
 	{
-		assert assetName != null;
+		assert assetName != null : "assetName != null";
 
 		for (Asset asset : assets) {
 			if (assetName.equals(asset.getName())) {
@@ -154,7 +165,7 @@ public class Assets<ChildType extends Object> extends AbstractAsset implements D
 
 	public int indexOfAsset(Asset asset)
 	{
-		assert asset != null;
+		assert asset != null : "asset != null";
 
 		return assets.indexOf(asset);
 	}
@@ -166,8 +177,8 @@ public class Assets<ChildType extends Object> extends AbstractAsset implements D
 
 	public <AssetType extends Asset> AssetType findAssetWithIndex(int index)
 	{
-		assert index > -1;
-		assert index < assets.size();
+		assert index > -1 : "index > -1";
+		assert index < assets.size() : "index < assets.size()";
 
 		return (AssetType) assets.get(index);
 	}

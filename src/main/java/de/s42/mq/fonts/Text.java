@@ -177,7 +177,7 @@ public class Text extends Mesh implements UIComponent, Copyable
 
 		copy.font = font;
 		copy.layout = layout;
-		copy.layoutOptions = layoutOptions;
+		copy.layoutOptions = (layoutOptions != null) ? layoutOptions.copy() : null;
 		copy.buffer = buffer;
 		copy.text.setValue(text.getValue());
 		copy.color.setValue(color.getValue());
@@ -206,7 +206,6 @@ public class Text extends Mesh implements UIComponent, Copyable
 		super.load();
 
 		log.debug("Generating font cache", maxCharCount);
-
 		vao = glGenVertexArrays();
 		glBindVertexArray(vao);
 

@@ -1,18 +1,20 @@
 /*
  * Copyright Studio 42 GmbH 2021. All rights reserved.
- *  
+ *
  * Unless required by applicable law or agreed to in writing, software
  * distributed under the License is distributed on an "AS IS" BASIS,
  * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
  * See the License for the specific language governing permissions and
  * limitations under the License.
- *  
+ *
  * For details to the License read https://www.s42m.de/license
  */
 package de.s42.mq.data;
 
 import java.lang.ref.WeakReference;
-import java.util.*;
+import java.util.ArrayList;
+import java.util.Iterator;
+import java.util.List;
 
 /**
  *
@@ -21,6 +23,7 @@ import java.util.*;
  */
 public abstract class AbstractData<DataValueType extends Object> implements Data<DataValueType>
 {
+
 	protected boolean editable;
 	protected String name;
 	protected Class<DataValueType> dataType;
@@ -34,7 +37,7 @@ public abstract class AbstractData<DataValueType extends Object> implements Data
 
 	protected AbstractData(String name)
 	{
-		assert name != null;
+		assert name != null : "name != null";
 
 		this.name = name;
 		dirty = true;
@@ -53,8 +56,7 @@ public abstract class AbstractData<DataValueType extends Object> implements Data
 			DataHandler<DataValueType> handler = handlerReference.get();
 			if (handler != null) {
 				handler.handleUpdate(this);
-			}
-			// prune invalid references
+			} // prune invalid references
 			else {
 				it.remove();
 			}
@@ -65,14 +67,14 @@ public abstract class AbstractData<DataValueType extends Object> implements Data
 
 	public void addHandler(DataHandler<DataValueType> handler)
 	{
-		assert handler != null;
+		assert handler != null : "handler != null";
 
 		handlers.add(new WeakReference<>(handler));
 	}
 
 	public void removeHandler(DataHandler<DataValueType> remove)
 	{
-		assert remove != null;
+		assert remove != null : "remove != null";
 
 		Iterator<WeakReference<DataHandler<DataValueType>>> it = handlers.iterator();
 		while (it.hasNext()) {
@@ -103,7 +105,7 @@ public abstract class AbstractData<DataValueType extends Object> implements Data
 
 	public void setDataType(Class<DataValueType> dataType)
 	{
-		assert dataType != null;
+		assert dataType != null : "dataType != null";
 
 		this.dataType = dataType;
 	}
