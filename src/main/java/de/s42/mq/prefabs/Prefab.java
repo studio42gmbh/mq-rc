@@ -11,10 +11,8 @@
  */
 package de.s42.mq.prefabs;
 
-import de.s42.mq.assets.Asset;
+import de.s42.dl.exceptions.DLException;
 import de.s42.mq.assets.Assets;
-import de.s42.mq.core.Copyable;
-import java.util.List;
 
 /**
  *
@@ -24,20 +22,22 @@ import java.util.List;
 public class Prefab<ChildType extends Object> extends Assets<ChildType>
 {
 
-	public Assets instantiate()
+	protected final static PrefabLoader DEFAULT_LOADER = new BasePrefabLoader();
+
+	protected PrefabLoader loader = DEFAULT_LOADER;
+
+	public Assets instantiate(Object... context) throws DLException
 	{
-		// Copy first asset and create
-		Assets instance = new Assets();
+		return loader.instantiate(this, context);
+	}
 
-		// Copy or link assets
-		for (Asset asset : ((List<Asset>) getAssets())) {
-			if (asset instanceof Copyable copyable) {
-				instance.add(copyable.copy());
-			} else {
-				instance.add(asset);
-			}
-		}
+	public PrefabLoader getLoader()
+	{
+		return loader;
+	}
 
-		return instance;
+	public void setLoader(PrefabLoader loader)
+	{
+		this.loader = loader;
 	}
 }

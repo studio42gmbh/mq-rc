@@ -73,6 +73,7 @@ public abstract class Mesh<ChildType extends Object> extends AbstractAsset imple
 			Mesh copy = getClass().getConstructor().newInstance();
 
 			// dont copy parent - leads to strange trees which are not consistent when iterating
+			copy.name = name;
 			copy.loaded = loaded;
 			copy.transform.set(transform);
 			copy.flipNormals = flipNormals;

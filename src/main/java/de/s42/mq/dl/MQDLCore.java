@@ -61,7 +61,9 @@ import de.s42.mq.materials.Texture.TextureFormat;
 import de.s42.mq.materials.Texture.TextureType;
 import de.s42.mq.materials.Texture.TextureWrap;
 import de.s42.mq.meshes.*;
+import de.s42.mq.prefabs.BasePrefabLoader;
 import de.s42.mq.prefabs.Prefab;
+import de.s42.mq.prefabs.PrefabLoader;
 import de.s42.mq.rendering.*;
 import de.s42.mq.scenes.RunScenes;
 import de.s42.mq.scenes.Scene;
@@ -272,7 +274,9 @@ public class MQDLCore extends DefaultCore
 		defineType(createType(UpdateMeshes.class), "UpdateMeshes");
 
 		// Prefabs
-		defineType(createType(Prefab.class), "Prefab");
+		defineType(PrefabLoader.class, "PrefabLoader");
+		defineType(BasePrefabLoader.class, "BasePrefabLoader");
+		defineType(Prefab.class, "Prefab");
 
 		// Editors
 		defineType(createType(DataEditor.class), "DataEditor");
