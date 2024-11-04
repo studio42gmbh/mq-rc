@@ -1,35 +1,33 @@
 /*
  * Copyright Studio 42 GmbH 2021. All rights reserved.
- *  
+ *
  * Unless required by applicable law or agreed to in writing, software
  * distributed under the License is distributed on an "AS IS" BASIS,
  * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
  * See the License for the specific language governing permissions and
  * limitations under the License.
- *  
+ *
  * For details to the License read https://www.s42m.de/license
  */
 package de.s42.mq.ui;
 
-import de.s42.dl.DLAnnotation.AnnotationDL;
 import de.s42.dl.DLAttribute.AttributeDL;
-import de.s42.mq.data.*;
-import de.s42.mq.dl.annotations.EditableDLAnnotation;
-import de.s42.mq.dl.annotations.MaxDLAnnotation;
-import de.s42.mq.dl.annotations.MinDLAnnotation;
-import de.s42.mq.dl.annotations.StepDLAnnotation;
+import de.s42.mq.core.Copyable;
+import de.s42.mq.data.ColorData;
+import de.s42.mq.data.FloatData;
+import de.s42.mq.data.Vector4Data;
 import de.s42.mq.materials.Material;
 
 /**
  *
  * @author Benjamin Schiller
  */
-public class PanelOptions
+public class PanelOptions implements Copyable
 {
 
 	@AttributeDL(required = false)
 	//@AnnotationDL(value = EditableDLAnnotation.DEFAULT_SYMBOL)
-	protected ColorData backgroundColor = new ColorData();
+	protected final ColorData backgroundColor = new ColorData();
 
 	/**
 	 * x = lefttop, y = righttop, z = rightbottom, w = leftbottom
@@ -39,21 +37,35 @@ public class PanelOptions
 	//@AnnotationDL(value = MinDLAnnotation.DEFAULT_SYMBOL, parameters = "0.0")
 	//@AnnotationDL(value = MaxDLAnnotation.DEFAULT_SYMBOL, parameters = "10000.0")
 	//@AnnotationDL(value = StepDLAnnotation.DEFAULT_SYMBOL, parameters = "1.0")
-	protected Vector4Data borderRadius = new Vector4Data();
+	protected final Vector4Data borderRadius = new Vector4Data();
 
 	@AttributeDL(required = false)
 	//@AnnotationDL(value = EditableDLAnnotation.DEFAULT_SYMBOL)
-	protected ColorData borderColor = new ColorData();
+	protected final ColorData borderColor = new ColorData();
 
 	@AttributeDL(required = false)
 	//@AnnotationDL(value = EditableDLAnnotation.DEFAULT_SYMBOL)
 	//@AnnotationDL(value = MinDLAnnotation.DEFAULT_SYMBOL, parameters = "0.0")
 	//@AnnotationDL(value = MaxDLAnnotation.DEFAULT_SYMBOL, parameters = "10000.0")
 	//@AnnotationDL(value = StepDLAnnotation.DEFAULT_SYMBOL, parameters = "1.0")
-	protected FloatData borderWidth = new FloatData();
+	protected final FloatData borderWidth = new FloatData();
 
 	@AttributeDL(required = false)
 	protected Material material;
+
+	@Override
+	public PanelOptions copy()
+	{
+		PanelOptions copy = new PanelOptions();
+
+		copy.backgroundColor.setValue(backgroundColor.getValue());
+		copy.borderRadius.setValue(borderRadius.getValue());
+		copy.borderColor.setValue(borderColor.getValue());
+		copy.borderWidth.setValue(borderWidth.getValue());
+		copy.material = material;
+
+		return copy;
+	}
 
 	// <editor-fold desc="Getters/Setters" defaultstate="collapsed">
 	public ColorData getBackgroundColor()
@@ -63,7 +75,7 @@ public class PanelOptions
 
 	public void setBackgroundColor(ColorData backgroundColor)
 	{
-		this.backgroundColor = backgroundColor;
+		this.backgroundColor.setValue(backgroundColor.getValue().copy());
 	}
 
 	public Vector4Data getBorderRadius()
@@ -73,7 +85,7 @@ public class PanelOptions
 
 	public void setBorderRadius(Vector4Data borderRadius)
 	{
-		this.borderRadius = borderRadius;
+		this.borderRadius.setValue(borderRadius.getValue());
 	}
 
 	public ColorData getBorderColor()
@@ -83,7 +95,7 @@ public class PanelOptions
 
 	public void setBorderColor(ColorData borderColor)
 	{
-		this.borderColor = borderColor;
+		this.borderColor.setValue(borderColor.getValue().copy());
 	}
 
 	public FloatData getBorderWidth()
@@ -93,7 +105,7 @@ public class PanelOptions
 
 	public void setBorderWidth(FloatData borderWidth)
 	{
-		this.borderWidth = borderWidth;
+		this.borderWidth.setValue(borderWidth.getValue());
 	}
 
 	public Material getMaterial()
@@ -105,5 +117,5 @@ public class PanelOptions
 	{
 		this.material = material;
 	}
-	// "Getters/Setters" </editor-fold>	
+	// "Getters/Setters" </editor-fold>
 }

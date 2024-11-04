@@ -1,25 +1,22 @@
 /*
  * Copyright Studio 42 GmbH 2021. All rights reserved.
- *  
+ *
  * Unless required by applicable law or agreed to in writing, software
  * distributed under the License is distributed on an "AS IS" BASIS,
  * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
  * See the License for the specific language governing permissions and
  * limitations under the License.
- *  
+ *
  * For details to the License read https://www.s42m.de/license
  */
 package de.s42.mq.fonts;
 
-import de.s42.dl.DLAnnotation.AnnotationDL;
 import de.s42.dl.DLAttribute.AttributeDL;
 import de.s42.mq.MQColor;
 import de.s42.mq.buffers.FrameBuffer;
-import de.s42.mq.data.*;
-import de.s42.mq.dl.annotations.EditableDLAnnotation;
-import de.s42.mq.dl.annotations.MaxDLAnnotation;
-import de.s42.mq.dl.annotations.MinDLAnnotation;
-import de.s42.mq.dl.annotations.StepDLAnnotation;
+import de.s42.mq.core.Copyable;
+import de.s42.mq.data.ColorData;
+import de.s42.mq.data.FloatData;
 import de.s42.mq.fonts.Text.HorizontalAlignment;
 import de.s42.mq.fonts.Text.VerticalAlignment;
 import de.s42.mq.materials.Material;
@@ -28,7 +25,7 @@ import de.s42.mq.materials.Material;
  *
  * @author Benjamin Schiller
  */
-public class TextOptions
+public class TextOptions implements Copyable
 {
 
 	@AttributeDL(required = true)
@@ -87,6 +84,27 @@ public class TextOptions
 
 	@AttributeDL(required = true)
 	protected FrameBuffer buffer;
+
+	@Override
+	public TextOptions copy()
+	{
+		TextOptions copy = new TextOptions();
+
+		copy.fontSize.setValue(fontSize.getValue());
+		copy.edge2.setValue(edge2.getValue());
+		copy.color2.setValue(color2.getValue());
+		copy.edge.setValue(edge.getValue());
+		copy.color.setValue(color.getValue());
+		copy.font = font;
+		copy.buffer = buffer;
+		copy.material = material;
+		copy.maxCharCount = maxCharCount;
+		copy.horizontalAlignment = horizontalAlignment;
+		copy.verticalAlignment = verticalAlignment;
+		copy.scaleWithBufferSize = scaleWithBufferSize;
+
+		return copy;
+	}
 
 	// <editor-fold desc="Getters/Setters" defaultstate="collapsed">
 	public Font getFont()
@@ -218,5 +236,5 @@ public class TextOptions
 	{
 		this.buffer = buffer;
 	}
-	// "Getters/Setters" </editor-fold>	
+	// "Getters/Setters" </editor-fold>
 }

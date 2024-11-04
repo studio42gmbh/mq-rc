@@ -78,7 +78,8 @@ public class Panel extends Quad implements UIComponent
 	{
 		assert options != null;
 
-		setBackgroundColor(options.getBackgroundColor());
+		backgroundColor.setValue(options.getBackgroundColor().getValue());
+		//setBackgroundColor(options.getBackgroundColor());
 		setBorderRadius(options.getBorderRadius());
 		setBorderColor(options.getBorderColor());
 		setBorderWidth(options.getBorderWidth());
@@ -190,7 +191,7 @@ public class Panel extends Quad implements UIComponent
 
 	public void setBackgroundColor(ColorData backgroundColor)
 	{
-		this.backgroundColor = backgroundColor;
+		this.backgroundColor.setValue(backgroundColor.getValue());
 	}
 
 	public Vector4Data getBorderRadius()

@@ -53,7 +53,7 @@ public abstract class Mesh<ChildType extends Object> extends AbstractAsset imple
 	protected final Transform transform = new Transform();
 
 	@AttributeDL(ignore = true)
-	protected List<MeshAnimation> animations = new ArrayList<>();
+	protected final List<MeshAnimation> animations = new ArrayList<>();
 
 	@AttributeDL(ignore = true)
 	protected final List<String> layersAsList = new ArrayList();
@@ -83,7 +83,7 @@ public abstract class Mesh<ChildType extends Object> extends AbstractAsset imple
 			copy.layersAsList.addAll(layersAsList);
 
 			for (MeshAnimation animation : animations) {
-				copy.addAnimation(animation.copy());
+				copy.animations.add(animation.copy());
 			}
 
 			return copy;

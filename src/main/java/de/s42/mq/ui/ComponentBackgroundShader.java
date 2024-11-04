@@ -76,7 +76,6 @@ public class ComponentBackgroundShader extends UIShader
 		super.beforeRendering();
 
 		if (mesh instanceof Panel panel) {
-
 			setUniform(colorUniform, panel.getBackgroundColor());
 			setUniform(borderRadiusUniform, panel.getBorderRadius());
 			setUniform(borderColorUniform, panel.getBorderColor());

@@ -28,7 +28,7 @@ import java.util.List;
  *
  * @author Benjamin Schiller
  */
-public class Button extends MeshGroup<UIAction> implements UIAction, UIComponent
+public class Button extends MeshGroup implements UIAction, UIComponent
 {
 
 	@AttributeDL(required = true)
@@ -67,8 +67,8 @@ public class Button extends MeshGroup<UIAction> implements UIAction, UIComponent
 			copy.layout = layout;
 			copy.layoutOptions = (layoutOptions != null) ? layoutOptions.copy() : null;
 			copy.uiManager = uiManager;
-			copy.textOptions = textOptions;
-			copy.panelOptions = panelOptions;
+			copy.textOptions = textOptions.copy();
+			copy.panelOptions = panelOptions.copy();
 			copy.textComponent = textComponent.copy();
 			copy.panelComponent = panelComponent.copy();
 			copy.actions.addAll(actions);
@@ -93,9 +93,11 @@ public class Button extends MeshGroup<UIAction> implements UIAction, UIComponent
 	}
 
 	@Override
-	public void addChild(String name, UIAction child)
+	public void addChild(String name, Object child)
 	{
-		addAction(child);
+		if (child instanceof UIAction action) {
+			addAction(action);
+		}
 
 		super.addChild(name, child);
 	}
