@@ -11,11 +11,14 @@
  */
 package de.s42.mq.ui.layout.uilayout;
 
-import de.s42.dl.DLAttribute.AttributeDL;
-import de.s42.log.LogManager;
-import de.s42.log.Logger;
+import de.s42.dl.annotations.attributes.RequiredDLAnnotation.required;
 import de.s42.mq.core.AbstractEntity;
 import de.s42.mq.data.Vector2Data;
+import de.s42.mq.fonts.Text;
+import static de.s42.mq.fonts.Text.HorizontalAlignment.LEFT;
+import static de.s42.mq.fonts.Text.HorizontalAlignment.RIGHT;
+import static de.s42.mq.fonts.Text.VerticalAlignment.BOTTOM;
+import static de.s42.mq.fonts.Text.VerticalAlignment.TOP;
 import de.s42.mq.materials.Texture;
 import de.s42.mq.meshes.Mesh;
 import de.s42.mq.ui.Image;
@@ -33,10 +36,8 @@ import org.joml.Vector3f;
 public class UILayout extends AbstractEntity implements Layout<UILayoutOptions>
 {
 
-	private final static Logger log = LogManager.getLogger(UILayout.class.getName());
-
-	@AttributeDL(required = true)
-	//@AnnotationDL(value = EditableDLAnnotation.DEFAULT_SYMBOL)
+	//private final static Logger log = LogManager.getLogger(UILayout.class.getName());
+	@required
 	protected Vector2Data dimension = new Vector2Data();
 
 	@Override
@@ -85,10 +86,8 @@ public class UILayout extends AbstractEntity implements Layout<UILayoutOptions>
 				float displayRatio = displaySize.x / displaySize.y;
 
 				if (imageFit == FIT_X) {
-
 					screenSize.x = screenSize.y * textRatio / displayRatio;
 				} else if (imageFit == FIT_Y) {
-
 					screenSize.y = screenSize.x * displayRatio / textRatio;
 				} else if (imageFit == FIT_BOTH) {
 					// @todo fit in both directions
@@ -108,6 +107,20 @@ public class UILayout extends AbstractEntity implements Layout<UILayoutOptions>
 			}
 
 			image.getDimensionUI().setValue(screenSize.x * displaySize.x * 0.5f, screenSize.y * displaySize.y * 0.5f);
+		} else if (mesh instanceof Text text) {
+
+			if (text.getVerticalAlignment() == TOP) {
+				meshPosition.y -= deltaY * 0.5f;
+			} else if (text.getVerticalAlignment() == BOTTOM) {
+				meshPosition.y += deltaY * 0.5f;
+			}
+
+			if (text.getHorizontalAlignment() == LEFT) {
+				meshPosition.x -= deltaX * 0.5f;
+			} else if (text.getHorizontalAlignment() == RIGHT) {
+				meshPosition.x += deltaX * 0.5f;
+			}
+
 		}
 
 		meshScale.x = screenSize.x;

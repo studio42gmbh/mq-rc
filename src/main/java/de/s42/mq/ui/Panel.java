@@ -74,6 +74,9 @@ public class Panel extends Quad implements UIComponent
 	@AttributeDL(required = false)
 	protected UIManager uiManager;
 
+	@AttributeDL(required = false, defaultValue = "false")
+	protected boolean focusable = false;
+
 	public void setOptions(PanelOptions options)
 	{
 		assert options != null;
@@ -141,6 +144,17 @@ public class Panel extends Quad implements UIComponent
 		}
 
 		super.render();
+	}
+
+	@Override
+	public void handleKey(int key, int scancode, int action, int mods)
+	{
+		// do nothing
+	}
+
+	@Override
+	public void handleChar(String chars)
+	{
 	}
 
 	@Override
@@ -236,4 +250,16 @@ public class Panel extends Quad implements UIComponent
 		this.uiManager = uiManager;
 	}
 	// "Getters/Setters" </editor-fold>
+
+	@Override
+	public boolean isFocusable()
+	{
+		return focusable;
+	}
+
+	@Override
+	public void setFocusable(boolean focusable)
+	{
+		this.focusable = focusable;
+	}
 }

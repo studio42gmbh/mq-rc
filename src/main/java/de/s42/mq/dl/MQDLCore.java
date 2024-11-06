@@ -84,6 +84,8 @@ import de.s42.mq.ui.layout.LayoutOptions;
 import de.s42.mq.ui.layout.uilayout.UILayout;
 import de.s42.mq.ui.layout.uilayout.UILayoutFit;
 import de.s42.mq.ui.layout.uilayout.UILayoutOptions;
+import de.s42.mq.ui.textfield.TextFieldFocusAnimation;
+import de.s42.mq.ui.textfield.Textfield;
 import de.s42.mq.util.Transform;
 import java.io.IOException;
 import java.nio.file.Files;
@@ -205,6 +207,7 @@ public class MQDLCore extends DefaultCore
 		defineType(createType(Log.class), "Log");
 
 		// Inputs
+		defineType(Key.class, "Key");
 		defineType(createType(InputAxis.class), "InputAxis");
 		defineType(createType(AbstractInputAxis.class), "AbstractInputAxis");
 		defineType(createType(InputKey.class), "InputKey");
@@ -334,6 +337,10 @@ public class MQDLCore extends DefaultCore
 		defineType(createType(FadeTintOnMouseOver.class), "FadeTintOnMouseOver");
 		defineType(createType(UIShader.class), "UIShader");
 		defineType(createType(ComponentBackgroundShader.class), "ComponentBackgroundShader");
+
+		// Textfield
+		defineType(Textfield.class, "Textfield");
+		defineType(TextFieldFocusAnimation.class, "TextFieldFocusAnimation");
 
 		// Scenes
 		defineType(createType(Scene.class), "Scene");

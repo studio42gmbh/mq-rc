@@ -9,29 +9,35 @@
  *
  * For details to the License read https://www.s42m.de/license
  */
-package de.s42.mq.ui;
+package de.s42.mq.ui.textfield;
 
 import de.s42.dl.DLAttribute.AttributeDL;
 import de.s42.dl.annotations.attributes.RequiredDLAnnotation.required;
 import de.s42.dl.annotations.persistence.DontPersistDLAnnotation.dontPersist;
 import de.s42.dl.exceptions.DLException;
+import de.s42.log.LogManager;
+import de.s42.log.Logger;
 import de.s42.mq.cameras.Camera;
 import de.s42.mq.data.StringData;
 import de.s42.mq.fonts.Text;
 import de.s42.mq.fonts.TextOptions;
 import de.s42.mq.meshes.MeshGroup;
-import de.s42.mq.ui.actions.UIAction;
+import de.s42.mq.ui.Panel;
+import de.s42.mq.ui.PanelOptions;
+import de.s42.mq.ui.UIComponent;
+import de.s42.mq.ui.UIManager;
 import de.s42.mq.ui.layout.Layout;
 import de.s42.mq.ui.layout.LayoutOptions;
-import java.util.ArrayList;
-import java.util.List;
+import static org.lwjgl.glfw.GLFW.*;
 
 /**
  *
  * @author Benjamin Schiller
  */
-public class Button extends MeshGroup implements UIAction, UIComponent
+public class Textfield extends MeshGroup implements UIComponent
 {
+
+	private final static Logger log = LogManager.getLogger(Textfield.class.getName());
 
 	@required
 	protected StringData text = new StringData();
@@ -63,14 +69,11 @@ public class Button extends MeshGroup implements UIAction, UIComponent
 	@dontPersist
 	protected Panel panelComponent = new Panel();
 
-	@dontPersist
-	protected final List<UIAction> actions = new ArrayList<>();
-
 	@Override
-	public Button copy()
+	public Textfield copy()
 	{
 		try {
-			Button copy = (Button) super.copy();
+			Textfield copy = (Textfield) super.copy();
 
 			// @todo finalize proper copying
 			copy.text.setValue(text.getValue());
@@ -81,7 +84,6 @@ public class Button extends MeshGroup implements UIAction, UIComponent
 			copy.panelOptions = panelOptions.copy();
 			copy.textComponent = textComponent.copy();
 			copy.panelComponent = panelComponent.copy();
-			copy.actions.addAll(actions);
 
 			return copy;
 		} catch (Exception ex) {
@@ -90,44 +92,37 @@ public class Button extends MeshGroup implements UIAction, UIComponent
 	}
 
 	@Override
-	public void handleKey(int key, int scancode, int action, int mods)
+	public void handleChar(String chars)
 	{
+		assert chars != null : "chars != null";
+
+		String currentText = text.getValue();
+		text.setValueAndHandle(currentText + chars);
+
 	}
 
 	@Override
-	public void handleChar(String chars)
+	public void handleKey(int key, int scancode, int action, int mods)
 	{
+		log.debug("handleKey", key, scancode, action, mods);
+
+		if (action == GLFW_PRESS || action == GLFW_REPEAT) {
+
+			// Handle backspace -> remove char
+			if (key == GLFW_KEY_BACKSPACE) {
+				String currentText = text.getValue();
+				if (currentText.length() > 0) {
+					currentText = currentText.substring(0, currentText.length() - 1);
+					text.setValueAndHandle(currentText);
+				}
+			}
+		}
 	}
 
 	@Override
 	public void handleClick(int x, int y) throws DLException
 	{
-		doPerform();
-	}
-
-	public void addAction(UIAction action)
-	{
-		assert action != null;
-
-		actions.add(action);
-	}
-
-	@Override
-	public void addChild(String name, Object child)
-	{
-		if (child instanceof UIAction action) {
-			addAction(action);
-		}
-
-		super.addChild(name, child);
-	}
-
-	@Override
-	public void doPerform() throws DLException
-	{
-		for (UIAction action : actions) {
-			action.doPerform();
-		}
+		log.debug("handleClick", x, y);
 	}
 
 	@Override
@@ -285,11 +280,13 @@ public class Button extends MeshGroup implements UIAction, UIComponent
 	}
 	// "Getters/Setters" </editor-fold>
 
+	@Override
 	public boolean isFocusable()
 	{
 		return focusable;
 	}
 
+	@Override
 	public void setFocusable(boolean focusable)
 	{
 		this.focusable = focusable;

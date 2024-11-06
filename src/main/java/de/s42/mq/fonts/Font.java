@@ -122,7 +122,7 @@ public class Font extends AbstractAsset implements DLContainer<GlyphPage>
 
 	public void removeGlyph(int id)
 	{
-		Glyph glyph = glyphs.remove(id);
+		glyphs.remove(id);
 	}
 
 	public boolean hasGlyph(int id)

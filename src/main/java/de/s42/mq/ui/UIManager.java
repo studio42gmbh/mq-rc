@@ -11,6 +11,7 @@
  */
 package de.s42.mq.ui;
 
+import de.s42.dl.annotations.persistence.DontPersistDLAnnotation.dontPersist;
 import de.s42.dl.exceptions.DLException;
 import de.s42.dl.types.DLContainer;
 import de.s42.mq.assets.AbstractAsset;
@@ -26,9 +27,17 @@ public class UIManager extends AbstractAsset implements DLContainer<UIComponent>
 
 	protected final static AtomicInteger nextComponentId = new AtomicInteger(0);
 
+	@dontPersist
 	protected final List<UIComponent> components = new ArrayList<>();
+
+	@dontPersist
 	protected final Map<Integer, UIComponent> componentsByIdentifier = new HashMap<>();
+
+	@dontPersist
 	protected final Map<String, UIComponent> templateComponents = new HashMap<>();
+
+	@dontPersist
+	protected UIComponent focusedComponent;
 
 	public boolean containsComponentId(int id)
 	{
@@ -81,6 +90,12 @@ public class UIManager extends AbstractAsset implements DLContainer<UIComponent>
 		UIComponent component = componentsByIdentifier.get(identifier);
 
 		if (component != null) {
+
+			// Handle focus of clicked component
+			if (component.isFocusable()) {
+				setFocusedComponent(component);
+			}
+
 			component.handleClick(x, y);
 		}
 	}
@@ -125,5 +140,15 @@ public class UIManager extends AbstractAsset implements DLContainer<UIComponent>
 	public Map<Integer, UIComponent> getComponentsByIdentifier()
 	{
 		return Collections.unmodifiableMap(componentsByIdentifier);
+	}
+
+	public UIComponent getFocusedComponent()
+	{
+		return focusedComponent;
+	}
+
+	public void setFocusedComponent(UIComponent focusedComponent)
+	{
+		this.focusedComponent = focusedComponent;
 	}
 }

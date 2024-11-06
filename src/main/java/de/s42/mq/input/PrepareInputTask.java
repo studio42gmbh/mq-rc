@@ -1,20 +1,19 @@
 /*
  * Copyright Studio 42 GmbH 2021. All rights reserved.
- *  
+ *
  * Unless required by applicable law or agreed to in writing, software
  * distributed under the License is distributed on an "AS IS" BASIS,
  * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
  * See the License for the specific language governing permissions and
  * limitations under the License.
- *  
+ *
  * For details to the License read https://www.s42m.de/license
  */
 package de.s42.mq.input;
 
 import de.s42.dl.DLAttribute.AttributeDL;
 import de.s42.mq.ui.AbstractWindowTask;
-import de.s42.log.LogManager;
-import de.s42.log.Logger;
+import static org.lwjgl.glfw.GLFW.*;
 import org.lwjgl.glfw.*;
 import static org.lwjgl.glfw.GLFW.*;
 
@@ -25,8 +24,7 @@ import static org.lwjgl.glfw.GLFW.*;
 public class PrepareInputTask extends AbstractWindowTask implements InputTask
 {
 
-	private final static Logger log = LogManager.getLogger(PrepareInputTask.class.getName());
-
+	//private final static Logger log = LogManager.getLogger(PrepareInputTask.class.getName());
 	@AttributeDL(required = true)
 	protected Input input;
 
@@ -34,6 +32,22 @@ public class PrepareInputTask extends AbstractWindowTask implements InputTask
 	protected GLFWCursorPosCallback cursorCallback;
 	protected GLFWMouseButtonCallback mouseButtonCallback;
 	protected GLFWScrollCallback scrollCallback;
+	protected GLFWCharCallback charCallback;
+
+	protected String codepointToString(int cp)
+	{
+		StringBuilder sb = new StringBuilder();
+		if (Character.isBmpCodePoint(cp)) {
+			sb.append((char) cp);
+		} else if (Character.isValidCodePoint(cp)) {
+			sb.append(Character.highSurrogate(cp));
+			sb.append(Character.lowSurrogate(cp));
+		} else {
+			sb.append('?');
+		}
+
+		return sb.toString();
+	}
 
 	@Override
 	protected void runTask()
@@ -57,6 +71,15 @@ public class PrepareInputTask extends AbstractWindowTask implements InputTask
 					log.debug("Release {} {}", key, scancode);
 				}
 				 */
+			}
+		});
+
+		glfwSetCharCallback(window.getGlfwWindowHandle(), charCallback = new GLFWCharCallback()
+		{
+			@Override
+			public void invoke(long window, int codepoint)
+			{
+				input.handleChar(codepointToString(codepoint));
 			}
 		});
 

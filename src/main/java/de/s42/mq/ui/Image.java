@@ -101,6 +101,9 @@ public class Image extends Quad implements UIComponent
 	@AttributeDL(required = false)
 	protected UIManager uiManager;
 
+	@AttributeDL(required = false, defaultValue = "true")
+	protected boolean focusable = true;
+
 	protected boolean textureLoaded;
 	protected float originalWidth;
 
@@ -241,6 +244,17 @@ public class Image extends Quad implements UIComponent
 	}
 
 	@Override
+	public void handleKey(int key, int scancode, int action, int mods)
+	{
+		// do nothing
+	}
+
+	@Override
+	public void handleChar(String chars)
+	{
+	}
+
+	@Override
 	public void handleClick(int x, int y) throws DLException
 	{
 		// do nothing
@@ -272,21 +286,25 @@ public class Image extends Quad implements UIComponent
 		return textureLoaded;
 	}
 
+	@Override
 	public Layout getLayout()
 	{
 		return layout;
 	}
 
+	@Override
 	public void setLayout(Layout layout)
 	{
 		this.layout = layout;
 	}
 
+	@Override
 	public LayoutOptions getLayoutOptions()
 	{
 		return layoutOptions;
 	}
 
+	@Override
 	public void setLayoutOptions(LayoutOptions layoutOptions)
 	{
 		this.layoutOptions = layoutOptions;
@@ -363,5 +381,17 @@ public class Image extends Quad implements UIComponent
 	public void setDimensionUI(Vector2Data dimensionUI)
 	{
 		this.dimensionUI = dimensionUI;
+	}
+
+	@Override
+	public boolean isFocusable()
+	{
+		return focusable;
+	}
+
+	@Override
+	public void setFocusable(boolean focusable)
+	{
+		this.focusable = focusable;
 	}
 }

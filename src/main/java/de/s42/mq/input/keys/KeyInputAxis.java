@@ -1,19 +1,23 @@
 /*
  * Copyright Studio 42 GmbH 2021. All rights reserved.
- *  
+ *
  * Unless required by applicable law or agreed to in writing, software
  * distributed under the License is distributed on an "AS IS" BASIS,
  * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
  * See the License for the specific language governing permissions and
  * limitations under the License.
- *  
+ *
  * For details to the License read https://www.s42m.de/license
  */
 package de.s42.mq.input.keys;
 
-import de.s42.dl.DLAttribute.AttributeDL;
-import de.s42.mq.input.*;
-import static org.lwjgl.glfw.GLFW.*;
+import de.s42.dl.annotations.attributes.RequiredDLAnnotation.required;
+import de.s42.dl.annotations.persistence.DontPersistDLAnnotation.dontPersist;
+import de.s42.mq.input.AbstractInputAxis;
+import de.s42.mq.input.InputHandler;
+import de.s42.mq.input.KeyInputHandler;
+import static org.lwjgl.glfw.GLFW.GLFW_PRESS;
+import static org.lwjgl.glfw.GLFW.GLFW_RELEASE;
 
 /**
  *
@@ -21,14 +25,24 @@ import static org.lwjgl.glfw.GLFW.*;
  */
 public class KeyInputAxis extends AbstractInputAxis implements InputHandler, KeyInputHandler
 {
-	@AttributeDL(required = true)
+
+	@required
 	protected int minKey;
-	
-	@AttributeDL(required = true)
+
+	@required
 	protected int maxKey;
-	
+
+	@dontPersist
 	protected boolean isMinKeyPressed;
+
+	@dontPersist
 	protected boolean isMaxKeyPressed;
+
+	@Override
+	public void handleChar(String chars)
+	{
+		// @todo
+	}
 
 	@Override
 	public void handleKey(int key, int scancode, int action, int mods)
@@ -37,17 +51,14 @@ public class KeyInputAxis extends AbstractInputAxis implements InputHandler, Key
 			if (action == GLFW_PRESS) {
 				isMinKeyPressed = true;
 				singleStepActive = true;
-			}
-			else if (action == GLFW_RELEASE) {
+			} else if (action == GLFW_RELEASE) {
 				isMinKeyPressed = false;
 			}
-		}
-		else if (key == maxKey) {
+		} else if (key == maxKey) {
 			if (action == GLFW_PRESS) {
 				isMaxKeyPressed = true;
 				singleStepActive = true;
-			}
-			else if (action == GLFW_RELEASE) {
+			} else if (action == GLFW_RELEASE) {
 				isMaxKeyPressed = false;
 			}
 		}
@@ -71,14 +82,12 @@ public class KeyInputAxis extends AbstractInputAxis implements InputHandler, Key
 
 			keysActive = true;
 			direction = -1.0f;
-		}
-		// JUST maxkey is pressed
+		} // JUST maxkey is pressed
 		else if (isMaxKeyPressed && !isMinKeyPressed) {
 
 			keysActive = true;
 			direction = 1.0f;
-		}
-		// no key or both keys are pressed -> snap to middle if active
+		} // No key or both keys are pressed -> snap to middle if active
 		else {
 
 			if (snapToMiddle) {
@@ -88,8 +97,7 @@ public class KeyInputAxis extends AbstractInputAxis implements InputHandler, Key
 				if (value > middle) {
 
 					direction = -1.0f;
-				}
-				else if (value < middle) {
+				} else if (value < middle) {
 
 					direction = 1.0f;
 				}
@@ -99,42 +107,41 @@ public class KeyInputAxis extends AbstractInputAxis implements InputHandler, Key
 		if (timeScaled) {
 			velocity = org.joml.Math.lerp(velocity, direction, response * elapsedTime);
 			value += velocity * speed * elapsedTime;
-		}
-		else {
+		} else {
 			velocity = org.joml.Math.lerp(velocity, direction, response);
 			value += velocity * speed;
 		}
 
-		// stop velocity
+		// Stop velocity
 		if (!keysActive && !snapActive && Math.abs(velocity) < epsilon) {
 			velocity = 0.0f;
 		}
 
-		// snap to middle
+		// Snap to middle
 		if (snapActive && Math.abs(value - middle) < epsilon) {
 			value = middle;
 		}
 
-		// clamp value
-		if (overflow == InputAxisOverflowMode.CLAMP) {
-			value = Math.min(Math.max(min, value), max);
-		}
-		else if (overflow == InputAxisOverflowMode.WRAP) {
-			if (value > max) {
-				value = value - (max - min);
+		if (null != overflow) // Clamp value
+		{
+			switch (overflow) {
+				case CLAMP ->
+					value = Math.min(Math.max(min, value), max);
+				case WRAP -> {
+					if (value > max) {
+						value = value - (max - min);
+					} else if (value < min) {
+						value = value + (max - min);
+					}
+				}
+				case WRAP_ALIGNED -> {
+					if (value > max) {
+						value = min;
+					} else if (value < min) {
+						value = max;
+					}
+				}
 			}
-			else if (value < min) {
-				value = value + (max - min);
-			}
-		}
-		else if (overflow == InputAxisOverflowMode.WRAP_ALIGNED) {
-			if (value > max) {
-				value = min;
-			}
-			else if (value < min) {
-				value = max;
-			}
-
 		}
 	}
 

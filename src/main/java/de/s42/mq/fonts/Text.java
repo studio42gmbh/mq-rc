@@ -12,6 +12,7 @@
 package de.s42.mq.fonts;
 
 import de.s42.dl.DLAttribute.AttributeDL;
+import de.s42.dl.annotations.persistence.DontPersistDLAnnotation.dontPersist;
 import de.s42.dl.exceptions.DLException;
 import de.s42.log.LogManager;
 import de.s42.log.Logger;
@@ -136,10 +137,22 @@ public class Text extends Mesh implements UIComponent, Copyable
 	@AttributeDL(required = false)
 	protected UIManager uiManager;
 
+	@AttributeDL(required = false, defaultValue = "false")
+	protected boolean focusable = false;
+
+	@dontPersist
 	protected int vao = -1;
+
+	@dontPersist
 	protected int vbo = -1;
+
+	@dontPersist
 	protected int charDataBuffer = -1;
+
+	@dontPersist
 	protected float charData[];
+
+	@dontPersist
 	protected boolean textDirty = true;
 
 	public void setOptions(TextOptions options)
@@ -390,9 +403,8 @@ public class Text extends Mesh implements UIComponent, Copyable
 		float lineAlignmentOffsetX = 0.0f;
 
 		if (horizontalAlignment == HorizontalAlignment.LEFT) {
-			lineAlignmentOffsetX = 0;
-		}
-		if (horizontalAlignment == HorizontalAlignment.CENTER) {
+			lineAlignmentOffsetX = 0.0f;
+		} else if (horizontalAlignment == HorizontalAlignment.CENTER) {
 			lineAlignmentOffsetX = -lineDimensions.x * 0.5f;
 		} else if (horizontalAlignment == HorizontalAlignment.RIGHT) {
 			lineAlignmentOffsetX = -lineDimensions.x;
@@ -565,6 +577,18 @@ public class Text extends Mesh implements UIComponent, Copyable
 	}
 
 	@Override
+	public void handleKey(int key, int scancode, int action, int mods)
+	{
+		// do nothing
+	}
+
+	@Override
+	public void handleChar(String chars)
+	{
+		// do nothing
+	}
+
+	@Override
 	public void handleClick(int x, int y) throws DLException
 	{
 		// do nothing
@@ -715,21 +739,25 @@ public class Text extends Mesh implements UIComponent, Copyable
 		this.letterSpacing = letterSpacing;
 	}
 
+	@Override
 	public Layout getLayout()
 	{
 		return layout;
 	}
 
+	@Override
 	public void setLayout(Layout layout)
 	{
 		this.layout = layout;
 	}
 
+	@Override
 	public LayoutOptions getLayoutOptions()
 	{
 		return layoutOptions;
 	}
 
+	@Override
 	public void setLayoutOptions(LayoutOptions layoutOptions)
 	{
 		this.layoutOptions = layoutOptions;
@@ -747,4 +775,16 @@ public class Text extends Mesh implements UIComponent, Copyable
 		this.uiManager = uiManager;
 	}
 	// "Getters/Setters" </editor-fold>
+
+	@Override
+	public boolean isFocusable()
+	{
+		return focusable;
+	}
+
+	@Override
+	public void setFocusable(boolean focusable)
+	{
+		this.focusable = focusable;
+	}
 }

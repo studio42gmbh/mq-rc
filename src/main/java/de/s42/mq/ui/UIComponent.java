@@ -15,6 +15,7 @@ import de.s42.dl.DLAttribute.AttributeDL;
 import de.s42.dl.exceptions.DLException;
 import de.s42.mq.core.Copyable;
 import de.s42.mq.core.Entity;
+import de.s42.mq.input.KeyInputHandler;
 import de.s42.mq.ui.layout.Layout;
 import de.s42.mq.ui.layout.LayoutOptions;
 
@@ -22,7 +23,7 @@ import de.s42.mq.ui.layout.LayoutOptions;
  *
  * @author Benjamin Schiller
  */
-public interface UIComponent extends Copyable, Entity
+public interface UIComponent extends Copyable, Entity, KeyInputHandler
 {
 
 	public int getIdentifier();
@@ -44,4 +45,8 @@ public interface UIComponent extends Copyable, Entity
 	public LayoutOptions getLayoutOptions();
 
 	public void setLayoutOptions(LayoutOptions options);
+
+	public boolean isFocusable();
+
+	public void setFocusable(boolean focusable);
 }

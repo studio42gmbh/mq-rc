@@ -26,6 +26,7 @@
 package de.s42.mq.ui;
 
 import de.s42.dl.DLAttribute.AttributeDL;
+import de.s42.dl.exceptions.DLException;
 import de.s42.mq.core.AbstractEntity;
 import de.s42.mq.ui.layout.Layout;
 import de.s42.mq.ui.layout.LayoutOptions;
@@ -39,12 +40,32 @@ public abstract class AbstractUIComponent extends AbstractEntity implements UICo
 
 	protected int identifier = -1;
 
+	protected boolean focusable;
+
 	@AttributeDL(ignore = true)
 	protected UIManager uiManager;
 
 	protected Layout layout;
 
 	protected LayoutOptions layoutOptions;
+
+	@Override
+	public void handleClick(int x, int y) throws DLException
+	{
+		// Implement
+	}
+
+	@Override
+	public void handleKey(int key, int scancode, int action, int mods)
+	{
+		// Implement
+	}
+
+	@Override
+	public void handleChar(String chars)
+	{
+		// Implement
+	}
 
 	@Override
 	public int getIdentifier()
@@ -94,5 +115,17 @@ public abstract class AbstractUIComponent extends AbstractEntity implements UICo
 	public void setLayoutOptions(LayoutOptions layoutOptions)
 	{
 		this.layoutOptions = layoutOptions;
+	}
+
+	@Override
+	public boolean isFocusable()
+	{
+		return focusable;
+	}
+
+	@Override
+	public void setFocusable(boolean focusable)
+	{
+		this.focusable = focusable;
 	}
 }

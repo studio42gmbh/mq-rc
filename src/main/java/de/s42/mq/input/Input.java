@@ -50,6 +50,18 @@ public class Input extends AbstractEntity implements Updateable, DLContainer, In
 	}
 
 	@Override
+	public void handleChar(String chars)
+	{
+		if (debug) {
+			log.debug("Chars", chars);
+		}
+
+		for (KeyInputHandler iKey : keys) {
+			iKey.handleChar(chars);
+		}
+	}
+
+	@Override
 	public void handleScroll(double xOffset, double yOffset)
 	{
 		for (ScrollInputHandler scroll : scrolls) {
@@ -84,15 +96,15 @@ public class Input extends AbstractEntity implements Updateable, DLContainer, In
 	@Override
 	public void addChild(String name, Object child)
 	{
-		assert name != null;
-		assert child != null;
+		assert name != null : "name != null";
+		assert child != null : "child != null";
 
 		if (child instanceof InputHandler inputHandler) {
 			handlers.add(inputHandler);
 		}
 
 		if (child instanceof KeyInputHandler keyInputHandler) {
-			keys.add(keyInputHandler);
+			addKeyInputHandler(keyInputHandler);
 		}
 
 		if (child instanceof ScrollInputHandler scrollInputHandler) {
@@ -106,6 +118,13 @@ public class Input extends AbstractEntity implements Updateable, DLContainer, In
 		if (child instanceof MouseCursorInputHandler mouseCursorInputHandler) {
 			mouseCursors.add(mouseCursorInputHandler);
 		}
+	}
+
+	public void addKeyInputHandler(KeyInputHandler handler)
+	{
+		assert handler != null : "handler != null";
+
+		keys.add(handler);
 	}
 
 	@Override
