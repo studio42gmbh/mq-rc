@@ -32,7 +32,7 @@ public class MeshGroup<ChildType extends Object> extends Mesh<ChildType>
 	@AttributeDL(required = false)
 	protected BooleanData enabled = new BooleanData(true);
 
-	protected final List<Mesh> meshes = new ArrayList();
+	protected final List<Mesh> meshes = Collections.synchronizedList(new ArrayList());
 	protected final Map<String, Object> customProperties = new HashMap<>();
 
 	@Override
@@ -156,16 +156,16 @@ public class MeshGroup<ChildType extends Object> extends Mesh<ChildType>
 	{
 		assert mesh != null;
 
-		meshes.add(mesh);
 		mesh.setParent(this);
+		meshes.add(mesh);
 	}
 
 	public void removeMesh(Mesh mesh)
 	{
 		assert mesh != null;
 
-		meshes.remove(mesh);
 		mesh.setParent(null);
+		meshes.remove(mesh);
 	}
 
 	public void clearMeshes()

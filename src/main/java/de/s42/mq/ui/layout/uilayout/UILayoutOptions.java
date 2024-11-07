@@ -65,6 +65,11 @@ public class UILayoutOptions implements LayoutOptions
 		this.leftTop.set(leftTop);
 	}
 
+	public void translateLeftTop(float x, float y)
+	{
+		this.leftTop.add(x, y);
+	}
+
 	public Vector2f getLeftTopAnchor()
 	{
 		return new Vector2f(leftTopAnchor);
@@ -87,6 +92,11 @@ public class UILayoutOptions implements LayoutOptions
 		assert rightBottom != null : "rightBottom != null";
 
 		this.rightBottom.set(rightBottom);
+	}
+
+	public void translateRightBottom(float x, float y)
+	{
+		this.rightBottom.add(x, y);
 	}
 
 	public Vector2f getRightBottomAnchor()

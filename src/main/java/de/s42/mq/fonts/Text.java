@@ -266,8 +266,91 @@ public class Text extends Mesh implements UIComponent, Copyable
 		super.unload();
 	}
 
-	public Vector2f getDimensions(String text)
+	public Vector2f computeDimension(String text)
 	{
+		assert isLoaded() : "isLoaded()";
+		assert buffer != null : "buffer != null";
+		assert text != null : "text != null";
+
+		Vector2f dimension = new Vector2f();
+
+		float dpiCorrect = 72.0f / 96.0f;
+
+		float fontSizeX = fontSize.getFloatValue() * font.getStretchH() / 100.0f / font.getSize() / dpiCorrect;
+		float fontSizeY = fontSize.getFloatValue() / font.getSize() / dpiCorrect;
+
+		float fontLineHeight = font.getLineHeight();
+		float letterSpace = letterSpacing.getFloatValue() * font.getSize();
+
+		int cCount = Math.min(Character.codePointCount(text, 0, text.length()), maxCharCount);
+		float x = 0.0f;
+		float y = (fontLineHeight - font.getPaddingTop() - font.getPaddingBottom()) * fontSizeY;
+		Glyph lastGlyph = null;
+
+		for (int c = 0; c < cCount; ++c) {
+
+			int charId = Character.codePointAt(text, c);
+
+			// new line
+			if (charId == '\n') {
+				dimension.x = Math.max(x, dimension.x);
+				x = 0;
+				y += (fontLineHeight - font.getPaddingTop() - font.getPaddingBottom()) * fontSizeY;
+			}
+
+			Glyph glyph = font.getGlyph(charId);
+
+			// @todo provide better replacement mechanics for missing glyphs?
+			if (glyph == null) {
+				glyph = font.getGlyph('_');
+			}
+
+			float kerningOffset = 0.0f;
+
+			if (lastGlyph != null) {
+				kerningOffset = lastGlyph.getKerningOffset(glyph.getId());
+			}
+
+			//log.debug("" + charId + " kerning " + kerningOffset + " " + Toolkit.getDefaultToolkit().getScreenResolution());
+			lastGlyph = glyph;
+
+			x += (glyph.getxAdvance() + kerningOffset - font.getPaddingLeft() - font.getPaddingRight() + letterSpace) * fontSizeX;
+		}
+
+		dimension.x = Math.max(x, dimension.x);
+		dimension.y = Math.max(y, dimension.y);
+
+		return dimension;
+	}
+
+	public Vector2f computeDimensionScreenspace(String text)
+	{
+		assert isLoaded() : "isLoaded()";
+		assert buffer != null : "buffer != null";
+		assert text != null : "text != null";
+
+		Vector2f dimension = computeDimension(text);
+
+		// @todo find solution for making text scale properly with parent scalings
+		float screenWidth = buffer.getWidth();
+		float screenHeight = buffer.getHeight();
+
+		Vector3f parentScale = getParentMatrix().getScale(new Vector3f());
+		screenWidth *= parentScale.x;
+		screenHeight *= parentScale.y;
+
+		if (!isScaleWithBufferSize()) {
+			float normScale = 1024.0f / screenHeight;
+			screenWidth *= normScale;
+			screenHeight *= normScale;
+		}
+
+		dimension.x *= 1.0 / screenWidth * 2.0f;
+		dimension.y *= 1.0 / screenHeight * 2.0f;
+
+		return dimension;
+
+		/*
 		assert isLoaded();
 		assert buffer != null;
 		assert text != null;
@@ -340,6 +423,7 @@ public class Text extends Mesh implements UIComponent, Copyable
 		dimension.y = Math.max(y, dimension.y);
 
 		return dimension;
+		 */
 	}
 
 	// @todo allow to render multipage texts
@@ -356,7 +440,7 @@ public class Text extends Mesh implements UIComponent, Copyable
 
 		String[] lines = t.split("\n");
 		Font f = getFont();
-		Vector2f dimensions = getDimensions(t);
+		Vector2f dimensions = computeDimensionScreenspace(t);
 		GlyphPage p = f.getPages().get(0);
 
 		float alignmentOffsetY = 0.0f;
@@ -399,7 +483,7 @@ public class Text extends Mesh implements UIComponent, Copyable
 		int line = 0;
 		Glyph lastGlyph = null;
 
-		Vector2f lineDimensions = getDimensions(lines[0]);
+		Vector2f lineDimensions = computeDimensionScreenspace(lines[0]);
 		float lineAlignmentOffsetX = 0.0f;
 
 		if (horizontalAlignment == HorizontalAlignment.LEFT) {
@@ -421,7 +505,7 @@ public class Text extends Mesh implements UIComponent, Copyable
 				line++;
 
 				// @todo solve issue with newline right at the end of a text
-				lineDimensions = getDimensions(lines[line]);
+				lineDimensions = computeDimensionScreenspace(lines[line]);
 				if (horizontalAlignment == HorizontalAlignment.LEFT) {
 					lineAlignmentOffsetX = 0;
 				} else if (horizontalAlignment == HorizontalAlignment.CENTER) {

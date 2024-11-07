@@ -11,6 +11,7 @@
  */
 package de.s42.mq.ui.textfield;
 
+import de.s42.base.strings.StringHelper;
 import de.s42.dl.DLAttribute.AttributeDL;
 import de.s42.dl.annotations.attributes.RequiredDLAnnotation.required;
 import de.s42.dl.annotations.persistence.DontPersistDLAnnotation.dontPersist;
@@ -67,6 +68,12 @@ public class Textfield extends MeshGroup implements UIComponent
 	protected Text textComponent = new Text();
 
 	@dontPersist
+	protected Text caretComponent = new Text();
+
+	@dontPersist
+	protected int caretPosition;
+
+	@dontPersist
 	protected Panel panelComponent = new Panel();
 
 	@Override
@@ -84,6 +91,8 @@ public class Textfield extends MeshGroup implements UIComponent
 			copy.panelOptions = panelOptions.copy();
 			copy.textComponent = textComponent.copy();
 			copy.panelComponent = panelComponent.copy();
+			copy.caretComponent = caretComponent.copy();
+			copy.caretPosition = caretPosition;
 
 			return copy;
 		} catch (Exception ex) {
@@ -97,8 +106,10 @@ public class Textfield extends MeshGroup implements UIComponent
 		assert chars != null : "chars != null";
 
 		String currentText = text.getValue();
-		text.setValueAndHandle(currentText + chars);
-
+		caretPosition = Math.max(Math.min(caretPosition, currentText.length()), 0);
+		currentText = StringHelper.insert(currentText, chars, caretPosition);
+		caretPosition += chars.length();
+		text.setValueAndHandle(currentText);
 	}
 
 	@Override
@@ -108,13 +119,36 @@ public class Textfield extends MeshGroup implements UIComponent
 
 		if (action == GLFW_PRESS || action == GLFW_REPEAT) {
 
-			// Handle backspace -> remove char
-			if (key == GLFW_KEY_BACKSPACE) {
-				String currentText = text.getValue();
-				if (currentText.length() > 0) {
-					currentText = currentText.substring(0, currentText.length() - 1);
+			switch (key) {
+				// Handle backspace -> remove char before caret
+				case GLFW_KEY_BACKSPACE -> {
+					String currentText = text.getValue();
+					caretPosition = Math.max(Math.min(caretPosition, currentText.length()), 0);
+					if (caretPosition > 0) {
+						caretPosition = caretPosition - 1;
+						currentText = StringHelper.remove(currentText, caretPosition, 1);
+						text.setValueAndHandle(currentText);
+					}
+				}
+				// Handle backspace -> remove char after caret
+				case GLFW_KEY_DELETE -> {
+					String currentText = text.getValue();
+					caretPosition = Math.max(Math.min(caretPosition, currentText.length()), 0);
+					currentText = StringHelper.remove(currentText, caretPosition, 1);
 					text.setValueAndHandle(currentText);
 				}
+				// Left -> Caret to left
+				case GLFW_KEY_LEFT ->
+					caretPosition = Math.max(caretPosition - 1, 0);
+				// Left -> Caret to right
+				case GLFW_KEY_RIGHT ->
+					caretPosition = Math.min(caretPosition + 1, text.getValue().length());
+				// End -> Caret end of text
+				case GLFW_KEY_END ->
+					caretPosition = text.getValue().length();
+				// End -> Caret end of text
+				case GLFW_KEY_HOME ->
+					caretPosition = 0;
 			}
 		}
 	}
@@ -138,7 +172,6 @@ public class Textfield extends MeshGroup implements UIComponent
 			uiManager.register(this);
 		}
 
-		panelComponent.setParentMatrix(getModelMatrix());
 		panelComponent.setOptions(getPanelOptions());
 		panelComponent.setIdentifier(getIdentifier());
 		panelComponent.setLayout(getLayout());
@@ -148,7 +181,6 @@ public class Textfield extends MeshGroup implements UIComponent
 		panelComponent.load();
 		addMesh(panelComponent);
 
-		textComponent.setParentMatrix(getModelMatrix());
 		textComponent.getPosition().z = 0.001f;
 		textComponent.setOptions(getTextOptions());
 		textComponent.setText(getText());
@@ -159,6 +191,17 @@ public class Textfield extends MeshGroup implements UIComponent
 		textComponent.setLayers(getLayers());
 		textComponent.load();
 		addMesh(textComponent);
+
+		caretComponent.getPosition().z = 0.002f;
+		caretComponent.setOptions(getTextOptions());
+		caretComponent.getText().setValue("");
+		caretComponent.setIdentifier(getIdentifier());
+		caretComponent.setLayout(getLayout());
+		caretComponent.setLayoutOptions(getLayoutOptions());
+		caretComponent.setCamera(getCamera());
+		caretComponent.setLayers(getLayers());
+		caretComponent.load();
+		addMesh(caretComponent);
 	}
 
 	@Override
@@ -167,6 +210,10 @@ public class Textfield extends MeshGroup implements UIComponent
 		if (!isLoaded()) {
 			return;
 		}
+
+		removeMesh(caretComponent);
+		removeMesh(textComponent);
+		removeMesh(panelComponent);
 
 		if (uiManager != null) {
 			uiManager.unregister(this);
@@ -278,7 +325,6 @@ public class Textfield extends MeshGroup implements UIComponent
 	{
 		this.uiManager = uiManager;
 	}
-	// "Getters/Setters" </editor-fold>
 
 	@Override
 	public boolean isFocusable()
@@ -291,4 +337,25 @@ public class Textfield extends MeshGroup implements UIComponent
 	{
 		this.focusable = focusable;
 	}
+
+	public Text getCaretComponent()
+	{
+		return caretComponent;
+	}
+
+	public void setCaretComponent(Text caretComponent)
+	{
+		this.caretComponent = caretComponent;
+	}
+
+	public int getCaretPosition()
+	{
+		return caretPosition;
+	}
+
+	public void setCaretPosition(int caretPosition)
+	{
+		this.caretPosition = caretPosition;
+	}
+	// "Getters/Setters" </editor-fold>
 }

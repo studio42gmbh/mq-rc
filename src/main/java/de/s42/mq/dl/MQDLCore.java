@@ -84,6 +84,7 @@ import de.s42.mq.ui.layout.LayoutOptions;
 import de.s42.mq.ui.layout.uilayout.UILayout;
 import de.s42.mq.ui.layout.uilayout.UILayoutFit;
 import de.s42.mq.ui.layout.uilayout.UILayoutOptions;
+import de.s42.mq.ui.textfield.TextFieldCaretAnimation;
 import de.s42.mq.ui.textfield.TextFieldFocusAnimation;
 import de.s42.mq.ui.textfield.Textfield;
 import de.s42.mq.util.Transform;
@@ -341,6 +342,7 @@ public class MQDLCore extends DefaultCore
 		// Textfield
 		defineType(Textfield.class, "Textfield");
 		defineType(TextFieldFocusAnimation.class, "TextFieldFocusAnimation");
+		defineType(TextFieldCaretAnimation.class, "TextFieldCaretAnimation");
 
 		// Scenes
 		defineType(createType(Scene.class), "Scene");
