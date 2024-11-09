@@ -53,6 +53,18 @@ public class UILayoutOptions implements LayoutOptions
 	}
 
 	// <editor-fold desc="Getters/Setters" defaultstate="collapsed">
+	public void translate(float x, float y)
+	{
+		this.leftTop.add(x, y);
+		this.rightBottom.add(x, y);
+	}
+
+	public void translateAnchors(float x, float y)
+	{
+		this.leftTopAnchor.add(x, y);
+		this.rightBottomAnchor.add(x, y);
+	}
+
 	public Vector2f getLeftTop()
 	{
 		return new Vector2f(leftTop);
