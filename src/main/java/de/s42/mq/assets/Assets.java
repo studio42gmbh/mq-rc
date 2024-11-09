@@ -31,6 +31,20 @@ public class Assets extends AbstractAsset implements DLContainer
 	protected final List<Asset> assets = new ArrayList();
 
 	@Override
+	public void update(float elapsedTime)
+	{
+		if (!isLoaded()) {
+			return;
+		}
+
+		for (Asset asset : assets) {
+			if (asset instanceof Updateable updateable) {
+				updateable.update(elapsedTime);
+			}
+		}
+	}
+
+	@Override
 	public void load() throws DLException
 	{
 		if (isLoaded()) {
