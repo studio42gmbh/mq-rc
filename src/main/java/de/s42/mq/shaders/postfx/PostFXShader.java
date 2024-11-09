@@ -76,8 +76,8 @@ public class PostFXShader extends Shader
 		vignetteColorUniform = getUniformLocation("vignetteColor");
 		chromaticAbberationStrengthUniform = getUniformLocation("chromaticAbberationStrength");
 		inBufferResolutionUniform = getUniformLocation("inBufferResolution");
-		lookupIntensityUniform = getUniformLocation("lookupIntensity");
-		barrelPowerUniform = getUniformLocation("barrelPower");
+		lookupIntensityUniform = getUniformLocationOpt("lookupIntensity");
+		barrelPowerUniform = getUniformLocationOpt("barrelPower");
 	}
 
 	@Override
