@@ -18,13 +18,13 @@ import de.s42.log.Logger;
 import de.s42.mq.cameras.Camera;
 import de.s42.mq.data.BooleanData;
 import java.util.*;
+import java.util.function.Predicate;
 
 /**
  *
  * @author Benjamin Schiller
- * @param <ChildType>
  */
-public class MeshGroup<ChildType extends Object> extends Mesh<ChildType>
+public class MeshGroup extends Mesh
 {
 
 	private final static Logger log = LogManager.getLogger(MeshGroup.class.getName());
@@ -180,7 +180,7 @@ public class MeshGroup<ChildType extends Object> extends Mesh<ChildType>
 	}
 
 	@Override
-	public void addChild(String name, ChildType child)
+	public void addChild(String name, Object child)
 	{
 		switch (child) {
 			case Mesh mesh ->
@@ -195,10 +195,9 @@ public class MeshGroup<ChildType extends Object> extends Mesh<ChildType>
 	}
 
 	@Override
-	public List<ChildType> getChildren()
+	public List getChildren()
 	{
-		// @todo
-		return (List<ChildType>) Collections.unmodifiableList(animations);
+		return Collections.unmodifiableList(animations);
 	}
 
 	public List<Mesh> getMeshes()
@@ -263,6 +262,31 @@ public class MeshGroup<ChildType extends Object> extends Mesh<ChildType>
 		List<MeshType> result = new ArrayList<>();
 
 		findMeshesOfType(type, result);
+
+		return result;
+	}
+
+	protected List<Mesh> findMeshesByFilter(Predicate<Mesh> filter, List<Mesh> result)
+	{
+		for (Mesh mesh : meshes) {
+
+			if (filter.test(mesh)) {
+				result.add(mesh);
+			}
+
+			if (mesh instanceof MeshGroup meshGroup) {
+				meshGroup.findMeshesByFilter(filter, result);
+			}
+		}
+
+		return result;
+	}
+
+	public List<Mesh> findMeshesByFilter(Predicate<Mesh> filter)
+	{
+		List<Mesh> result = new ArrayList<>();
+
+		findMeshesByFilter(filter, result);
 
 		return result;
 	}

@@ -59,14 +59,14 @@ public class UIShader extends Shader
 		setUniform(modelMatrixUniform, mesh.getModelMatrix());
 		setUniform(viewMatrixUniform, camera.getViewMatrix());
 		setUniform(projectionMatrixUniform, camera.getProjectionMatrix());
-		setUniform(identifierUniform, mesh.getIdentifier());
 
-		if (mesh instanceof Panel panel) {
-			setUniform(dimensionUIUniform, panel.getDimensionUI());
-		} else if (mesh instanceof Image image) {
-			setUniform(dimensionUIUniform, image.getDimensionUI());
-		} else {
-			setUniform(dimensionUIUniform, dimensionUI);
+		switch (mesh) {
+			case Panel panel ->
+				setUniform(dimensionUIUniform, panel.getDimensionUI());
+			case Image image ->
+				setUniform(dimensionUIUniform, image.getDimensionUI());
+			default ->
+				setUniform(dimensionUIUniform, dimensionUI);
 		}
 
 		if (mesh.getIdentifier() > 0) {

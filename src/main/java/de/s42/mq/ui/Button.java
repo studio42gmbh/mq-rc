@@ -283,15 +283,17 @@ public class Button extends MeshGroup implements UIAction, UIComponent
 	{
 		this.uiManager = uiManager;
 	}
-	// "Getters/Setters" </editor-fold>
 
+	@Override
 	public boolean isFocusable()
 	{
 		return focusable;
 	}
 
+	@Override
 	public void setFocusable(boolean focusable)
 	{
 		this.focusable = focusable;
 	}
+	// "Getters/Setters" </editor-fold>
 }

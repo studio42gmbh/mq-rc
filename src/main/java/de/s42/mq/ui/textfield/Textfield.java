@@ -29,6 +29,8 @@ import de.s42.mq.ui.UIComponent;
 import de.s42.mq.ui.UIManager;
 import de.s42.mq.ui.layout.Layout;
 import de.s42.mq.ui.layout.LayoutOptions;
+import de.s42.mq.ui.layout.uilayout.UILayoutOptions;
+import org.joml.Vector4f;
 import static org.lwjgl.glfw.GLFW.*;
 
 /**
@@ -52,16 +54,18 @@ public class Textfield extends MeshGroup implements UIComponent
 	/**
 	 * if no layout is given position and scale shall remain untouched
 	 */
-	@AttributeDL(required = false)
 	protected Layout layout;
 
-	@AttributeDL(required = false)
 	protected LayoutOptions layoutOptions;
 
-	@AttributeDL(required = false)
 	protected UIManager uiManager;
 
-	@AttributeDL(required = false, defaultValue = "true")
+	/**
+	 * x = Left, y = Top, z = Right, w = Bottom
+	 */
+	protected final Vector4f textInsets = new Vector4f();
+
+	@AttributeDL(defaultValue = "true")
 	protected boolean focusable = true;
 
 	@dontPersist
@@ -93,6 +97,7 @@ public class Textfield extends MeshGroup implements UIComponent
 			copy.panelComponent = panelComponent.copy();
 			copy.caretComponent = caretComponent.copy();
 			copy.caretPosition = caretPosition;
+			copy.textInsets.set(textInsets);
 
 			return copy;
 		} catch (Exception ex) {
@@ -197,9 +202,9 @@ public class Textfield extends MeshGroup implements UIComponent
 		caretComponent.getText().setValue("");
 		caretComponent.setIdentifier(getIdentifier());
 		caretComponent.setLayout(getLayout());
-		caretComponent.setLayoutOptions(getLayoutOptions());
 		caretComponent.setCamera(getCamera());
 		caretComponent.setLayers(getLayers());
+		updateLayoutOptions();
 		caretComponent.load();
 		addMesh(caretComponent);
 	}
@@ -220,6 +225,26 @@ public class Textfield extends MeshGroup implements UIComponent
 		}
 
 		super.unload();
+	}
+
+	@Override
+	public void update(float elapsedTime)
+	{
+		updateLayoutOptions();
+
+		super.update(elapsedTime);
+
+	}
+
+	protected void updateLayoutOptions()
+	{
+		UILayoutOptions options = layoutOptions.copy();
+
+		options.translateLeftTop(textInsets.x, textInsets.y);
+		options.translateRightBottom(-textInsets.z, -textInsets.w);
+
+		textComponent.setLayoutOptions(options);
+		caretComponent.setLayoutOptions(options.copy());
 	}
 
 	// <editor-fold desc="Getters/Setters" defaultstate="collapsed">
@@ -356,6 +381,16 @@ public class Textfield extends MeshGroup implements UIComponent
 	public void setCaretPosition(int caretPosition)
 	{
 		this.caretPosition = caretPosition;
+	}
+
+	public Vector4f getTextInsets()
+	{
+		return new Vector4f(textInsets);
+	}
+
+	public void setTextInsets(Vector4f textInsets)
+	{
+		this.textInsets.set(textInsets);
 	}
 	// "Getters/Setters" </editor-fold>
 }

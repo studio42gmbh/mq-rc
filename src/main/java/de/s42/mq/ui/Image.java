@@ -12,9 +12,11 @@
 package de.s42.mq.ui;
 
 import de.s42.dl.DLAttribute.AttributeDL;
+import de.s42.dl.annotations.persistence.DontPersistDLAnnotation;
 import de.s42.dl.exceptions.DLException;
 import de.s42.log.LogManager;
 import de.s42.log.Logger;
+import de.s42.mq.MQColor;
 import de.s42.mq.buffers.FXBuffer;
 import de.s42.mq.data.ColorData;
 import de.s42.mq.data.Vector2Data;
@@ -26,19 +28,25 @@ import de.s42.mq.materials.Texture.TextureWrap;
 import de.s42.mq.meshes.Quad;
 import de.s42.mq.shaders.BasicShader;
 import de.s42.mq.shaders.Shader;
+import de.s42.mq.ui.actions.UIAction;
 import de.s42.mq.ui.layout.Layout;
 import de.s42.mq.ui.layout.LayoutOptions;
 import java.nio.file.Path;
+import java.util.ArrayList;
+import java.util.List;
 
 /**
  * Represents a simple image in the scene.
  *
  * @author Benjamin Schiller
  */
-public class Image extends Quad implements UIComponent
+public class Image extends Quad implements UIComponent, UIAction
 {
 
 	private final static Logger log = LogManager.getLogger(Image.class.getName());
+
+	@DontPersistDLAnnotation.dontPersist
+	protected final List<UIAction> actions = new ArrayList<>();
 
 	/**
 	 * set at least the path or the texture or the material
@@ -63,7 +71,7 @@ public class Image extends Quad implements UIComponent
 
 	@AttributeDL(required = false)
 	//@AnnotationDL(value = EditableDLAnnotation.DEFAULT_SYMBOL)
-	protected ColorData tint = new ColorData();
+	protected ColorData tint = new ColorData(new MQColor(1.0f));
 
 	@AttributeDL(required = false)
 	protected Layout layout;
@@ -124,6 +132,7 @@ public class Image extends Quad implements UIComponent
 		copy.borderRadius.setValue(borderRadius.getValue());
 		copy.dimensionUI.setValue(dimensionUI.getValue());
 		copy.tint.setValue(tint.getValue());
+		copy.actions.addAll(actions);
 
 		return copy;
 	}
@@ -151,7 +160,11 @@ public class Image extends Quad implements UIComponent
 
 		originalWidth = getScale().x;
 
-		log.info("Loading image " + getName());
+		log.debug("Loading image " + getName());
+
+		if (uiManager != null) {
+			uiManager.register(this);
+		}
 
 		// load texture from buffer
 		if (buffer != null) {
@@ -228,9 +241,15 @@ public class Image extends Quad implements UIComponent
 			Shader shader = mat.getShader();
 
 			//@todo how to make sharing of a texture into shading/materials more generic?
-			if (shader instanceof BasicShader basicShader) {
-				basicShader.setBaseTexture(texture);
-				basicShader.setTint(getTint());
+			switch (shader) {
+				case BasicShader basicShader -> {
+					basicShader.setBaseTexture(texture);
+					basicShader.setTint(getTint());
+				}
+				case ComponentBackgroundShader componentShader ->
+					componentShader.setColor(getTint());
+				default -> {
+				}
 			}
 		}
 
@@ -257,7 +276,32 @@ public class Image extends Quad implements UIComponent
 	@Override
 	public void handleClick(int x, int y) throws DLException
 	{
-		// do nothing
+		doPerform();
+	}
+
+	public void addAction(UIAction action)
+	{
+		assert action != null;
+
+		actions.add(action);
+	}
+
+	@Override
+	public void addChild(String name, Object child)
+	{
+		if (child instanceof UIAction action) {
+			addAction(action);
+		}
+
+		super.addChild(name, child);
+	}
+
+	@Override
+	public void doPerform() throws DLException
+	{
+		for (UIAction action : actions) {
+			action.doPerform();
+		}
 	}
 
 	// <editor-fold desc="Getters/Setters" defaultstate="collapsed">
@@ -361,7 +405,6 @@ public class Image extends Quad implements UIComponent
 	{
 		this.uiManager = uiManager;
 	}
-	// "Getters/Setters" </editor-fold>
 
 	public Vector4Data getBorderRadius()
 	{
@@ -394,4 +437,5 @@ public class Image extends Quad implements UIComponent
 	{
 		this.focusable = focusable;
 	}
+	// "Getters/Setters" </editor-fold>
 }

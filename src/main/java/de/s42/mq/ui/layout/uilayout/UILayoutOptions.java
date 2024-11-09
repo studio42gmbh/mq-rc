@@ -65,6 +65,11 @@ public class UILayoutOptions implements LayoutOptions
 		this.leftTop.set(leftTop);
 	}
 
+	public void setLeftTop(float left, float top)
+	{
+		this.leftTop.set(left, top);
+	}
+
 	public void translateLeftTop(float x, float y)
 	{
 		this.leftTop.add(x, y);
@@ -82,6 +87,11 @@ public class UILayoutOptions implements LayoutOptions
 		this.leftTopAnchor.set(leftTopAnchor);
 	}
 
+	public void setLeftTopAnchor(float left, float top)
+	{
+		this.leftTopAnchor.set(left, top);
+	}
+
 	public Vector2f getRightBottom()
 	{
 		return new Vector2f(rightBottom);
@@ -92,6 +102,11 @@ public class UILayoutOptions implements LayoutOptions
 		assert rightBottom != null : "rightBottom != null";
 
 		this.rightBottom.set(rightBottom);
+	}
+
+	public void setRightBottom(float right, float bottom)
+	{
+		this.rightBottom.set(right, bottom);
 	}
 
 	public void translateRightBottom(float x, float y)
@@ -109,6 +124,11 @@ public class UILayoutOptions implements LayoutOptions
 		assert rightBottomAnchor != null : "rightBottomAnchor != null";
 
 		this.rightBottomAnchor.set(rightBottomAnchor);
+	}
+
+	public void setRightBottomAnchor(float right, float bottom)
+	{
+		this.rightBottomAnchor.set(right, bottom);
 	}
 
 	public UILayoutFit getFit()

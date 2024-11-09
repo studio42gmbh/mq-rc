@@ -37,16 +37,14 @@ public abstract class Mesh<ChildType extends Object> extends AbstractAsset imple
 {
 
 	//private final static Logger log = LogManager.getLogger(Mesh.class.getName());
-	@AttributeDL(required = false, defaultValue = "false")
+	@AttributeDL(defaultValue = "false")
 	protected boolean flipNormals = false;
 
-	@AttributeDL(required = false)
 	protected Material material;
 
-	@AttributeDL(required = false, defaultValue = "-1")
+	@AttributeDL(defaultValue = "-1")
 	protected int identifier = -1;
 
-	@AttributeDL(required = false)
 	protected String[] layers;
 
 	@AttributeDL(ignore = true)
@@ -279,6 +277,28 @@ public abstract class Mesh<ChildType extends Object> extends AbstractAsset imple
 
 		if (layers != null) {
 			layersAsList.addAll(Arrays.asList(layers));
+		}
+	}
+
+	public void addLayer(String layer)
+	{
+		assert layer != null : "layer != null";
+
+		// @todo might optimize later
+		if (!layersAsList.contains(layer)) {
+			layersAsList.add(layer);
+			setLayers(layersAsList.toArray(String[]::new));
+		}
+	}
+
+	public void removeLayer(String layer)
+	{
+		assert layer != null : "layer != null";
+
+		// @todo might optimize later
+		if (layersAsList.contains(layer)) {
+			layersAsList.remove(layer);
+			setLayers(layersAsList.toArray(String[]::new));
 		}
 	}
 

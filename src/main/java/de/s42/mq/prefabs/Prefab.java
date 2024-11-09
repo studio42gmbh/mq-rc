@@ -17,9 +17,8 @@ import de.s42.mq.assets.Assets;
 /**
  *
  * @author Benjamin Schiller
- * @param <ChildType>
  */
-public class Prefab<ChildType extends Object> extends Assets<ChildType>
+public class Prefab extends Assets
 {
 
 	protected final static PrefabLoader DEFAULT_LOADER = new BasePrefabLoader();

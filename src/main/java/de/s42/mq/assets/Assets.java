@@ -13,6 +13,8 @@ package de.s42.mq.assets;
 
 import de.s42.dl.exceptions.DLException;
 import de.s42.dl.types.DLContainer;
+import de.s42.log.LogManager;
+import de.s42.log.Logger;
 import de.s42.mq.materials.Material;
 import java.util.ArrayList;
 import java.util.Collections;
@@ -21,12 +23,11 @@ import java.util.List;
 /**
  *
  * @author Benjamin Schiller
- * @param <ChildType>
  */
-public class Assets<ChildType extends Object> extends AbstractAsset implements DLContainer<ChildType>
+public class Assets extends AbstractAsset implements DLContainer
 {
 
-	//private final static Logger log = LogManager.getLogger(Assets.class.getName());
+	private final static Logger log = LogManager.getLogger(Assets.class.getName());
 	protected final List<Asset> assets = new ArrayList();
 
 	@Override
@@ -72,12 +73,14 @@ public class Assets<ChildType extends Object> extends AbstractAsset implements D
 	}
 
 	@Override
-	public void addChild(String name, ChildType child)
+	public void addChild(String name, Object child)
 	{
 		assert child != null : "child != null";
 
 		if (child instanceof Asset asset) {
 			add(asset);
+		} else {
+			log.warn("Invalid child " + child.toString());
 		}
 	}
 
@@ -87,9 +90,9 @@ public class Assets<ChildType extends Object> extends AbstractAsset implements D
 	}
 
 	@Override
-	public List<ChildType> getChildren()
+	public List getChildren()
 	{
-		return (List<ChildType>) Collections.unmodifiableList(assets);
+		return Collections.unmodifiableList(assets);
 	}
 
 	protected Material findMaterial(Assets container, String name)

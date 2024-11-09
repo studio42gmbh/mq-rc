@@ -12,6 +12,7 @@
 package de.s42.mq.fonts;
 
 import de.s42.dl.DLAttribute.AttributeDL;
+import de.s42.dl.annotations.attributes.RequiredDLAnnotation.required;
 import de.s42.dl.annotations.persistence.DontPersistDLAnnotation.dontPersist;
 import de.s42.dl.exceptions.DLException;
 import de.s42.log.LogManager;
@@ -47,6 +48,8 @@ public class Text extends Mesh implements UIComponent, Copyable
 
 	private final static Logger log = LogManager.getLogger(Text.class.getName());
 
+	public final static float DPI_CORRECT = 72.0f / 96.0f;// ((float) Toolkit.getDefaultToolkit().getScreenResolution()) / 72.0f;
+
 	public static enum VerticalAlignment
 	{
 		TOP, CENTER, BOTTOM
@@ -57,8 +60,8 @@ public class Text extends Mesh implements UIComponent, Copyable
 		LEFT, CENTER, RIGHT
 	}
 
+	// Position X, Y, Z  UVs U, Y
 	protected final static float quadVertices[] = {
-		// positions // uvs
 		0.0f, -1.0f, 0.0f, 0.0f, 1.0f,
 		1.0f, 0.0f, 0.0f, 1.0f, 0.0f,
 		0.0f, 0.0f, 0.0f, 0.0f, 0.0f,
@@ -67,77 +70,41 @@ public class Text extends Mesh implements UIComponent, Copyable
 		1.0f, 0.0f, 0.0f, 1.0f, 0.0f
 	};
 
-	@AttributeDL(required = true)
+	@required
 	protected Font font;
 
-	@AttributeDL(required = false)
-	//@AnnotationDL(value = EditableDLAnnotation.DEFAULT_SYMBOL)
+	@required
+	protected FrameBuffer buffer;
+
 	protected ColorData color = new ColorData();
-
-	@AttributeDL(required = false)
-	//@AnnotationDL(value = EditableDLAnnotation.DEFAULT_SYMBOL)
-	//@AnnotationDL(value = MinDLAnnotation.DEFAULT_SYMBOL, parameters = "0.0")
-	//@AnnotationDL(value = MaxDLAnnotation.DEFAULT_SYMBOL, parameters = "1.0")
-	//@AnnotationDL(value = StepDLAnnotation.DEFAULT_SYMBOL, parameters = "0.01")
 	protected FloatData edge = new FloatData(0.5f);
-
-	@AttributeDL(required = false)
-	//@AnnotationDL(value = EditableDLAnnotation.DEFAULT_SYMBOL)
 	protected ColorData color2 = new ColorData(new MQColor(1.0f));
-
-	@AttributeDL(required = false)
-	//@AnnotationDL(value = EditableDLAnnotation.DEFAULT_SYMBOL)
-	//@AnnotationDL(value = MinDLAnnotation.DEFAULT_SYMBOL, parameters = "0.0")
-	//@AnnotationDL(value = MaxDLAnnotation.DEFAULT_SYMBOL, parameters = "1.0")
-	//@AnnotationDL(value = StepDLAnnotation.DEFAULT_SYMBOL, parameters = "0.01")
 	protected FloatData edge2 = new FloatData(1.0f);
-
-	@AttributeDL(required = false)
-	//@AnnotationDL(value = EditableDLAnnotation.DEFAULT_SYMBOL)
-	//@AnnotationDL(value = MinDLAnnotation.DEFAULT_SYMBOL, parameters = "1.0")
-	//@AnnotationDL(value = MaxDLAnnotation.DEFAULT_SYMBOL, parameters = "10000.0")
-	//@AnnotationDL(value = StepDLAnnotation.DEFAULT_SYMBOL, parameters = "1.0")
 	protected FloatData fontSize = new FloatData(1.0f);
-
-	@AttributeDL(required = false)
-	//@AnnotationDL(value = EditableDLAnnotation.DEFAULT_SYMBOL)
-	//@AnnotationDL(value = MinDLAnnotation.DEFAULT_SYMBOL, parameters = "-5.0")
-	//@AnnotationDL(value = MaxDLAnnotation.DEFAULT_SYMBOL, parameters = "5.0")
-	//@AnnotationDL(value = StepDLAnnotation.DEFAULT_SYMBOL, parameters = "0.01")
 	protected FloatData letterSpacing = new FloatData(0.0f);
 
-	@AttributeDL(required = false, defaultValue = "false")
+	@AttributeDL(defaultValue = "false")
 	protected boolean scaleWithBufferSize = false;
 
-	@AttributeDL(required = false, defaultValue = "TOP")
+	@AttributeDL(defaultValue = "TOP")
 	protected VerticalAlignment verticalAlignment = VerticalAlignment.TOP;
 
-	@AttributeDL(required = false, defaultValue = "LEFT")
+	@AttributeDL(defaultValue = "LEFT")
 	protected HorizontalAlignment horizontalAlignment = HorizontalAlignment.LEFT;
 
-	@AttributeDL(required = false, defaultValue = "100")
+	@AttributeDL(defaultValue = "100")
 	protected int maxCharCount = 100;
-
-	@AttributeDL(required = true)
-	protected FrameBuffer buffer;
 
 	/**
 	 * if no layout is given position and scale shall remain untouched
 	 */
-	@AttributeDL(required = false)
 	protected Layout layout;
-
-	@AttributeDL(required = false)
 	protected LayoutOptions layoutOptions;
 
-	@AttributeDL(required = false)
-	//@AnnotationDL(value = EditableDLAnnotation.DEFAULT_SYMBOL)
 	protected StringData text = new StringData("");
-
-	@AttributeDL(required = false)
 	protected UIManager uiManager;
 
-	@AttributeDL(required = false, defaultValue = "false")
+	@AttributeDL(defaultValue = "false")
 	protected boolean focusable = false;
 
 	@dontPersist
@@ -157,7 +124,7 @@ public class Text extends Mesh implements UIComponent, Copyable
 
 	public void setOptions(TextOptions options)
 	{
-		assert options != null;
+		assert options != null : "options != null";
 
 		setColor(options.getColor());
 		setEdge(options.getEdge());
@@ -179,7 +146,7 @@ public class Text extends Mesh implements UIComponent, Copyable
 	{
 		Text copy = (Text) super.copy();
 
-		// @todo finalize proper copying
+		// @todo Finalize proper copying
 		copy.uiManager = uiManager;
 		copy.maxCharCount = maxCharCount;
 		copy.vao = vao;
@@ -209,7 +176,7 @@ public class Text extends Mesh implements UIComponent, Copyable
 	@Override
 	public void load() throws DLException
 	{
-		assert maxCharCount > 0;
+		assert maxCharCount > 0 : "maxCharCount > 0";
 		assert buffer != null : "buffer != null " + getName();
 
 		if (isLoaded()) {
@@ -274,10 +241,10 @@ public class Text extends Mesh implements UIComponent, Copyable
 
 		Vector2f dimension = new Vector2f();
 
-		float dpiCorrect = 72.0f / 96.0f;
+		float fontStretch = font.getStretchH() / 100.0f;
 
-		float fontSizeX = fontSize.getFloatValue() * font.getStretchH() / 100.0f / font.getSize() / dpiCorrect;
-		float fontSizeY = fontSize.getFloatValue() / font.getSize() / dpiCorrect;
+		float fontSizeX = fontSize.getFloatValue() * fontStretch / font.getSize() / DPI_CORRECT;
+		float fontSizeY = fontSize.getFloatValue() / font.getSize() / DPI_CORRECT;
 
 		float fontLineHeight = font.getLineHeight();
 		float letterSpace = letterSpacing.getFloatValue() * font.getSize();
@@ -291,7 +258,7 @@ public class Text extends Mesh implements UIComponent, Copyable
 
 			int charId = Character.codePointAt(text, c);
 
-			// new line
+			// New line
 			if (charId == '\n') {
 				dimension.x = Math.max(x, dimension.x);
 				x = 0;
@@ -300,7 +267,7 @@ public class Text extends Mesh implements UIComponent, Copyable
 
 			Glyph glyph = font.getGlyph(charId);
 
-			// @todo provide better replacement mechanics for missing glyphs?
+			// @todo Provide better replacement mechanics for missing glyphs?
 			if (glyph == null) {
 				glyph = font.getGlyph('_');
 			}
@@ -311,7 +278,6 @@ public class Text extends Mesh implements UIComponent, Copyable
 				kerningOffset = lastGlyph.getKerningOffset(glyph.getId());
 			}
 
-			//log.debug("" + charId + " kerning " + kerningOffset + " " + Toolkit.getDefaultToolkit().getScreenResolution());
 			lastGlyph = glyph;
 
 			x += (glyph.getxAdvance() + kerningOffset - font.getPaddingLeft() - font.getPaddingRight() + letterSpace) * fontSizeX;
@@ -331,10 +297,10 @@ public class Text extends Mesh implements UIComponent, Copyable
 
 		Vector2f dimension = computeDimension(text);
 
-		// @todo find solution for making text scale properly with parent scalings
 		float screenWidth = buffer.getWidth();
 		float screenHeight = buffer.getHeight();
 
+		// @todo Find solution for making text scale properly with parent scalings
 		Vector3f parentScale = getParentMatrix().getScale(new Vector3f());
 		screenWidth *= parentScale.x;
 		screenHeight *= parentScale.y;
@@ -349,88 +315,13 @@ public class Text extends Mesh implements UIComponent, Copyable
 		dimension.y *= 1.0 / screenHeight * 2.0f;
 
 		return dimension;
-
-		/*
-		assert isLoaded();
-		assert buffer != null;
-		assert text != null;
-
-		Vector2f dimension = new Vector2f();
-
-		String t = text;
-		Font f = getFont();
-
-		float dpiCorrect = 72.0f / 96.0f;// ((float) Toolkit.getDefaultToolkit().getScreenResolution()) / 72.0f;
-
-		// @todo find solution for making text scale properly with parent scalings
-		float screenWidth = buffer.getWidth();
-		float screenHeight = buffer.getHeight();
-
-		Vector3f parentScale = getParentMatrix().getScale(new Vector3f());
-		screenWidth *= parentScale.x;
-		screenHeight *= parentScale.y;
-
-		if (!isScaleWithBufferSize()) {
-			float normScale = 1024.0f / screenHeight;
-			screenWidth *= normScale;
-			screenHeight *= normScale;
-		}
-
-		float fontStretch = f.getStretchH() / 100.0f;
-
-		float fontSizeX = fontSize.getFloatValue() * fontStretch / screenWidth * 2.0f / f.getSize() / dpiCorrect;
-		float fontSizeY = fontSize.getFloatValue() / screenHeight * 2.0f / f.getSize() / dpiCorrect;
-
-		float fontLineHeight = f.getLineHeight();
-		float letterSpace = letterSpacing.getFloatValue() * f.getSize();
-
-		int cCount = Math.min(Character.codePointCount(t, 0, t.length()), maxCharCount);
-		float x = 0.0f;
-		float y = (fontLineHeight - f.getPaddingTop() - f.getPaddingBottom()) * fontSizeY;
-		Glyph lastGlyph = null;
-
-		for (int c = 0; c < cCount; ++c) {
-
-			int charId = Character.codePointAt(t, c);
-
-			// new line
-			if (charId == '\n') {
-				dimension.x = Math.max(x, dimension.x);
-				x = 0;
-				y += (fontLineHeight - f.getPaddingTop() - f.getPaddingBottom()) * fontSizeY;
-			}
-
-			Glyph glyph = f.getGlyph(charId);
-
-			// @todo provide better replacement mechanics for missing glyphs?
-			if (glyph == null) {
-				glyph = f.getGlyph('_');
-			}
-
-			float kerningOffset = 0.0f;
-
-			if (lastGlyph != null) {
-				kerningOffset = lastGlyph.getKerningOffset(glyph.getId());
-			}
-
-			//log.debug("" + charId + " kerning " + kerningOffset + " " + Toolkit.getDefaultToolkit().getScreenResolution());
-			lastGlyph = glyph;
-
-			x += (glyph.getxAdvance() + kerningOffset - f.getPaddingLeft() - f.getPaddingRight() + letterSpace) * fontSizeX;
-		}
-
-		dimension.x = Math.max(x, dimension.x);
-		dimension.y = Math.max(y, dimension.y);
-
-		return dimension;
-		 */
 	}
 
-	// @todo allow to render multipage texts
+	// @todo Allow to render multipage texts
 	protected void updateCharData()
 	{
-		assert isLoaded();
-		assert buffer != null;
+		assert isLoaded() : "isLoaded()";
+		assert buffer != null : "buffer != null";
 
 		String t = getText().getStringValue();
 
@@ -451,8 +342,6 @@ public class Text extends Mesh implements UIComponent, Copyable
 			alignmentOffsetY = dimensions.y;
 		}
 
-		float dpiCorrect = 72.0f / 96.0f;// ((float) Toolkit.getDefaultToolkit().getScreenResolution()) / 72.0f;
-
 		float screenWidth = buffer.getWidth();
 		float screenHeight = buffer.getHeight();
 
@@ -468,8 +357,8 @@ public class Text extends Mesh implements UIComponent, Copyable
 
 		float fontStretch = f.getStretchH() / 100.0f;
 
-		float fontSizeX = fontSize.getFloatValue() * fontStretch / screenWidth * 2.0f / f.getSize() / dpiCorrect;
-		float fontSizeY = fontSize.getFloatValue() / screenHeight * 2.0f / f.getSize() / dpiCorrect;
+		float fontSizeX = fontSize.getFloatValue() * fontStretch / screenWidth * 2.0f / f.getSize() / DPI_CORRECT;
+		float fontSizeY = fontSize.getFloatValue() / screenHeight * 2.0f / f.getSize() / DPI_CORRECT;
 
 		float fontLineHeight = f.getLineHeight();
 		float letterSpace = letterSpacing.getFloatValue() * f.getSize();
@@ -498,7 +387,7 @@ public class Text extends Mesh implements UIComponent, Copyable
 
 			int charId = Character.codePointAt(t, c);
 
-			// new line
+			// New line
 			if (charId == '\n') {
 				x = 0;
 				y -= (fontLineHeight - f.getPaddingTop() - f.getPaddingBottom()) * fontSizeY;
@@ -517,7 +406,7 @@ public class Text extends Mesh implements UIComponent, Copyable
 
 			Glyph glyph = f.getGlyph(charId);
 
-			// @todo provide better replacement mechanics for missing glyphs?
+			// @todo Provide better replacement mechanics for missing glyphs?
 			if (glyph == null) {
 				glyph = f.getGlyph('_');
 			}
@@ -530,15 +419,15 @@ public class Text extends Mesh implements UIComponent, Copyable
 				kerningOffset = lastGlyph.getKerningOffset(glyph.getId());
 			}
 
-			//log.debug("" + charId + " kerning " + kerningOffset + " " + Toolkit.getDefaultToolkit().getScreenResolution());
 			lastGlyph = glyph;
 
-			// pos
+			// Pos
 			charData[cI + 0] = x + (glyph.getxOffset() + kerningOffset) * fontSizeX + lineAlignmentOffsetX;
 			charData[cI + 1] = y - (glyph.getyOffset()) * fontSizeY + alignmentOffsetY;
 			charData[cI + 2] = (glyph.getWidth()) * fontSizeX;
 			charData[cI + 3] = (glyph.getHeight()) * fontSizeY;
-			// uvs
+
+			// UVs
 			charData[cI + 4] = (glyph.getX()) * texSizeX;
 			charData[cI + 5] = (glyph.getY()) * texSizeY;
 			charData[cI + 6] = (glyph.getWidth()) * texSizeX;
@@ -580,15 +469,15 @@ public class Text extends Mesh implements UIComponent, Copyable
 			return;
 		}
 
-		//log.debug("Render " + font.getFace() + " " + getText());
+		// log.debug("Render " + font.getFace() + " " + getText());
 		FontShader shader = (FontShader) getMaterial().getShader();
 
-		// apply layout if given
+		// Apply layout if given
 		Layout lay = getLayout();
 		if (lay != null) {
 			lay.layout(this, getLayoutOptions());
 		}
-		// @todo reset the scale - is this really wanted that way here? -> will prevent Text from being scalabel with scale
+		// @todo Reset the scale - is this really wanted that way here? -> will prevent Text from being scalable with scale
 		getScale().set(1.0f);
 
 		float fontScreenSize = getFontScreenSize();
@@ -608,7 +497,7 @@ public class Text extends Mesh implements UIComponent, Copyable
 
 		updateModelMatrix();
 
-		// @todo change formula to better manage scaling
+		// @todo Change formula to better manage scaling
 		float edgeSize = Math.max(0.001f, font.getSmoothingFactor() / Math.max(1.0f, fontScreenSize));
 
 		material.beforeRendering();
@@ -627,17 +516,17 @@ public class Text extends Mesh implements UIComponent, Copyable
 
 		glBindVertexArray(vao);
 
-		// positions
+		// Positions
 		glBindBuffer(GL_ARRAY_BUFFER, vbo);
 		glEnableVertexAttribArray(shader.getInputPosition());
 		glVertexAttribPointer(shader.getInputPosition(), 3, GL_FLOAT, false, 5 * 4, 0L);
 
-		// uvs
+		// UVs
 		glEnableVertexAttribArray(shader.getInputTextureCoords());
 		glVertexAttribPointer(shader.getInputTextureCoords(), 2, GL_FLOAT, false, 5 * 4, 3L * 4L);
 		glBindBuffer(GL_ARRAY_BUFFER, 0);
 
-		// charData
+		// CharData
 		glBindBuffer(GL_ARRAY_BUFFER, charDataBuffer);
 		glEnableVertexAttribArray(2);
 		glVertexAttribPointer(2, 2, GL_FLOAT, false, 8 * 4, 0L);
@@ -858,7 +747,6 @@ public class Text extends Mesh implements UIComponent, Copyable
 	{
 		this.uiManager = uiManager;
 	}
-	// "Getters/Setters" </editor-fold>
 
 	@Override
 	public boolean isFocusable()
@@ -871,4 +759,5 @@ public class Text extends Mesh implements UIComponent, Copyable
 	{
 		this.focusable = focusable;
 	}
+	// "Getters/Setters" </editor-fold>
 }

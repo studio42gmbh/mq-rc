@@ -1,12 +1,12 @@
 /*
  * Copyright Studio 42 GmbH 2021. All rights reserved.
- *  
+ *
  * Unless required by applicable law or agreed to in writing, software
  * distributed under the License is distributed on an "AS IS" BASIS,
  * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
  * See the License for the specific language governing permissions and
  * limitations under the License.
- *  
+ *
  * For details to the License read https://www.s42m.de/license
  */
 package de.s42.mq.loaders.fbx;
@@ -16,16 +16,19 @@ import de.s42.dl.DLAttribute.AttributeDL;
 import de.s42.dl.annotations.files.IsFileDLAnnotation.isFile;
 import de.s42.dl.exceptions.DLException;
 import de.s42.dl.exceptions.InvalidInstance;
+import de.s42.log.LogManager;
+import de.s42.log.Logger;
 import de.s42.mq.assets.Assets;
 import de.s42.mq.materials.Material;
 import de.s42.mq.meshes.MeshGroup;
-import java.nio.*;
+import java.nio.ByteBuffer;
 import java.nio.charset.StandardCharsets;
 import java.nio.file.Path;
-import java.util.*;
-import de.s42.log.LogManager;
-import de.s42.log.Logger;
-import org.joml.*;
+import java.util.Arrays;
+import java.util.List;
+import org.joml.Matrix4f;
+import org.joml.Quaternionf;
+import org.joml.Vector3f;
 import org.lwjgl.assimp.*;
 import static org.lwjgl.assimp.Assimp.*;
 
@@ -34,9 +37,8 @@ import static org.lwjgl.assimp.Assimp.*;
  * and https://lwjglgamedev.gitbooks.io/3d-game-development-with-lwjgl/content/chapter27/chapter27.html
  *
  * @author Benjamin Schiller
- * @param <ChildType>
  */
-public class FbxMesh<ChildType extends Object> extends MeshGroup<ChildType>
+public class FbxMesh extends MeshGroup
 {
 
 	private final static Logger log = LogManager.getLogger(FbxMesh.class.getName());
@@ -94,8 +96,8 @@ public class FbxMesh<ChildType extends Object> extends MeshGroup<ChildType>
 		//| aiProcess_SortByPType
 		//| aiProcess_ForceGenNormals
 		//| aiProcess_GenNormals
-		//| aiProcess_GenSmoothNormals		
-		try ( AIScene scene = aiImportFile(source.toAbsolutePath().toString(),
+		//| aiProcess_GenSmoothNormals
+		try (AIScene scene = aiImportFile(source.toAbsolutePath().toString(),
 			aiProcess_JoinIdenticalVertices
 			| aiProcess_Triangulate
 			| aiProcess_FlipUVs
@@ -236,7 +238,7 @@ public class FbxMesh<ChildType extends Object> extends MeshGroup<ChildType>
 
 	protected void loadNodes(AIScene scene, AINode rootNode)
 	{
-		// Compensate for FBX Scale with 0.01 scale (Default in FBX is Centimeters -> Here Meters)		
+		// Compensate for FBX Scale with 0.01 scale (Default in FBX is Centimeters -> Here Meters)
 		loadContainerNode(scene, rootNode, this, new Matrix4f().scale(0.01f));
 	}
 
@@ -323,5 +325,5 @@ public class FbxMesh<ChildType extends Object> extends MeshGroup<ChildType>
 	{
 		this.materials = materials;
 	}
-	// </editor-fold>	
+	// </editor-fold>
 }
