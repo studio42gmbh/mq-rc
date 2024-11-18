@@ -160,7 +160,7 @@ public class Image extends Quad implements UIComponent, UIAction
 
 		originalWidth = getScale().x;
 
-		log.debug("Loading image " + getName());
+		log.debug("Loading image", this);
 
 		if (uiManager != null) {
 			uiManager.register(this);
@@ -214,10 +214,16 @@ public class Image extends Quad implements UIComponent, UIAction
 			return;
 		}
 
+		log.debug("Unloading image", this);
+
 		if (textureLoaded) {
 			texture.unload();
 			texture = null;
 			textureLoaded = false;
+		}
+
+		if (uiManager != null) {
+			uiManager.unregister(this);
 		}
 
 		super.unload();

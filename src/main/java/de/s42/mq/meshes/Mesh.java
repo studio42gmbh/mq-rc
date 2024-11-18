@@ -93,6 +93,8 @@ public abstract class Mesh<ChildType extends Object> extends AbstractAsset imple
 	@Override
 	public void update(float elapsedTime)
 	{
+		updateModelMatrix();
+
 		for (MeshAnimation animation : animations) {
 			animation.update(this, elapsedTime);
 		}
@@ -140,6 +142,16 @@ public abstract class Mesh<ChildType extends Object> extends AbstractAsset imple
 	public void setFromMatrix(Matrix4f matrix)
 	{
 		transform.setFromMatrix(matrix);
+	}
+
+	public Vector3f getWorldPosition()
+	{
+		return transform.getWorldPosition();//new Vector3f(0.0f, 0.0f, 0.0f).mulPosition(getModelMatrix());
+	}
+
+	public Vector3f getWorldDirection()
+	{
+		return transform.getWorldDirection();//new Vector3f(1.0f, 0.0f, 0.0f).mulDirection(getModelMatrix());
 	}
 
 	public void setCamera(Camera camera)

@@ -19,6 +19,8 @@ import de.s42.mq.cameras.Camera;
 import de.s42.mq.data.BooleanData;
 import java.util.*;
 import java.util.function.Predicate;
+import org.joml.Quaternionf;
+import org.joml.Vector3f;
 
 /**
  *
@@ -40,7 +42,7 @@ public class MeshGroup extends Mesh
 	{
 		MeshGroup copy = (MeshGroup) super.copy();
 
-		copy.enabled = enabled;
+		copy.enabled = new BooleanData(enabled.getBooleanValue());
 		copy.layers = layers;
 		copy.customProperties.putAll(customProperties);
 
@@ -319,6 +321,20 @@ public class MeshGroup extends Mesh
 		for (Mesh mesh : meshes) {
 			mesh.setModelMatrixDirty(modelMatrixDirty);
 		}
+	}
+
+	@Override
+	public void setPosition(Vector3f position)
+	{
+		super.setPosition(position);
+		setModelMatrixDirty(true);
+	}
+
+	@Override
+	public void setRotation(Quaternionf rotation)
+	{
+		super.setRotation(rotation);
+		setModelMatrixDirty(true);
 	}
 
 	@Override

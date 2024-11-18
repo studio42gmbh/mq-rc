@@ -1,17 +1,20 @@
 /*
  * Copyright Studio 42 GmbH 2021. All rights reserved.
- *  
+ *
  * Unless required by applicable law or agreed to in writing, software
  * distributed under the License is distributed on an "AS IS" BASIS,
  * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
  * See the License for the specific language governing permissions and
  * limitations under the License.
- *  
+ *
  * For details to the License read https://www.s42m.de/license
  */
 package de.s42.mq.util;
 
-import org.joml.*;
+import org.joml.Matrix4f;
+import org.joml.Quaternionf;
+import org.joml.Vector3f;
+import org.joml.Vector4f;
 
 /**
  *
@@ -19,6 +22,7 @@ import org.joml.*;
  */
 public final class Transform
 {
+
 	protected Matrix4f parentMatrix;
 	protected final Matrix4f matrix = new Matrix4f();
 	protected final Vector3f position = new Vector3f();
@@ -105,6 +109,11 @@ public final class Transform
 		Vector4f wPos = (new Vector4f(0.0f, 0.0f, 0.0f, 1.0f)).mul(matrix);
 
 		return new Vector3f(wPos.x / wPos.w, wPos.y / wPos.w, wPos.z / wPos.w);
+	}
+
+	public Vector3f getWorldDirection()
+	{
+		return (new Vector3f(1.0f, 0.0f, 0.0f)).mulDirection(matrix);
 	}
 
 	public Vector3f getPosition()
