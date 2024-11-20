@@ -124,10 +124,13 @@ public class PostFXShader extends Shader
 	@Override
 	public void afterRendering()
 	{
+		unsetTexture(0);
+		unsetTexture(1);
+		if (lookup != null) {
+			unsetTexture(2);
+		}
+
 		super.afterRendering();
-		setTexture(0, 0);
-		setTexture(1, 0);
-		setTexture(2, 0);
 	}
 
 	// <editor-fold desc="Getters/Setters" defaultstate="collapsed">

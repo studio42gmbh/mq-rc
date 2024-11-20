@@ -70,7 +70,7 @@ public class EquirectangularToCubemapShader extends Shader
 	@Override
 	public void afterRendering()
 	{
-		setTexture(0, 0);
+		unsetTexture(0);
 
 		super.afterRendering();
 	}

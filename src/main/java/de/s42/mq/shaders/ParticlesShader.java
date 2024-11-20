@@ -1,21 +1,23 @@
 /*
  * Copyright Studio 42 GmbH 2021. All rights reserved.
- *  
+ *
  * Unless required by applicable law or agreed to in writing, software
  * distributed under the License is distributed on an "AS IS" BASIS,
  * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
  * See the License for the specific language governing permissions and
  * limitations under the License.
- *  
+ *
  * For details to the License read https://www.s42m.de/license
  */
 package de.s42.mq.shaders;
 
 import de.s42.dl.exceptions.DLException;
-import de.s42.mq.data.*;
-import de.s42.mq.materials.Texture;
 import de.s42.log.LogManager;
 import de.s42.log.Logger;
+import de.s42.mq.data.ColorData;
+import de.s42.mq.data.FloatData;
+import de.s42.mq.data.Vector2Data;
+import de.s42.mq.materials.Texture;
 import org.joml.Vector3f;
 
 /**
@@ -24,6 +26,7 @@ import org.joml.Vector3f;
  */
 public class ParticlesShader extends Shader
 {
+
 	private final static Logger log = LogManager.getLogger(ParticlesShader.class.getName());
 
 	protected int viewMatrixUniform = -1;
@@ -149,8 +152,8 @@ public class ParticlesShader extends Shader
 	@Override
 	public void afterRendering()
 	{
-		//setTexture(0, 0);
-		//setTexture(0, 1);
+		unsetTexture(0);
+		unsetTexture(1);
 
 		super.afterRendering();
 	}
@@ -415,5 +418,5 @@ public class ParticlesShader extends Shader
 	{
 		this.baseSpread = baseSpread;
 	}
-	// </editor-fold>		
+	// </editor-fold>
 }

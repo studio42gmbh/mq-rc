@@ -1,24 +1,26 @@
 /*
  * Copyright Studio 42 GmbH 2021. All rights reserved.
- *  
+ *
  * Unless required by applicable law or agreed to in writing, software
  * distributed under the License is distributed on an "AS IS" BASIS,
  * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
  * See the License for the specific language governing permissions and
  * limitations under the License.
- *  
+ *
  * For details to the License read https://www.s42m.de/license
  */
 package de.s42.mq.shaders;
 
+import de.s42.log.LogManager;
+import de.s42.log.Logger;
 import de.s42.mq.MQColor;
 import de.s42.mq.data.*;
 import de.s42.mq.materials.CubeTexture;
 import de.s42.mq.materials.Texture;
 import de.s42.mq.util.HaltonSequenceGenerator;
-import de.s42.log.LogManager;
-import de.s42.log.Logger;
-import org.joml.*;
+import org.joml.Vector2f;
+import org.joml.Vector3f;
+import org.joml.Vector4f;
 
 /**
  *
@@ -26,6 +28,7 @@ import org.joml.*;
  */
 public class PBRShader extends Shader
 {
+
 	private final static Logger log = LogManager.getLogger(PBRShader.class.getName());
 
 	protected int viewMatrixUniform = -1;
@@ -59,7 +62,7 @@ public class PBRShader extends Shader
 
 	protected float[] points;
 	protected int pointsOffset;
-	
+
 	@Override
 	protected void loadShader()
 	{
@@ -86,7 +89,7 @@ public class PBRShader extends Shader
 		inputPosition = getAttributeLocationOpt("position");
 		inputNormal = getAttributeLocationOpt("normal");
 		inputTextureCoords = getAttributeLocationOpt("texCoords");
-		
+
 		HaltonSequenceGenerator gen = new HaltonSequenceGenerator(2);
 
 		points = new float[100];
@@ -104,10 +107,10 @@ public class PBRShader extends Shader
 	@Override
 	public void beforeRendering()
 	{
-		super.beforeRendering();
-
 		assert camera != null;
 		assert mesh != null;
+
+		super.beforeRendering();
 
 		setTextureOpt(getBaseTexture(), 0);
 		setTextureOpt(getHeromeaoTexture(), 1);
@@ -128,18 +131,16 @@ public class PBRShader extends Shader
 		setUniform(metalnessScaleUniform, metalnessScale);
 		setUniform(metalnessOffsetUniform, metalnessOffset);
 		setUniform(emissiveScaleUniform, emissiveScale);
-		
+
 		/* @todo implement TAA support
 		jitter.getValue().x = 3.0f * points[pointsOffset * 2] / 1280.0f;
-		jitter.getValue().y = 3.0f * points[pointsOffset * 2 + 1] / 768.0f;		
-		pointsOffset = (pointsOffset+1) % (points.length / 2);		
+		jitter.getValue().y = 3.0f * points[pointsOffset * 2 + 1] / 768.0f;
+		pointsOffset = (pointsOffset+1) % (points.length / 2);
 		setUniform(jitterUniform, jitter);
-		*/
-		
+		 */
 		if (mesh.getIdentifier() > 0) {
 			setDraw7ColorAttachments();
-		}
-		else {
+		} else {
 			setDraw6ColorAttachments();
 		}
 	}
@@ -147,13 +148,13 @@ public class PBRShader extends Shader
 	@Override
 	public void afterRendering()
 	{
-		//setTexture(0, 0);
-		//setTexture(0, 1);
-		//setTexture(0, 2);
-		//setTexture(0, 3);
-		//setCubeTexture(0, 4);
-		//setCubeTexture(0, 5);
-		//setTexture(0, 6);
+		unsetTexture(0);
+		unsetTexture(1);
+		unsetTexture(2);
+		unsetTexture(3);
+		unsetCubeTexture(4);
+		unsetCubeTexture(5);
+		unsetTexture(6);
 
 		super.afterRendering();
 	}
@@ -253,7 +254,7 @@ public class PBRShader extends Shader
 	{
 		this.tint = tint;
 	}
-	// </editor-fold>	
+	// </editor-fold>
 
 	public int getIdentifierUniform()
 	{

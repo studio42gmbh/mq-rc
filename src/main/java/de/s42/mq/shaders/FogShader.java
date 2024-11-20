@@ -100,11 +100,12 @@ public class FogShader extends Shader
 	@Override
 	public void afterRendering()
 	{
-		setTexture(0, 0);
-		setTexture(0, 1);
-		setTexture(0, 2);
-		setTexture(0, 3);
-		setTexture(0, 4);
+		unsetTexture(0);
+		unsetTexture(1);
+		unsetTexture(2);
+		unsetTexture(3);
+		unsetTexture(4);
+
 		super.afterRendering();
 
 		setDraw0ColorAttachment();

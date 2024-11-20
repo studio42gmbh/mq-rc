@@ -128,11 +128,11 @@ public class SSAOShader extends Shader
 
 		super.beforeRendering();
 
-		setUniform(inBufferResolutionUniform, 1.0f / (float) inBuffer.getWidth(), 1.0f / (float) inBuffer.getWidth());
 		setTexture(inBuffer.getPositionRenderBuffer(), 0);
 		setTexture(inBuffer.getNormalRenderBuffer(), 1);
 		setTexture(noiseTexture.getTextureId(), 2);
 
+		setUniform(inBufferResolutionUniform, 1.0f / (float) inBuffer.getWidth(), 1.0f / (float) inBuffer.getWidth());
 		setUniform(intensityUniform, intensity);
 		setUniform(biasUniform, bias);
 		setUniform(scaleUniform, scale);
@@ -141,7 +141,6 @@ public class SSAOShader extends Shader
 		setUniform(iterationsUniform, iterations);
 		setUniform(timeUniform, time);
 		setUniform2(pointsUniform, points);
-
 		setUniform(cameraNearUniform, getCamera().getNear());
 		setUniform(cameraFarUniform, getCamera().getFar());
 		setUniform(cameraPositionUniform, getCamera().getPosition());
@@ -154,10 +153,11 @@ public class SSAOShader extends Shader
 	@Override
 	public void afterRendering()
 	{
+		unsetTexture(0);
+		unsetTexture(1);
+		unsetTexture(2);
+
 		super.afterRendering();
-		setTexture(0, 0);
-		setTexture(1, 0);
-		setTexture(2, 0);
 	}
 
 	// <editor-fold desc="Getters/Setters" defaultstate="collapsed">

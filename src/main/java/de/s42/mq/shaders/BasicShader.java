@@ -13,6 +13,7 @@ package de.s42.mq.shaders;
 
 import de.s42.dl.DLAttribute.AttributeDL;
 import de.s42.dl.exceptions.DLException;
+import de.s42.mq.MQColor;
 import de.s42.mq.data.ColorData;
 import de.s42.mq.materials.Texture;
 
@@ -28,7 +29,7 @@ public class BasicShader extends Shader
 	protected Texture baseTexture;
 
 	@AttributeDL(required = false)
-	protected ColorData tint = new ColorData();
+	protected ColorData tint = new ColorData(MQColor.White);
 
 	protected int viewMatrixUniform = -1;
 	protected int projectionMatrixUniform = -1;
@@ -105,7 +106,7 @@ public class BasicShader extends Shader
 	@Override
 	public void afterRendering()
 	{
-		setTexture(0, 0);
+		unsetTexture(0);
 
 		super.afterRendering();
 	}
