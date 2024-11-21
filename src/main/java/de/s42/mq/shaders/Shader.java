@@ -13,8 +13,14 @@ package de.s42.mq.shaders;
 
 import de.s42.base.files.FilesHelper;
 import de.s42.dl.DLAttribute.AttributeDL;
+import de.s42.dl.annotations.attributes.RequiredDLAnnotation.required;
 import de.s42.dl.annotations.files.IsFileDLAnnotation.isFile;
+import de.s42.dl.annotations.persistence.DontPersistDLAnnotation.dontPersist;
 import de.s42.dl.exceptions.DLException;
+import de.s42.dlt.DLT;
+import de.s42.dlt.parser.CompiledTemplate;
+import de.s42.dlt.parser.DefaultTemplateContext;
+import de.s42.dlt.parser.TemplateCompilerOptions;
 import de.s42.log.LogManager;
 import de.s42.log.Logger;
 import de.s42.mq.MQColor;
@@ -25,7 +31,6 @@ import de.s42.mq.data.*;
 import de.s42.mq.materials.CubeTexture;
 import de.s42.mq.materials.Texture;
 import de.s42.mq.meshes.Mesh;
-import java.io.IOException;
 import java.nio.ByteBuffer;
 import java.nio.FloatBuffer;
 import java.nio.IntBuffer;
@@ -58,11 +63,6 @@ public abstract class Shader extends AbstractAsset
 {
 
 	private final static Logger log = LogManager.getLogger(Shader.class.getName());
-
-	private final FloatBuffer matrixBuffer = MemoryUtil.memAllocFloat(16);
-	private final FloatBuffer vector2Buffer = MemoryUtil.memAllocFloat(2);
-	private final FloatBuffer vector3Buffer = MemoryUtil.memAllocFloat(3);
-	private final FloatBuffer vector4Buffer = MemoryUtil.memAllocFloat(4);
 
 	public enum CullType
 	{
@@ -129,56 +129,78 @@ public abstract class Shader extends AbstractAsset
 		}
 	}
 
-	@AttributeDL(required = false, defaultValue = "BACK")
+	@AttributeDL(defaultValue = "BACK")
 	protected CullType cullType = CullType.BACK;
 
-	@AttributeDL(required = false, defaultValue = "ONE")
+	@AttributeDL(defaultValue = "ONE")
 	protected BlendFunc sourceFunc = BlendFunc.ONE;
 
-	@AttributeDL(required = false, defaultValue = "ONE")
+	@AttributeDL(defaultValue = "ONE")
 	protected BlendFunc destFunc = BlendFunc.ONE;
 
-	@AttributeDL(required = false, defaultValue = "LESS")
+	@AttributeDL(defaultValue = "LESS")
 	protected DepthFunc depthFunc = DepthFunc.LESS;
 
-	@AttributeDL(required = false, defaultValue = "true")
+	@AttributeDL(defaultValue = "true")
 	protected boolean depthTest = true;
 
-	@AttributeDL(required = false, defaultValue = "true")
+	@AttributeDL(defaultValue = "true")
 	protected boolean depthWrite = true;
 
-	@AttributeDL(required = false, defaultValue = "true")
+	@AttributeDL(defaultValue = "true")
 	protected boolean cullFace = true;
 
-	@AttributeDL(required = false, defaultValue = "false")
+	@AttributeDL(defaultValue = "false")
 	protected boolean stencilTest = false;
 
-	@AttributeDL(required = false, defaultValue = "false")
+	@AttributeDL(defaultValue = "false")
 	protected boolean wireframe = false;
 
-	@AttributeDL(required = false, defaultValue = "false")
+	@AttributeDL(defaultValue = "false")
 	protected boolean renderTransparent = false;
 
-	@AttributeDL(required = false)
 	protected Camera camera;
 
 	@AttributeDL(ignore = true)
 	protected Mesh mesh;
 
-	@AttributeDL(required = true)
+	@required
 	@isFile
 	protected Path vertexShaderSource;
 
-	@AttributeDL(required = true)
+	@required
 	@isFile
 	protected Path fragmentShaderSource;
 
+	@dontPersist
 	protected final Map<String, Integer> uniforms = new HashMap<>();
+
+	@dontPersist
 	protected final Map<String, Integer> attributes = new HashMap<>();
+
+	@dontPersist
 	protected int shaderProgramId = -1;
+
+	@dontPersist
 	protected int inputPosition = -1;
+
+	@dontPersist
 	protected int inputNormal = -1;
+
+	@dontPersist
 	protected int inputTextureCoords = -1;
+
+	@dontPersist
+	private final FloatBuffer matrixBuffer = MemoryUtil.memAllocFloat(16);
+
+	@dontPersist
+	private final FloatBuffer vector2Buffer = MemoryUtil.memAllocFloat(2);
+
+	@dontPersist
+	private final FloatBuffer vector3Buffer = MemoryUtil.memAllocFloat(3);
+
+	@dontPersist
+	private final FloatBuffer vector4Buffer = MemoryUtil.memAllocFloat(4);
 
 	public Shader()
 	{
@@ -192,7 +214,7 @@ public abstract class Shader extends AbstractAsset
 
 	protected void loadShader() throws DLException
 	{
-
+		// Implement
 	}
 
 	@Override
@@ -213,8 +235,8 @@ public abstract class Shader extends AbstractAsset
 		int vshader;
 		try {
 			vshader = createShader(getVertexShaderSource(), GL_VERTEX_SHADER);
-		} catch (IOException ex) {
-			throw new IllegalStateException("Error creating vertex shader - " + ex.getMessage(), ex);
+		} catch (Exception ex) {
+			throw new IllegalStateException("Error creating vertex shader '" + getVertexShaderSource() + "' - " + ex.getMessage(), ex);
 		}
 		glAttachShader(program, vshader);
 
@@ -223,8 +245,8 @@ public abstract class Shader extends AbstractAsset
 		int fshader;
 		try {
 			fshader = createShader(getFragmentShaderSource(), GL_FRAGMENT_SHADER);
-		} catch (IOException ex) {
-			throw new IllegalStateException("Error creating fragment shader - " + ex.getMessage(), ex);
+		} catch (Exception ex) {
+			throw new IllegalStateException("Error creating fragment shader '" + getFragmentShaderSource() + "' - " + ex.getMessage(), ex);
 		}
 		glAttachShader(program, fshader);
 
@@ -236,7 +258,9 @@ public abstract class Shader extends AbstractAsset
 			log.error(programLog);
 		}
 
-		assert linked != 0 : "Could not link program";
+		if (linked == 0) {
+			throw new IllegalStateException("Could not link program - " + programLog);
+		}
 
 		setShaderProgramId(program);
 
@@ -323,31 +347,71 @@ public abstract class Shader extends AbstractAsset
 		}
 	}
 
-	protected int createShader(Path source, int type) throws IOException
+	protected int createShader(Path source, int type) throws Exception
 	{
-		assert source != null;
-		assert Files.isRegularFile(source);
+		assert source != null : "source != null";
+
+		if (!Files.isRegularFile(source)) {
+			throw new Exception("Error creating shader " + source.toString() + " is not a regular file");
+		}
+
+		ByteBuffer sourceBuf = null;
+		String evaluated = null;
+
+		// Support DLT dynamic shaders
+		if (source.getFileName().toString().contains(".dlt.")) {
+			log.debug("Found dynamic shader source", source);
+
+			TemplateCompilerOptions options = new TemplateCompilerOptions(source.toString());
+			options.setClassName("DLTShader");
+			options.setDebug(false);
+			options.setCacheCompiledTemplate(true);
+			CompiledTemplate compiled = DLT.compile(source, options);
+
+			DefaultTemplateContext context = new DefaultTemplateContext();
+			context.setBinding("shader", this);
+			evaluated = compiled.evaluate(context);
+		} // Otherwise load file memory mapped
+		else {
+			sourceBuf = getAssetManager().getSourceAsByteBuffer(source);
+		}
 
 		int shaderId = glCreateShader(type);
 
-		ByteBuffer sourceBuf = getAssetManager().getSourceAsByteBuffer(source);
+		// Somehow wrapping the string into a ByteBuffer crashes the VM ... so we do the CharSequence based glShaderSource
+		if (evaluated != null) {
+			glShaderSource(shaderId, evaluated);
+		} else if (sourceBuf != null) {
 
-		PointerBuffer strings = BufferUtils.createPointerBuffer(1);
-		IntBuffer lengths = BufferUtils.createIntBuffer(1);
+			PointerBuffer strings = BufferUtils.createPointerBuffer(1);
+			IntBuffer lengths = BufferUtils.createIntBuffer(1);
 
-		strings.put(0, sourceBuf);
-		lengths.put(0, sourceBuf.remaining());
+			strings.put(0, sourceBuf);
+			lengths.put(0, sourceBuf.remaining());
 
-		glShaderSource(shaderId, strings, lengths);
-
-		glCompileShader(shaderId);
-		int compiled = glGetShaderi(shaderId, GL_COMPILE_STATUS);
-		String shaderLog = glGetShaderInfoLog(shaderId);
-		if (shaderLog.trim().length() > 0) {
-			log.error(shaderLog);
+			glShaderSource(shaderId, strings, lengths);
 		}
 
-		assert compiled != 0 : "Could not compile shader";
+		glCompileShader(shaderId);
+
+		int compiled = glGetShaderi(shaderId, GL_COMPILE_STATUS);
+
+		String shaderLog = glGetShaderInfoLog(shaderId);
+
+		if (compiled == 0) {
+			if (evaluated != null) {
+				log.error("Invalid shader:\n" + evaluated);
+			} else if (sourceBuf != null) {
+				sourceBuf.reset();
+				log.error("Invalid shader:\n" + (new String(sourceBuf.array())));
+			}
+			throw new Exception("Could not compile shader: " + shaderLog);
+		}
+
+		// Will issue warnings
+		if (shaderLog.trim().length() > 0) {
+			log.warn(shaderLog);
+		}
 
 		return shaderId;
 	}
@@ -395,7 +459,7 @@ public abstract class Shader extends AbstractAsset
 
 	public int getUniformLocation(String name)
 	{
-		assert uniforms.containsKey(name);
+		assert uniforms.containsKey(name) : "uniforms.containsKey(name) - " + name;
 
 		return uniforms.get(name);
 	}
@@ -646,6 +710,11 @@ public abstract class Shader extends AbstractAsset
 		glBindTexture(GL_TEXTURE_CUBE_MAP, textureId);
 	}
 
+	public void unsetCubeTexture(int index)
+	{
+		setCubeTexture(0, index);
+	}
+
 	public void setTexture(FXBuffer buffer, int index)
 	{
 		assert buffer != null;
@@ -667,7 +736,7 @@ public abstract class Shader extends AbstractAsset
 
 	public void unsetTexture(int index)
 	{
-		setTexture(-1, index);
+		setTexture(0, index);
 	}
 
 	public void setTexture(int textureId, int index)

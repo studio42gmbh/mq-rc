@@ -116,6 +116,11 @@ public final class Transform
 		return (new Vector3f(1.0f, 0.0f, 0.0f)).mulDirection(matrix);
 	}
 
+	public Quaternionf getWorldRotation()
+	{
+		return matrix.getNormalizedRotation(new Quaternionf());
+	}
+
 	public Vector3f getPosition()
 	{
 		return position;

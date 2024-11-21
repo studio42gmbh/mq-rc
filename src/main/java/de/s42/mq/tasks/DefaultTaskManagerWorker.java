@@ -1,22 +1,22 @@
 /*
  * Copyright Studio 42 GmbH 2021. All rights reserved.
- *  
+ *
  * Unless required by applicable law or agreed to in writing, software
  * distributed under the License is distributed on an "AS IS" BASIS,
  * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
  * See the License for the specific language governing permissions and
  * limitations under the License.
- *  
+ *
  * For details to the License read https://www.s42m.de/license
  */
 package de.s42.mq.tasks;
 
-import java.util.concurrent.BlockingQueue;
-import java.util.concurrent.CountDownLatch;
-import java.util.concurrent.atomic.AtomicInteger;
 import de.s42.log.LogManager;
 import de.s42.log.Logger;
+import java.util.concurrent.BlockingQueue;
+import java.util.concurrent.CountDownLatch;
 import java.util.concurrent.TimeUnit;
+import java.util.concurrent.atomic.AtomicInteger;
 
 /**
  *
@@ -56,7 +56,7 @@ public class DefaultTaskManagerWorker implements Runnable, Worker
 				Task task = tasks.poll(100, TimeUnit.MILLISECONDS);
 
 				if (task != null) {
-					
+
 					task.setWorker(this);
 					task.run();
 
@@ -69,8 +69,8 @@ public class DefaultTaskManagerWorker implements Runnable, Worker
 				}
 			} catch (Exception ex) {
 				if (!(ex instanceof InterruptedException)) {
-					ex.printStackTrace();
 					log.error(ex);
+					System.exit(-1);
 				}
 				setTerminated(true);
 			}

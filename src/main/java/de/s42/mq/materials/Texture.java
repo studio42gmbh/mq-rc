@@ -13,6 +13,7 @@ package de.s42.mq.materials;
 
 import de.s42.dl.DLAttribute.AttributeDL;
 import de.s42.dl.annotations.files.IsFileDLAnnotation.isFile;
+import de.s42.dl.annotations.persistence.DontPersistDLAnnotation.dontPersist;
 import de.s42.dl.exceptions.DLException;
 import de.s42.log.LogManager;
 import de.s42.log.Logger;
@@ -44,54 +45,55 @@ public class Texture extends AbstractAsset
 
 	private final static Logger log = LogManager.getLogger(Texture.class.getName());
 
-	@AttributeDL(required = false)
 	@isFile
 	protected Path source;
 
-	@AttributeDL(required = false, defaultValue = "REPEAT")
+	@AttributeDL(defaultValue = "REPEAT")
 	protected TextureWrap wrapR = TextureWrap.REPEAT;
 
-	@AttributeDL(required = false, defaultValue = "REPEAT")
+	@AttributeDL(defaultValue = "REPEAT")
 	protected TextureWrap wrapS = TextureWrap.REPEAT;
 
-	@AttributeDL(required = false, defaultValue = "REPEAT")
+	@AttributeDL(defaultValue = "REPEAT")
 	protected TextureWrap wrapT = TextureWrap.REPEAT;
 
-	@AttributeDL(required = false, defaultValue = "RGBA")
+	@AttributeDL(defaultValue = "RGBA")
 	protected TextureFormat internalFormat = TextureFormat.RGBA;
 
-	@AttributeDL(required = false, defaultValue = "RGBA")
+	@AttributeDL(defaultValue = "RGBA")
 	protected TextureFormat format = TextureFormat.RGBA;
 
-	@AttributeDL(required = false, defaultValue = "UNSIGNED_BYTE")
+	@AttributeDL(defaultValue = "UNSIGNED_BYTE")
 	protected TextureType dataType = TextureType.UNSIGNED_BYTE;
 
-	@AttributeDL(required = false, defaultValue = "LINEAR_MIPMAP_LINEAR")
+	@AttributeDL(defaultValue = "LINEAR_MIPMAP_LINEAR")
 	protected TextureFiltering minFilter = TextureFiltering.LINEAR_MIPMAP_LINEAR;
 
-	@AttributeDL(required = false, defaultValue = "LINEAR")
+	@AttributeDL(defaultValue = "LINEAR")
 	protected TextureFiltering magFilter = TextureFiltering.LINEAR;
 
-	@AttributeDL(required = false, defaultValue = "true")
+	@AttributeDL(defaultValue = "true")
 	protected boolean enableAnisotropic = true;
 
-	@AttributeDL(required = false, defaultValue = "true")
+	@AttributeDL(defaultValue = "true")
 	protected boolean generateMipMap = true;
 
-	@AttributeDL(required = false, defaultValue = "6")
+	@AttributeDL(defaultValue = "6")
 	protected int maxMipLevel = 6;
 
-	@AttributeDL(required = false, defaultValue = "0")
+	@AttributeDL(defaultValue = "0")
 	protected int minLod = 0;
 
-	@AttributeDL(required = false, defaultValue = "6")
+	@AttributeDL(defaultValue = "6")
 	protected int maxLod = 6;
 
-	@AttributeDL(required = false, defaultValue = "-0.5")
+	@AttributeDL(defaultValue = "-0.5")
 	protected float lodBias = -0.5f; // little sharper
 
 	protected int width;
 	protected int height;
+
+	@dontPersist
 	protected int textureId = -1;
 
 	public enum TextureFormat

@@ -17,6 +17,7 @@ module de.sft.mq.rc
 	requires de.sft.base;
 	requires org.antlr.antlr4.runtime;
 	requires de.sft.dl;
+	requires de.sft.dlt;
 	requires org.lwjgl;
 	requires org.lwjgl.glfw;
 	requires org.lwjgl.opengl;

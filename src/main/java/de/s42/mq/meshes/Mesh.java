@@ -146,12 +146,17 @@ public abstract class Mesh<ChildType extends Object> extends AbstractAsset imple
 
 	public Vector3f getWorldPosition()
 	{
-		return transform.getWorldPosition();//new Vector3f(0.0f, 0.0f, 0.0f).mulPosition(getModelMatrix());
+		return transform.getWorldPosition();
 	}
 
 	public Vector3f getWorldDirection()
 	{
-		return transform.getWorldDirection();//new Vector3f(1.0f, 0.0f, 0.0f).mulDirection(getModelMatrix());
+		return transform.getWorldDirection();
+	}
+
+	public Quaternionf getWorldRotation()
+	{
+		return transform.getWorldRotation();
 	}
 
 	public void setCamera(Camera camera)
