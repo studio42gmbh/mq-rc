@@ -481,6 +481,19 @@ public abstract class Shader extends AbstractAsset
 		setUniform(location, value);
 	}
 
+	public void setUniformOpt(int uniformLocation, FloatData value)
+	{
+		if (value == null) {
+			return;
+		}
+
+		if (uniformLocation == -1) {
+			return;
+		}
+
+		setUniform(uniformLocation, value.getFloatValue());
+	}
+
 	public void setUniform(int uniformLocation, FloatData value)
 	{
 		assert value != null;

@@ -1,12 +1,12 @@
 /*
  * Copyright Studio 42 GmbH 2020. All rights reserved.
- *  
+ *
  * Unless required by applicable law or agreed to in writing, software
  * distributed under the License is distributed on an "AS IS" BASIS,
  * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
  * See the License for the specific language governing permissions and
  * limitations under the License.
- *  
+ *
  * For details to the License read https://www.s42m.de/license
  */
 package de.s42.mq.rc;
@@ -14,17 +14,17 @@ package de.s42.mq.rc;
 import de.s42.base.files.FilesHelper;
 import de.s42.base.modules.ModuleHelper;
 import de.s42.dl.exceptions.DLException;
+import de.s42.log.LogManager;
+import de.s42.log.Logger;
 import de.s42.mq.dl.MQDLConfig;
 import de.s42.mq.dl.MQDLCore;
 import static de.s42.mq.rc.Version.getVersion;
 import de.s42.mq.tasks.TaskManager;
+import java.awt.Toolkit;
 import java.io.IOException;
 import java.nio.file.Path;
 import java.util.Arrays;
 import java.util.Map;
-import de.s42.log.LogManager;
-import de.s42.log.Logger;
-import java.awt.Toolkit;
 
 /**
  *
@@ -68,7 +68,7 @@ public class App
 			throw new IllegalArgumentException("app file is not a regular file: " + appFile.toAbsolutePath().toString());
 		}
 
-		log.info("App File {}", FilesHelper.createMavenNetbeansFileConsoleLink(appFile));
+		log.info("App File", FilesHelper.createMavenNetbeansFileConsoleLink(appFile));
 
 		Path configFile = null;
 
@@ -81,7 +81,7 @@ public class App
 				throw new IllegalArgumentException("config file is not a regular file: " + configFile.toAbsolutePath().toString());
 			}
 
-			log.info("Config File {}", FilesHelper.createMavenNetbeansFileConsoleLink(configFile));
+			log.info("Config File", FilesHelper.createMavenNetbeansFileConsoleLink(configFile));
 		}
 
 		MQDLConfig config = core.parseApp(configFile, appFile, arguments);

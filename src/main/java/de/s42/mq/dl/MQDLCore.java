@@ -12,12 +12,16 @@
 package de.s42.mq.dl;
 
 import de.s42.dl.DLInstance;
+import de.s42.dl.DLModule;
 import de.s42.dl.DLType;
+import de.s42.dl.annotations.instances.ExportDLAnnotation;
 import de.s42.dl.core.DefaultCore;
 import de.s42.dl.exceptions.DLException;
 import de.s42.dl.types.DefaultDLType;
 import de.s42.dl.types.collections.MapDLType;
 import de.s42.dl.types.primitive.ObjectDLType;
+import de.s42.log.LogManager;
+import de.s42.log.Logger;
 import de.s42.mq.MQColor;
 import de.s42.mq.assets.*;
 import de.s42.mq.buffers.FXBuffer;
@@ -102,6 +106,8 @@ import org.joml.*;
  */
 public class MQDLCore extends DefaultCore
 {
+
+	private final static Logger log = LogManager.getLogger(MQDLCore.class.getName());
 
 	public final static String ARGUMENTS_IDENTIFIER = "arguments";
 
@@ -438,9 +444,16 @@ public class MQDLCore extends DefaultCore
 			addArgsInstance(arguments);
 		}
 
-		// parse config if given
+		// Parse config if given
 		if (config != null) {
-			parse(config.toString());
+			DLModule configModule = parse(config.toString());
+
+			// Print debug of all exported config children
+			for (DLInstance child : configModule.getChildren()) {
+				if (child.hasAnnotation(ExportDLAnnotation.class)) {
+					log.debug("Config exported", de.s42.dl.util.DLHelper.toString(child));
+				}
+			}
 		}
 
 		return new MQDLConfig(this, parse(app.toString()));
