@@ -248,6 +248,8 @@ public class MQDLCore extends DefaultCore
 
 		// Shaders
 		defineType(createType(Shader.class), "Shader");
+		defineType(createType(PlainShader.class), "PlainShader");
+		defineType(createType(BasicShader.class), "BasicShader");
 		defineType(createType(BasicFXShader.class), "BasicFXShader");
 		defineType(createType(CombineFXShader.class), "CombineFXShader");
 		defineType(createType(EquirectangularToCubemapShader.class), "EquirectangularToCubemapShader");
@@ -263,6 +265,7 @@ public class MQDLCore extends DefaultCore
 		defineType(createType(SSAOShader.class), "SSAOShader");
 		defineType(createType(PBRShader.class), "PBRShader");
 		defineType(createType(FogShader.class), "FogShader");
+		defineType(createType(SSRRShader.class), "SSRRShader");
 
 		// Materials
 		defineType(createType(Material.class), "Material");
@@ -365,10 +368,6 @@ public class MQDLCore extends DefaultCore
 		defineType(createType(Sounds.class), "Sounds");
 		defineType(createType(UpdateSoundReceiver.class), "UpdateSoundReceiver");
 		defineType(createType(UpdateSound.class), "UpdateSound");
-
-		// Default Shaders
-		defineType(createType(SSRRShader.class), "SSRRShader");
-		defineType(createType(BasicShader.class), "BasicShader");
 
 		// Tasks
 		defineType(createType(RenderShaderTask.class), "RenderShaderTask");

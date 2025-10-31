@@ -13,6 +13,7 @@ package de.s42.mq.shaders;
 
 import de.s42.dl.DLAttribute.AttributeDL;
 import de.s42.mq.data.FloatData;
+import de.s42.mq.rendering.RenderContext;
 
 /**
  *
@@ -41,9 +42,9 @@ public class UpscaleShader extends BasicFXShader
 	}
 
 	@Override
-	public void beforeRendering()
+	public void beforeRendering(RenderContext context)
 	{
-		super.beforeRendering();
+		super.beforeRendering(context);
 
 		assert sampleScale != null;
 

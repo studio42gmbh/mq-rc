@@ -26,6 +26,7 @@ import de.s42.mq.materials.Texture;
 import de.s42.mq.materials.Texture.TextureFiltering;
 import de.s42.mq.materials.Texture.TextureWrap;
 import de.s42.mq.meshes.Quad;
+import de.s42.mq.rendering.RenderContext;
 import de.s42.mq.shaders.BasicShader;
 import de.s42.mq.shaders.Shader;
 import de.s42.mq.ui.actions.UIAction;
@@ -160,7 +161,7 @@ public class Image extends Quad implements UIComponent, UIAction
 
 		originalWidth = getScale().x;
 
-		log.debug("Loading image", this);
+		log.trace("Loading image", this);
 
 		if (uiManager != null) {
 			uiManager.register(this);
@@ -214,7 +215,7 @@ public class Image extends Quad implements UIComponent, UIAction
 			return;
 		}
 
-		log.debug("Unloading image", this);
+		log.trace("Unloading image", this);
 
 		if (textureLoaded) {
 			texture.unload();
@@ -230,8 +231,10 @@ public class Image extends Quad implements UIComponent, UIAction
 	}
 
 	@Override
-	public void render()
+	public void render(RenderContext context)
 	{
+		assert context != null : "context != null";
+
 		// make sure the texture gets set from the buffer
 		if (buffer != null) {
 			texture = buffer.getTexture();
@@ -240,10 +243,7 @@ public class Image extends Quad implements UIComponent, UIAction
 		//set texture into shader if given BasicShade
 		if (texture != null) {
 
-			Material mat = getMaterial();
-
-			assert mat != null;
-
+			Material mat = (context.getOverrideMaterial() != null) ? context.getOverrideMaterial() : material;
 			Shader shader = mat.getShader();
 
 			//@todo how to make sharing of a texture into shading/materials more generic?
@@ -265,7 +265,7 @@ public class Image extends Quad implements UIComponent, UIAction
 			lay.layout(this, layoutOptions);
 		}
 
-		super.render();
+		super.render(context);
 	}
 
 	@Override

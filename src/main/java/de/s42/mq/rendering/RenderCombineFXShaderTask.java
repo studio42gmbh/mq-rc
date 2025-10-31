@@ -54,24 +54,26 @@ public class RenderCombineFXShaderTask extends AbstractWindowTask
 			buffer.startRender();
 		}
 
+		DefaultRenderContext context = new DefaultRenderContext();
+
 		shaderMaterial.setShader(shader);
-		shaderMaterial.beforeRendering();
+		shaderMaterial.beforeRendering(context);
 		shader.setInBuffer(inBuffer);
 		shader.setInBuffer2(inBuffer2);
 		shader.setMesh(screenQuad);
-		shader.beforeRendering();
+		shader.beforeRendering(context);
 
 		// reset to screen size
 		if (buffer == null) {
 			window.setRenderViewportToWindow();
 		}
 
-		screenQuad.render();
+		screenQuad.render(context);
 
-		shader.afterRendering();
+		shader.afterRendering(context);
 		shader.setInBuffer(null);
 		shader.setInBuffer2(null);
-		shaderMaterial.afterRendering();
+		shaderMaterial.afterRendering(context);
 
 		if (buffer != null) {
 			buffer.endRender();

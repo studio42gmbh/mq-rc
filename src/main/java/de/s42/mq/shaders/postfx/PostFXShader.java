@@ -17,6 +17,7 @@ import de.s42.mq.data.ColorData;
 import de.s42.mq.data.FloatData;
 import de.s42.mq.data.IntegerData;
 import de.s42.mq.materials.Texture;
+import de.s42.mq.rendering.RenderContext;
 import de.s42.mq.shaders.Shader;
 
 /**
@@ -81,7 +82,7 @@ public class PostFXShader extends Shader
 	}
 
 	@Override
-	public void beforeRendering()
+	public void beforeRendering(RenderContext context)
 	{
 		assert blitMode != null;
 		assert exposure != null;
@@ -97,7 +98,7 @@ public class PostFXShader extends Shader
 		assert inBufferId != null;
 		assert inBufferId.getIntegerValue() != -1;
 
-		super.beforeRendering();
+		super.beforeRendering(context);
 
 		setUniform(blitModeUniform, blitMode.blitModeId);
 		setUniform(exposureUniform, exposure);
@@ -122,7 +123,7 @@ public class PostFXShader extends Shader
 	}
 
 	@Override
-	public void afterRendering()
+	public void afterRendering(RenderContext context)
 	{
 		unsetTexture(0);
 		unsetTexture(1);
@@ -130,7 +131,7 @@ public class PostFXShader extends Shader
 			unsetTexture(2);
 		}
 
-		super.afterRendering();
+		super.afterRendering(context);
 	}
 
 	// <editor-fold desc="Getters/Setters" defaultstate="collapsed">

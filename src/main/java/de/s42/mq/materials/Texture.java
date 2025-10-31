@@ -17,6 +17,7 @@ import de.s42.dl.annotations.persistence.DontPersistDLAnnotation.dontPersist;
 import de.s42.dl.exceptions.DLException;
 import de.s42.log.LogManager;
 import de.s42.log.Logger;
+import de.s42.mq.MQColor;
 import de.s42.mq.assets.AbstractAsset;
 import java.io.IOException;
 import java.nio.Buffer;
@@ -90,6 +91,8 @@ public class Texture extends AbstractAsset
 	@AttributeDL(defaultValue = "-0.5")
 	protected float lodBias = -0.5f; // little sharper
 
+	protected MQColor borderColor = new MQColor();
+
 	protected int width;
 	protected int height;
 
@@ -108,7 +111,12 @@ public class Texture extends AbstractAsset
 		RGB32F(GL_RGB32F, 3),
 		RGB(GL_RGB, 3),
 		RGBA16F(GL_RGBA16F, 4),
-		RGBA32F(GL_RGBA32F, 4);
+		RGBA32F(GL_RGBA32F, 4),
+		DEPTH_COMPONENT(GL_DEPTH_COMPONENT, 1),
+		DEPTH_COMPONENT16(GL_DEPTH_COMPONENT16, 1),
+		DEPTH_COMPONENT24(GL_DEPTH_COMPONENT24, 1),
+		DEPTH_COMPONENT32(GL_DEPTH_COMPONENT32, 1),
+		DEPTH_COMPONENT32F(GL_DEPTH_COMPONENT32F, 1);
 
 		public final int glFormat;
 		public final int channels;
@@ -206,7 +214,7 @@ public class Texture extends AbstractAsset
 
 		GLCapabilities caps = GL.createCapabilities();
 
-		log.trace("Loading {}", getSource());
+		log.trace("Loading", getSource());
 
 		try (MemoryStack frame = MemoryStack.stackPush()) {
 			IntBuffer widthB = frame.mallocInt(1);
@@ -274,6 +282,8 @@ public class Texture extends AbstractAsset
 			glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, getMinFilter().glFormat);
 			glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, getMagFilter().glFormat);
 
+			glTexParameterfv(GL_TEXTURE_2D, GL_TEXTURE_BORDER_COLOR, borderColor.getAsArray());
+
 			if (generateMipMap) {
 				glHint(GL_GENERATE_MIPMAP_HINT, GL_NICEST);
 				glGenerateMipmap(GL_TEXTURE_2D);
@@ -282,7 +292,7 @@ public class Texture extends AbstractAsset
 			glBindTexture(GL_TEXTURE_2D, 0);
 		}
 
-		log.trace("Loaded success {} {} {} {}", getSource(), getWidth(), getHeight(), getTextureId());
+		log.trace("Loaded success", getSource(), getWidth(), getHeight(), getTextureId());
 	}
 
 	public void generateMipMap()
@@ -542,5 +552,15 @@ public class Texture extends AbstractAsset
 			glTexParameterf(GL_TEXTURE_2D, GL_TEXTURE_LOD_BIAS, lodBias);
 			glBindTexture(GL_TEXTURE_2D, 0);
 		}
+	}
+
+	public MQColor getBorderColor()
+	{
+		return borderColor;
+	}
+
+	public void setBorderColor(MQColor borderColor)
+	{
+		this.borderColor = borderColor;
 	}
 }

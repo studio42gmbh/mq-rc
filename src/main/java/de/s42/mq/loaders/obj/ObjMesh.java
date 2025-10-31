@@ -1,12 +1,12 @@
 /*
  * Copyright Studio 42 GmbH 2021. All rights reserved.
- *  
+ *
  * Unless required by applicable law or agreed to in writing, software
  * distributed under the License is distributed on an "AS IS" BASIS,
  * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
  * See the License for the specific language governing permissions and
  * limitations under the License.
- *  
+ *
  * For details to the License read https://www.s42m.de/license
  */
 package de.s42.mq.loaders.obj;
@@ -14,15 +14,21 @@ package de.s42.mq.loaders.obj;
 import de.s42.dl.DLAttribute.AttributeDL;
 import de.s42.dl.annotations.files.IsFileDLAnnotation.isFile;
 import de.s42.dl.exceptions.DLException;
+import de.s42.log.LogManager;
+import de.s42.log.Logger;
+import de.s42.mq.materials.Material;
 import de.s42.mq.meshes.Mesh;
+import de.s42.mq.rendering.RenderContext;
 import de.s42.mq.shaders.Shader;
 import java.nio.FloatBuffer;
 import java.nio.IntBuffer;
-import de.s42.log.LogManager;
-import de.s42.log.Logger;
 import java.nio.file.Path;
 import org.joml.Vector3f;
-import static org.lwjgl.opengl.GL46.*;
+import static org.lwjgl.opengl.GL11.*;
+import static org.lwjgl.opengl.GL15.*;
+import static org.lwjgl.opengl.GL20.glEnableVertexAttribArray;
+import static org.lwjgl.opengl.GL20.glVertexAttribPointer;
+import static org.lwjgl.opengl.GL30.*;
 import org.lwjgl.system.MemoryUtil;
 
 /**
@@ -89,7 +95,7 @@ public class ObjMesh extends Mesh
 
 		log.info("Generating mesh");
 
-		// Generate vertex buffer		
+		// Generate vertex buffer
 		vbo = glGenBuffers();
 		glBindBuffer(GL_ARRAY_BUFFER, vbo);
 		FloatBuffer fb = MemoryUtil.memAllocFloat(loader.faces.size() * 3 * (3 + 3 + 2));
@@ -169,20 +175,23 @@ public class ObjMesh extends Mesh
 	}
 
 	@Override
-	public void render()
+	public void render(RenderContext context)
 	{
+		assert context != null : "context != null";
 		assert material != null;
 		assert material.isLoaded();
 		assert material.getShader().isLoaded();
 		assert isLoaded();
 
-		Shader shader = material.getShader();
+		// Use override material if given
+		Material mat = (context.getOverrideMaterial() != null) ? context.getOverrideMaterial() : material;
+		Shader shader = mat.getShader();
 
 		updateModelMatrix();
 
-		material.beforeRendering();
+		mat.beforeRendering(context);
 		shader.setMesh(this);
-		shader.beforeRendering();
+		shader.beforeRendering(context);
 
 		glBindVertexArray(vao);
 
@@ -209,8 +218,8 @@ public class ObjMesh extends Mesh
 		//glBindBuffer(GL_ARRAY_BUFFER, 0);
 		//glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, 0);
 		//glBindVertexArray(0);
-		shader.afterRendering();
-		material.afterRendering();
+		shader.afterRendering(context);
+		mat.afterRendering(context);
 	}
 
 	public Path getSource()

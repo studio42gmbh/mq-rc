@@ -17,6 +17,7 @@ import de.s42.log.LogManager;
 import de.s42.log.Logger;
 import de.s42.mq.cameras.Camera;
 import de.s42.mq.data.BooleanData;
+import de.s42.mq.rendering.RenderContext;
 import java.util.*;
 import java.util.function.Predicate;
 import org.joml.Quaternionf;
@@ -108,8 +109,9 @@ public class MeshGroup extends Mesh
 	}
 
 	@Override
-	public void render()
+	public void render(RenderContext context)
 	{
+		assert context != null : "context != null";
 		assert enabled != null;
 		assert isLoaded();
 		assert getCamera() != null;
@@ -121,8 +123,7 @@ public class MeshGroup extends Mesh
 		updateModelMatrix();
 
 		for (Mesh mesh : meshes) {
-
-			renderSubMesh(mesh);
+			renderSubMesh(mesh, context);
 		}
 	}
 
@@ -131,26 +132,26 @@ public class MeshGroup extends Mesh
 		return mesh.containsLayers(getLayersAsList());
 	}
 
-	protected void renderSubMesh(Mesh mesh)
+	protected void renderSubMesh(Mesh mesh, RenderContext context)
 	{
 		assert mesh != null;
 
 		mesh.setCamera(getCamera());
 
 		if (mesh.getMaterial() != null) {
-			mesh.getMaterial().beforeRendering();
+			mesh.getMaterial().beforeRendering(context);
 		}
 
 		if (mesh instanceof MeshGroup meshGroup) {
 			// @todo: should i preserve the layers of contained meshgroups?
 			meshGroup.setLayers(getLayers());
-			mesh.render();
+			meshGroup.render(context);
 		} else if (shallBeRendered(mesh)) {
-			mesh.render();
+			mesh.render(context);
 		}
 
 		if (mesh.getMaterial() != null) {
-			mesh.getMaterial().afterRendering();
+			mesh.getMaterial().afterRendering(context);
 		}
 	}
 
@@ -397,5 +398,22 @@ public class MeshGroup extends Mesh
 	public boolean containsCustomProperty(String name)
 	{
 		return customProperties.containsKey(name);
+	}
+
+	/**
+	 * @todo This is not nice atm - will have to change it being handled in the render call ...
+	 * @param layers
+	 */
+	public void setLayersDeep(String... layers)
+	{
+		super.setLayers(layers);
+
+		for (Mesh mesh : meshes) {
+			if (mesh instanceof MeshGroup meshGroup) {
+				meshGroup.setLayersDeep(layers);
+			} else if (mesh != null) {
+				mesh.setLayers(layers);
+			}
+		}
 	}
 }

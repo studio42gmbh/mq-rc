@@ -11,37 +11,69 @@
  */
 package de.s42.mq.shaders;
 
+import de.s42.dl.exceptions.DLException;
 import de.s42.mq.rendering.RenderContext;
 
 /**
  *
  * @author Benjamin Schiller
  */
-public class SkyShader extends Shader
+public class PlainShader extends Shader
 {
 
-	//private final static Logger log = LogManager.getLogger(SkyShader.class.getName());
-	private int viewMatrixUniform;
-	private int projectionMatrixUniform;
+	//private final static Logger log = LogManager.getLogger(PlainShader.class.getName());
+	protected int viewMatrixUniform = -1;
+	protected int projectionMatrixUniform = -1;
+	protected int modelMatrixUniform = -1;
 
 	@Override
 	protected void loadShader()
 	{
 		viewMatrixUniform = getUniformLocationOpt("viewMatrix");
 		projectionMatrixUniform = getUniformLocationOpt("projectionMatrix");
+		modelMatrixUniform = getUniformLocationOpt("modelMatrix");
+		inputPosition = getAttributeLocationOpt("position");
+	}
+
+	@Override
+	public void load() throws DLException
+	{
+		if (isLoaded()) {
+			return;
+		}
+
+		super.load();
+	}
+
+	@Override
+	public void unload() throws DLException
+	{
+		if (!isLoaded()) {
+			return;
+		}
+
+		super.unload();
 	}
 
 	@Override
 	public void beforeRendering(RenderContext context)
 	{
+		assert camera != null;
+		assert mesh != null;
+
 		super.beforeRendering(context);
 
-		assert camera != null;
+		setUniform(modelMatrixUniform, mesh.getModelMatrix());
+		setUniform(viewMatrixUniform, camera.getViewMatrix());
+		setUniform(projectionMatrixUniform, camera.getProjectionMatrix());
 
-		setUniform(viewMatrixUniform, getCamera().getViewMatrix());
-		setUniform(projectionMatrixUniform, getCamera().getProjectionMatrix());
+		setDraw6ColorAttachments();
+	}
 
-		setDraw1ColorAttachment();
+	@Override
+	public void afterRendering(RenderContext context)
+	{
+		super.afterRendering(context);
 	}
 
 	// <editor-fold desc="Getters/Setters" defaultstate="collapsed">
@@ -55,5 +87,9 @@ public class SkyShader extends Shader
 		return projectionMatrixUniform;
 	}
 
+	public int getModelMatrixUniform()
+	{
+		return modelMatrixUniform;
+	}
 	// </editor-fold>
 }

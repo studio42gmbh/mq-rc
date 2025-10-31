@@ -12,8 +12,11 @@
 package de.s42.mq.i18n;
 
 import de.s42.base.files.FilesHelper;
-import de.s42.dl.*;
 import de.s42.dl.DLAttribute.AttributeDL;
+import de.s42.dl.DLCore;
+import de.s42.dl.DLInstance;
+import de.s42.dl.DLModule;
+import de.s42.dl.DLType;
 import de.s42.dl.exceptions.DLException;
 import de.s42.dl.exceptions.InvalidValue;
 import de.s42.dl.types.DLContainer;
@@ -23,7 +26,10 @@ import de.s42.mq.assets.AbstractAsset;
 import de.s42.mq.data.StringData;
 import java.io.IOException;
 import java.io.InputStream;
-import java.nio.file.*;
+import java.nio.file.FileSystems;
+import java.nio.file.Files;
+import java.nio.file.Path;
+import java.nio.file.PathMatcher;
 import java.util.*;
 import java.util.concurrent.atomic.AtomicInteger;
 
@@ -128,7 +134,7 @@ public class L10N extends AbstractAsset implements DLContainer
 										loc = fileName.substring(uI + 1, uD);
 									}
 
-									log.debug("Locale " + loc);
+									log.trace("Locale " + loc);
 
 									L10N l10n = new L10N();
 									l10n.setLocale(loc);

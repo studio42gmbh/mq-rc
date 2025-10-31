@@ -16,6 +16,7 @@ import de.s42.dl.exceptions.DLException;
 import de.s42.mq.data.ColorData;
 import de.s42.mq.data.FloatData;
 import de.s42.mq.data.Vector4Data;
+import de.s42.mq.rendering.RenderContext;
 
 /**
  *
@@ -68,12 +69,12 @@ public class ComponentBackgroundShader extends UIShader
 	}
 
 	@Override
-	public void beforeRendering()
+	public void beforeRendering(RenderContext context)
 	{
 		assert camera != null;
 		assert mesh != null;
 
-		super.beforeRendering();
+		super.beforeRendering(context);
 
 		if (mesh instanceof Panel panel) {
 			setUniform(colorUniform, panel.getBackgroundColor());
@@ -97,11 +98,11 @@ public class ComponentBackgroundShader extends UIShader
 	}
 
 	@Override
-	public void afterRendering()
+	public void afterRendering(RenderContext context)
 	{
 		setTexture(0, 0);
 
-		super.afterRendering();
+		super.afterRendering(context);
 	}
 
 	// <editor-fold desc="Getters/Setters" defaultstate="collapsed">

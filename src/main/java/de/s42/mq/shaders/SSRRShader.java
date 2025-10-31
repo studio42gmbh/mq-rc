@@ -13,11 +13,10 @@ package de.s42.mq.shaders;
 
 import de.s42.dl.DLAttribute.AttributeDL;
 import de.s42.dl.exceptions.DLException;
-import de.s42.log.LogManager;
-import de.s42.log.Logger;
 import de.s42.mq.buffers.GBuffer;
 import de.s42.mq.data.FloatData;
 import de.s42.mq.data.IntegerData;
+import de.s42.mq.rendering.RenderContext;
 
 /**
  *
@@ -26,8 +25,7 @@ import de.s42.mq.data.IntegerData;
 public class SSRRShader extends Shader
 {
 
-	private final static Logger log = LogManager.getLogger(SSRRShader.class.getName());
-
+	//private final static Logger log = LogManager.getLogger(SSRRShader.class.getName());
 	@AttributeDL(required = true)
 	protected GBuffer inBuffer;
 
@@ -71,12 +69,12 @@ public class SSRRShader extends Shader
 	}
 
 	@Override
-	public void beforeRendering()
+	public void beforeRendering(RenderContext context)
 	{
 		assert inBuffer != null;
 		assert camera != null;
 
-		super.beforeRendering();
+		super.beforeRendering(context);
 
 		setUniform(inBufferResolutionUniform, 1.0f / (float) inBuffer.getWidth(), 1.0f / (float) inBuffer.getWidth());
 		setTexture(inBuffer.getColorRenderBuffer(), 0);

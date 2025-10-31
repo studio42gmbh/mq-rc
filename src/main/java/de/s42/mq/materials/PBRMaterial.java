@@ -1,20 +1,24 @@
 /*
  * Copyright Studio 42 GmbH 2021. All rights reserved.
- *  
+ *
  * Unless required by applicable law or agreed to in writing, software
  * distributed under the License is distributed on an "AS IS" BASIS,
  * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
  * See the License for the specific language governing permissions and
  * limitations under the License.
- *  
+ *
  * For details to the License read https://www.s42m.de/license
  */
 package de.s42.mq.materials;
 
 import de.s42.dl.DLAttribute.AttributeDL;
 import de.s42.dl.exceptions.DLException;
+import de.s42.mq.MQColor;
+import de.s42.mq.rendering.RenderContext;
 import de.s42.mq.shaders.PBRShader;
 import java.nio.file.Path;
+import org.joml.Vector2f;
+import org.joml.Vector3f;
 
 /**
  *
@@ -73,11 +77,19 @@ public class PBRMaterial extends Material
 	protected boolean irradianceTextureLoaded;
 	protected boolean brdfLUTTextureLoaded;
 
+	protected MQColor tint = new MQColor(1.0f);
+	protected Vector2f normalScale = new Vector2f(1.0f);
+	protected float roughnessScale = 1.0f;
+	protected float roughnessOffset = 0.0f;
+	protected float metalnessScale = 1.0f;
+	protected float metalnessOffset = 0.0f;
+	protected Vector3f emissiveScale = new Vector3f(1.0f);
+
 	// ATTENTION: This field helps DL to change the type of shader to PBRShader in type reflection
 	@AttributeDL(required = false)
 	@SuppressWarnings("FieldNameHidesFieldInSuperclass")
 	protected PBRShader shader;
-		
+
 	public PBRMaterial()
 	{
 		this(null, null, null, null, null, null, null);
@@ -227,20 +239,27 @@ public class PBRMaterial extends Material
 	}
 
 	@Override
-	public void beforeRendering()
+	public void beforeRendering(RenderContext context)
 	{
-		assert camera != null;
+		super.beforeRendering(context);
 
-		PBRShader pbrShader = (PBRShader) getShader();
+		PBRShader pbrShader = getShader();
 
 		pbrShader.setBaseTexture(getBaseTexture());
 		pbrShader.setNormalTexture(getNormalTexture());
 		pbrShader.setHeromeaoTexture(getHeromeaoTexture());
 		pbrShader.setBrdfLUTTexture(getBrdfLUTTexture());
 		pbrShader.setEmtrTexture(getEmtrTexture());
-		pbrShader.setCamera(camera);
 		pbrShader.setEnvironmentTexture(getEnvironmentTexture());
 		pbrShader.setIrradianceTexture(getIrradianceTexture());
+
+		pbrShader.getTint().setValue(tint);
+		pbrShader.getNormalScale().setValue(normalScale);
+		pbrShader.getRoughnessScale().setValue(roughnessScale);
+		pbrShader.getRoughnessOffset().setValue(roughnessOffset);
+		pbrShader.getMetalnessScale().setValue(metalnessScale);
+		pbrShader.getMetalnessOffset().setValue(metalnessOffset);
+		pbrShader.getEmissiveScale().setValue(emissiveScale);
 	}
 
 	public Path getBaseSource()
@@ -381,5 +400,75 @@ public class PBRMaterial extends Material
 	public void setBrdfLUTTexture(Texture brdfLUTTexture)
 	{
 		this.brdfLUTTexture = brdfLUTTexture;
+	}
+
+	public MQColor getTint()
+	{
+		return tint;
+	}
+
+	public void setTint(MQColor tint)
+	{
+		this.tint = tint;
+	}
+
+	public Vector2f getNormalScale()
+	{
+		return normalScale;
+	}
+
+	public void setNormalScale(Vector2f normalScale)
+	{
+		this.normalScale = normalScale;
+	}
+
+	public float getRoughnessScale()
+	{
+		return roughnessScale;
+	}
+
+	public void setRoughnessScale(float roughnessScale)
+	{
+		this.roughnessScale = roughnessScale;
+	}
+
+	public float getRoughnessOffset()
+	{
+		return roughnessOffset;
+	}
+
+	public void setRoughnessOffset(float roughnessOffset)
+	{
+		this.roughnessOffset = roughnessOffset;
+	}
+
+	public float getMetalnessScale()
+	{
+		return metalnessScale;
+	}
+
+	public void setMetalnessScale(float metalnessScale)
+	{
+		this.metalnessScale = metalnessScale;
+	}
+
+	public float getMetalnessOffset()
+	{
+		return metalnessOffset;
+	}
+
+	public void setMetalnessOffset(float metalnessOffset)
+	{
+		this.metalnessOffset = metalnessOffset;
+	}
+
+	public Vector3f getEmissiveScale()
+	{
+		return emissiveScale;
+	}
+
+	public void setEmissiveScale(Vector3f emissiveScale)
+	{
+		this.emissiveScale = emissiveScale;
 	}
 }

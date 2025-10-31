@@ -11,6 +11,8 @@
  */
 package de.s42.mq.shaders;
 
+import de.s42.mq.rendering.RenderContext;
+
 /**
  *
  * @author Benjamin Schiller
@@ -26,15 +28,15 @@ public class TaaShader extends CombineFXShader
 	}
 
 	@Override
-	public void beforeRendering()
+	public void beforeRendering(RenderContext context)
 	{
-		super.beforeRendering();
+		super.beforeRendering(context);
 	}
 
 	@Override
-	public void afterRendering()
+	public void afterRendering(RenderContext context)
 	{
-		super.afterRendering();
+		super.afterRendering(context);
 	}
 
 	// <editor-fold desc="Getters/Setters" defaultstate="collapsed">

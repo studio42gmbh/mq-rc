@@ -1,12 +1,12 @@
 /*
  * Copyright Studio 42 GmbH 2021. All rights reserved.
- *  
+ *
  * Unless required by applicable law or agreed to in writing, software
  * distributed under the License is distributed on an "AS IS" BASIS,
  * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
  * See the License for the specific language governing permissions and
  * limitations under the License.
- *  
+ *
  * For details to the License read https://www.s42m.de/license
  */
 package de.s42.mq;
@@ -20,6 +20,7 @@ import java.util.concurrent.ThreadLocalRandom;
  */
 public class MQColor
 {
+
 	public float r, g, b, a;
 
 	public final static MQColor Black = new MQColor(0.0f, 0.0f, 0.0f, 1.0f);
@@ -225,12 +226,11 @@ public class MQColor
 
 		//float[] compArray = new float[4];
 		//other.getColorComponents(compArray);
+		r = (float) other.getRed() / 255.0f;
+		g = (float) other.getGreen() / 255.0f;
+		b = (float) other.getBlue() / 255.0f;
+		a = (float) other.getAlpha() / 255.0f;
 
-		r = (float)other.getRed() / 255.0f;
-		g = (float)other.getGreen()/ 255.0f;
-		b = (float)other.getBlue()/ 255.0f;
-		a = (float)other.getAlpha()/ 255.0f;
-		
 		return this;
 	}
 
@@ -569,6 +569,11 @@ public class MQColor
 		a = 0.0f;
 
 		return this;
+	}
+
+	public float[] getAsArray()
+	{
+		return new float[]{r, g, b, a};
 	}
 
 	public java.awt.Color toAwtColor()

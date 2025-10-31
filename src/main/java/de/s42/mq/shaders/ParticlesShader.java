@@ -12,12 +12,11 @@
 package de.s42.mq.shaders;
 
 import de.s42.dl.exceptions.DLException;
-import de.s42.log.LogManager;
-import de.s42.log.Logger;
 import de.s42.mq.data.ColorData;
 import de.s42.mq.data.FloatData;
 import de.s42.mq.data.Vector2Data;
 import de.s42.mq.materials.Texture;
+import de.s42.mq.rendering.RenderContext;
 import org.joml.Vector3f;
 
 /**
@@ -27,8 +26,7 @@ import org.joml.Vector3f;
 public class ParticlesShader extends Shader
 {
 
-	private final static Logger log = LogManager.getLogger(ParticlesShader.class.getName());
-
+	//private final static Logger log = LogManager.getLogger(ParticlesShader.class.getName());
 	protected int viewMatrixUniform = -1;
 	protected int projectionMatrixUniform = -1;
 	protected int modelMatrixUniform = -1;
@@ -118,9 +116,9 @@ public class ParticlesShader extends Shader
 	}
 
 	@Override
-	public void beforeRendering()
+	public void beforeRendering(RenderContext context)
 	{
-		super.beforeRendering();
+		super.beforeRendering(context);
 
 		assert camera != null;
 		assert mesh != null;
@@ -150,12 +148,12 @@ public class ParticlesShader extends Shader
 	}
 
 	@Override
-	public void afterRendering()
+	public void afterRendering(RenderContext context)
 	{
 		unsetTexture(0);
 		unsetTexture(1);
 
-		super.afterRendering();
+		super.afterRendering(context);
 	}
 
 	// <editor-fold desc="Getters/Setters" defaultstate="collapsed">

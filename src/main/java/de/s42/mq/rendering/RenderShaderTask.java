@@ -51,20 +51,22 @@ public class RenderShaderTask extends AbstractWindowTask
 			buffer.startRender();
 		}
 
+		DefaultRenderContext context = new DefaultRenderContext();
+
 		shaderMaterial.setShader(shader);
-		shaderMaterial.beforeRendering();
+		shaderMaterial.beforeRendering(context);
 		shader.setMesh(screenQuad);
-		shader.beforeRendering();
+		shader.beforeRendering(context);
 
 		// reset to screen size
 		if (buffer == null) {
 			window.setRenderViewportToWindow();
 		}
 
-		screenQuad.render();
+		screenQuad.render(context);
 
-		shader.afterRendering();
-		shaderMaterial.afterRendering();
+		shader.afterRendering(context);
+		shaderMaterial.afterRendering(context);
 
 		if (buffer != null) {
 			buffer.endRender();

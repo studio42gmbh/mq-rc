@@ -1,35 +1,44 @@
 /*
  * Copyright Studio 42 GmbH 2021. All rights reserved.
- *  
+ *
  * Unless required by applicable law or agreed to in writing, software
  * distributed under the License is distributed on an "AS IS" BASIS,
  * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
  * See the License for the specific language governing permissions and
  * limitations under the License.
- *  
+ *
  * For details to the License read https://www.s42m.de/license
  */
 package de.s42.mq.loaders.fbx;
 
 import de.s42.dl.exceptions.DLException;
 import de.s42.dl.exceptions.InvalidInstance;
-import de.s42.mq.meshes.Mesh;
-import de.s42.mq.shaders.Shader;
-import java.nio.*;
 import de.s42.log.LogManager;
 import de.s42.log.Logger;
-import org.lwjgl.assimp.*;
-import static org.lwjgl.opengl.GL15.GL_ELEMENT_ARRAY_BUFFER;
-import static org.lwjgl.opengl.GL46.*;
+import de.s42.mq.materials.Material;
+import de.s42.mq.meshes.Mesh;
+import de.s42.mq.rendering.RenderContext;
+import de.s42.mq.shaders.Shader;
+import java.nio.IntBuffer;
+import org.lwjgl.assimp.AIFace;
+import org.lwjgl.assimp.AIMesh;
+import org.lwjgl.assimp.AIVector3D;
+import static org.lwjgl.opengl.GL11.*;
+import static org.lwjgl.opengl.GL15.*;
+import static org.lwjgl.opengl.GL20.glEnableVertexAttribArray;
+import static org.lwjgl.opengl.GL20.glVertexAttribPointer;
+import static org.lwjgl.opengl.GL30.*;
 import org.lwjgl.system.MemoryUtil;
 
 /**
  * See for ref: https://github.com/LWJGL/lwjgl3-demos/blob/main/src/org/lwjgl/demo/opengl/assimp/WavefrontObjDemo.java
  * and https://lwjglgamedev.gitbooks.io/3d-game-development-with-lwjgl/content/chapter27/chapter27.html
+ *
  * @author Benjamin Schiller
  */
 public class FbxSubMesh extends Mesh
 {
+
 	private final static Logger log = LogManager.getLogger(FbxSubMesh.class.getName());
 
 	protected int vao = -1;
@@ -68,7 +77,7 @@ public class FbxSubMesh extends Mesh
 		}
 
 		assert aiMesh != null;
-		
+
 		super.load();
 
 		vao = glGenVertexArrays();
@@ -116,10 +125,10 @@ public class FbxSubMesh extends Mesh
 		glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, 0);
 
 		glBindVertexArray(0);
-		
+
 		aiMesh = null;
 
-		log.debug("Loaded mesh " + faceCount);
+		log.trace("Loaded mesh " + faceCount);
 	}
 
 	@Override
@@ -140,20 +149,23 @@ public class FbxSubMesh extends Mesh
 	}
 
 	@Override
-	public void render()
+	public void render(RenderContext context)
 	{
+		assert context != null : "context != null";
 		assert material != null;
 		assert material.isLoaded();
 		assert material.getShader().isLoaded();
 		assert isLoaded();
 
-		Shader shader = material.getShader();
+		// Use override material if given
+		Material mat = (context.getOverrideMaterial() != null) ? context.getOverrideMaterial() : material;
+		Shader shader = mat.getShader();
 
 		updateModelMatrix();
 
-		material.beforeRendering();
+		mat.beforeRendering(context);
 		shader.setMesh(this);
-		shader.beforeRendering();
+		shader.beforeRendering(context);
 
 		glBindVertexArray(vao);
 
@@ -182,8 +194,8 @@ public class FbxSubMesh extends Mesh
 		//glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, 0);
 		//glBindBuffer(GL_ARRAY_BUFFER, 0);
 		//glBindVertexArray(0);
-		shader.afterRendering();
-		material.afterRendering();
+		shader.afterRendering(context);
+		mat.afterRendering(context);
 	}
 
 	// <editor-fold desc="Getters/Setters" defaultstate="collapsed">
@@ -196,5 +208,5 @@ public class FbxSubMesh extends Mesh
 	{
 		this.aiMesh = aiMesh;
 	}
-	// </editor-fold>	
+	// </editor-fold>
 }

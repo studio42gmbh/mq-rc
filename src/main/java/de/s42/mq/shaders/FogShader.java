@@ -19,6 +19,7 @@ import de.s42.mq.buffers.GBuffer;
 import de.s42.mq.data.FloatData;
 import de.s42.mq.data.IntegerData;
 import de.s42.mq.materials.Texture;
+import de.s42.mq.rendering.RenderContext;
 
 /**
  *
@@ -71,13 +72,13 @@ public class FogShader extends Shader
 	}
 
 	@Override
-	public void beforeRendering()
+	public void beforeRendering(RenderContext context)
 	{
 		assert inBuffer != null;
 		assert noiseTexture != null;
 		assert camera != null;
 
-		super.beforeRendering();
+		super.beforeRendering(context);
 
 		setUniform(inBufferResolutionUniform, 1.0f / (float) inBuffer.getWidth(), 1.0f / (float) inBuffer.getWidth());
 		setTexture(inBuffer.getPositionRenderBuffer(), 0);
@@ -98,7 +99,7 @@ public class FogShader extends Shader
 	}
 
 	@Override
-	public void afterRendering()
+	public void afterRendering(RenderContext context)
 	{
 		unsetTexture(0);
 		unsetTexture(1);
@@ -106,7 +107,7 @@ public class FogShader extends Shader
 		unsetTexture(3);
 		unsetTexture(4);
 
-		super.afterRendering();
+		super.afterRendering(context);
 
 		setDraw0ColorAttachment();
 	}

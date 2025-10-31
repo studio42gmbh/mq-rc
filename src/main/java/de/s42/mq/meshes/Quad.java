@@ -14,6 +14,8 @@ package de.s42.mq.meshes;
 import de.s42.dl.exceptions.DLException;
 import de.s42.log.LogManager;
 import de.s42.log.Logger;
+import de.s42.mq.materials.Material;
+import de.s42.mq.rendering.RenderContext;
 import de.s42.mq.shaders.Shader;
 import java.util.Arrays;
 import static org.lwjgl.opengl.GL11.*;
@@ -75,7 +77,7 @@ public class Quad extends Mesh
 
 		super.load();
 
-		log.debug("Generating quad");
+		log.trace("Generating quad");
 
 		vao = glGenVertexArrays();
 		glBindVertexArray(vao);
@@ -143,18 +145,22 @@ public class Quad extends Mesh
 	}
 
 	@Override
-	public void render()
+	public void render(RenderContext context)
 	{
+		assert context != null : "context != null";
 		assert material != null;
 		assert material.isLoaded();
 		assert isLoaded();
 
+		// Use override material if given
+		Material mat = (context.getOverrideMaterial() != null) ? context.getOverrideMaterial() : material;
+		Shader shader = mat.getShader();
+
 		updateModelMatrix();
 
-		Shader shader = material.getShader();
-		material.beforeRendering();
+		mat.beforeRendering(context);
 		shader.setMesh(this);
-		shader.beforeRendering();
+		shader.beforeRendering(context);
 
 		glBindVertexArray(vao);
 
@@ -182,7 +188,8 @@ public class Quad extends Mesh
 		glBindBuffer(GL_ARRAY_BUFFER, 0);
 		glBindVertexArray(0);
 
-		shader.afterRendering();
+		shader.afterRendering(context);
+		mat.afterRendering(context);
 	}
 
 	public boolean isDynamicVertices()

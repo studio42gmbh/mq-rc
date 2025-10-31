@@ -15,7 +15,9 @@ import de.s42.dl.DLAttribute.AttributeDL;
 import de.s42.dl.exceptions.DLException;
 import de.s42.mq.assets.AbstractAsset;
 import de.s42.mq.cameras.Camera;
+import de.s42.mq.rendering.RenderContext;
 import de.s42.mq.shaders.Shader;
+import de.s42.mq.shaders.Shader.CullType;
 import java.util.HashMap;
 import java.util.Map;
 
@@ -32,8 +34,13 @@ public abstract class Material extends AbstractAsset
 	@AttributeDL(required = false)
 	protected Shader shader;
 
-	protected boolean shaderLoaded;
+	@AttributeDL(required = false)
+	protected CullType cullType;
 
+	@AttributeDL(required = false)
+	protected float alphaDiscard = -1.0f;
+
+	//protected boolean shaderLoaded;
 	protected final Map<String, Object> customProperties = new HashMap<>();
 
 	protected Material()
@@ -47,16 +54,35 @@ public abstract class Material extends AbstractAsset
 		this.shader = shader;
 	}
 
-	public void beforeRendering()
+	protected boolean oldCullFace;
+	protected CullType oldCullType;
+	protected float oldAlphaDiscard;
+
+	public void beforeRendering(RenderContext context)
 	{
 		if (shader != null && camera != null) {
 			shader.setCamera(camera);
 		}
+
+		oldAlphaDiscard = shader.getAlphaDiscard();
+		oldCullFace = shader.isCullFace();
+		oldCullType = shader.getCullType();
+
+		if (cullType != null) {
+			shader.setCullFace(true);
+			shader.setCullType(cullType);
+		}
+
+		if (alphaDiscard >= 0.0f) {
+			shader.setAlphaDiscard(alphaDiscard);
+		}
 	}
 
-	public void afterRendering()
+	public void afterRendering(RenderContext context)
 	{
-		// prepare stuff
+		shader.setCullFace(oldCullFace);
+		shader.setCullType(oldCullType);
+		shader.setAlphaDiscard(oldAlphaDiscard);
 	}
 
 	@Override
@@ -68,9 +94,9 @@ public abstract class Material extends AbstractAsset
 
 		super.load();
 
-		if (shader != null && !shader.isLoaded()) {
+		if (shader != null/* && !shader.isLoaded()*/) {
 			shader.load();
-			shaderLoaded = true;
+			//shaderLoaded = true;
 		}
 	}
 
@@ -81,9 +107,9 @@ public abstract class Material extends AbstractAsset
 			return;
 		}
 
-		if (shader != null && shaderLoaded) {
+		if (shader != null/* && shaderLoaded*/) {
 			shader.unload();
-			shaderLoaded = false;
+			//shaderLoaded = false;
 		}
 
 		super.unload();
@@ -130,4 +156,24 @@ public abstract class Material extends AbstractAsset
 		this.shader = shader;
 	}
 	// </editor-fold>
+
+	public CullType getCullType()
+	{
+		return cullType;
+	}
+
+	public void setCullType(CullType cullType)
+	{
+		this.cullType = cullType;
+	}
+
+	public float getAlphaDiscard()
+	{
+		return alphaDiscard;
+	}
+
+	public void setAlphaDiscard(float alphaDiscard)
+	{
+		this.alphaDiscard = alphaDiscard;
+	}
 }

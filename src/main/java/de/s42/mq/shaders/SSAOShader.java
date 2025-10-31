@@ -19,6 +19,7 @@ import de.s42.mq.buffers.GBuffer;
 import de.s42.mq.data.FloatData;
 import de.s42.mq.data.IntegerData;
 import de.s42.mq.materials.Texture;
+import de.s42.mq.rendering.RenderContext;
 import de.s42.mq.util.HaltonSequenceGenerator;
 
 /**
@@ -120,13 +121,13 @@ public class SSAOShader extends Shader
 	}
 
 	@Override
-	public void beforeRendering()
+	public void beforeRendering(RenderContext context)
 	{
 		assert inBuffer != null;
 		assert noiseTexture != null;
 		assert camera != null;
 
-		super.beforeRendering();
+		super.beforeRendering(context);
 
 		setTexture(inBuffer.getPositionRenderBuffer(), 0);
 		setTexture(inBuffer.getNormalRenderBuffer(), 1);
@@ -151,13 +152,13 @@ public class SSAOShader extends Shader
 	}
 
 	@Override
-	public void afterRendering()
+	public void afterRendering(RenderContext context)
 	{
 		unsetTexture(0);
 		unsetTexture(1);
 		unsetTexture(2);
 
-		super.afterRendering();
+		super.afterRendering(context);
 	}
 
 	// <editor-fold desc="Getters/Setters" defaultstate="collapsed">

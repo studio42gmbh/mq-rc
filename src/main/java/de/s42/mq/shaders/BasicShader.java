@@ -16,6 +16,7 @@ import de.s42.dl.exceptions.DLException;
 import de.s42.mq.MQColor;
 import de.s42.mq.data.ColorData;
 import de.s42.mq.materials.Texture;
+import de.s42.mq.rendering.RenderContext;
 
 /**
  *
@@ -36,17 +37,29 @@ public class BasicShader extends Shader
 	protected int modelMatrixUniform = -1;
 	protected int identifierUniform = -1;
 	protected int tintUniform = -1;
+	protected int alphaDiscardUniform = -1;
+	protected int totalTimeUniform = -1;
+	protected int deltaTimeUniform = -1;
+	protected int tickUniform = -1;
 
 	@Override
 	protected void loadShader()
 	{
+		// Samplers
 		setUniform("baseSampler", 0);
 
+		// Uniforms
 		viewMatrixUniform = getUniformLocationOpt("viewMatrix");
 		projectionMatrixUniform = getUniformLocationOpt("projectionMatrix");
 		modelMatrixUniform = getUniformLocationOpt("modelMatrix");
 		identifierUniform = getUniformLocationOpt("identifier");
 		tintUniform = getUniformLocationOpt("tint");
+		alphaDiscardUniform = getUniformLocationOpt("alphaDiscard");
+		totalTimeUniform = getUniformLocationOpt("totalTime");
+		deltaTimeUniform = getUniformLocationOpt("deltaTime");
+		tickUniform = getUniformLocationOpt("tick");
+
+		// Attributes
 		inputPosition = getAttributeLocationOpt("position");
 		inputNormal = getAttributeLocationOpt("normal");
 		inputTextureCoords = getAttributeLocationOpt("texCoords");
@@ -81,20 +94,25 @@ public class BasicShader extends Shader
 	}
 
 	@Override
-	public void beforeRendering()
+	public void beforeRendering(RenderContext context)
 	{
 		assert camera != null;
 		assert mesh != null;
 
-		super.beforeRendering();
+		super.beforeRendering(context);
 
 		setTextureOpt(getBaseTexture(), 0);
 
-		setUniform(tintUniform, getTint());
 		setUniform(identifierUniform, mesh.getIdentifier());
 		setUniform(modelMatrixUniform, mesh.getModelMatrix());
 		setUniform(viewMatrixUniform, camera.getViewMatrix());
 		setUniform(projectionMatrixUniform, camera.getProjectionMatrix());
+		setUniform(identifierUniform, mesh.getIdentifier());
+		setUniform(tintUniform, tint);
+		setUniform(alphaDiscardUniform, alphaDiscard);
+		setUniform(totalTimeUniform, context.getTotalTime());
+		setUniform(deltaTimeUniform, context.getDeltaTime());
+		setUniform(tickUniform, context.getTick());
 
 		if (mesh.getIdentifier() > 0) {
 			setDraw7ColorAttachments();
@@ -104,11 +122,11 @@ public class BasicShader extends Shader
 	}
 
 	@Override
-	public void afterRendering()
+	public void afterRendering(RenderContext context)
 	{
 		unsetTexture(0);
 
-		super.afterRendering();
+		super.afterRendering(context);
 	}
 
 	// <editor-fold desc="Getters/Setters" defaultstate="collapsed">

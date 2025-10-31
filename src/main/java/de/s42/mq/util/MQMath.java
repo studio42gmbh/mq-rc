@@ -11,6 +11,7 @@
  */
 package de.s42.mq.util;
 
+import java.util.concurrent.ThreadLocalRandom;
 import org.joml.Vector2f;
 import org.joml.Vector3f;
 
@@ -27,9 +28,48 @@ public final class MQMath
 	public static final float PI = (float) Math.PI;
 	public static final float TAU = (float) (Math.PI * 2.0);
 	public static final float PIHALF = (float) (Math.PI * 0.5);
+	public static final float PIQUARTER = (float) (Math.PI * 0.25);
+	public final static double SQRT2 = Math.sqrt(2.0);
+	public final static double SQRT3 = Math.sqrt(3.0);
+
+	public static final float[] POWERS_OF_TEN_FLOAT = {
+		1.0f,
+		10.0f,
+		100.0f,
+		1_000.0f,
+		10_000.0f,
+		100_000.0f,
+		1_000_000.0f,
+		10_000_000.0f,
+		100_000_000.0f,
+		1_000_000_000.0f,
+		10_000_000_000.0f,
+		100_000_000_000.0f,
+		1_000_000_000_000.0f,
+		10_000_000_000_000.0f,
+		100_000_000_000_000.0f,
+		1_000_000_000_000_000.0f};
 
 	private MQMath()
 	{
+	}
+
+	public static final float pow10(int exp)
+	{
+		if (exp < 0 || exp > 15) {
+			throw new IllegalArgumentException("exp has to be 0 - 15");
+		}
+
+		return POWERS_OF_TEN_FLOAT[exp];
+	}
+
+	public static final float pow10(float number, int exp)
+	{
+		if (exp < 0 || exp > 15) {
+			throw new IllegalArgumentException("exp has to be 0 - 15");
+		}
+
+		return number * POWERS_OF_TEN_FLOAT[exp];
 	}
 
 	public static float saturate(float value)
@@ -66,6 +106,11 @@ public final class MQMath
 		);
 	}
 
+	public static final float fract(float value)
+	{
+		return value - (float) Math.floor(value);
+	}
+
 	public static float toRadians(float degrees)
 	{
 		return (float) Math.toRadians(degrees);
@@ -74,5 +119,30 @@ public final class MQMath
 	public static float toDegrees(float radians)
 	{
 		return (float) Math.toDegrees(radians);
+	}
+
+	public static float random()
+	{
+		return ThreadLocalRandom.current().nextFloat();
+	}
+
+	public static float randomPi()
+	{
+		return ThreadLocalRandom.current().nextFloat(PI);
+	}
+
+	public static float randomTau()
+	{
+		return ThreadLocalRandom.current().nextFloat(TAU);
+	}
+
+	public static float random(float max)
+	{
+		return ThreadLocalRandom.current().nextFloat(max);
+	}
+
+	public static float random(float min, float max)
+	{
+		return ThreadLocalRandom.current().nextFloat(min, max);
 	}
 }

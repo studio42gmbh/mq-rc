@@ -14,6 +14,7 @@ package de.s42.mq.ui;
 import de.s42.dl.DLAttribute.AttributeDL;
 import de.s42.dl.exceptions.DLException;
 import de.s42.mq.data.Vector2Data;
+import de.s42.mq.rendering.RenderContext;
 import de.s42.mq.shaders.Shader;
 
 /**
@@ -48,12 +49,12 @@ public class UIShader extends Shader
 	}
 
 	@Override
-	public void beforeRendering()
+	public void beforeRendering(RenderContext context)
 	{
 		assert camera != null;
 		assert mesh != null;
 
-		super.beforeRendering();
+		super.beforeRendering(context);
 
 		setUniform(identifierUniform, mesh.getIdentifier());
 		setUniform(modelMatrixUniform, mesh.getModelMatrix());

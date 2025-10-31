@@ -70,6 +70,11 @@ public class FXBuffer extends FrameBuffer
 	@AttributeDL(required = false, defaultValue = "-0.5")
 	protected float lodBias = -0.5f; // little sharper
 
+	@AttributeDL(required = false, defaultValue = "CLAMP_TO_EDGE")
+	protected TextureWrap wrap = TextureWrap.CLAMP_TO_EDGE; // little sharper
+
+	protected MQColor borderColor = new MQColor();
+
 	@AttributeDL(required = false)
 	protected Texture texture;
 
@@ -98,9 +103,10 @@ public class FXBuffer extends FrameBuffer
 			texture.setGenerateMipMap(generateMipMap);
 			texture.setWidth(getScaledWidth());
 			texture.setHeight(getScaledHeight());
-			texture.setWrapR(TextureWrap.CLAMP_TO_EDGE);
-			texture.setWrapS(TextureWrap.CLAMP_TO_EDGE);
-			texture.setWrapT(TextureWrap.CLAMP_TO_EDGE);
+			texture.setWrapR(wrap);
+			texture.setWrapS(wrap);
+			texture.setWrapT(wrap);
+			texture.setBorderColor(borderColor);
 			texture.setMaxLod(maxLod);
 			texture.setMinLod(minLod);
 			texture.setMaxMipLevel(maxMipLevel);
@@ -118,11 +124,18 @@ public class FXBuffer extends FrameBuffer
 		}
 
 		glBindTexture(GL_TEXTURE_2D, texture.getTextureId());
-		glFramebufferTexture2D(GL_FRAMEBUFFER, GL_COLOR_ATTACHMENT0, GL_TEXTURE_2D, texture.getTextureId(), 0);
 
-		attachments = new int[]{
-			GL_COLOR_ATTACHMENT0
-		};
+		if (format == TextureFormat.DEPTH_COMPONENT) {
+			glFramebufferTexture2D(GL_FRAMEBUFFER, GL_DEPTH_ATTACHMENT, GL_TEXTURE_2D, texture.getTextureId(), 0);
+			attachments = new int[]{
+				GL_DEPTH_ATTACHMENT
+			};
+		} else {
+			glFramebufferTexture2D(GL_FRAMEBUFFER, GL_COLOR_ATTACHMENT0, GL_TEXTURE_2D, texture.getTextureId(), 0);
+			attachments = new int[]{
+				GL_COLOR_ATTACHMENT0
+			};
+		}
 	}
 
 	@Override
@@ -324,4 +337,24 @@ public class FXBuffer extends FrameBuffer
 		this.lodBias = lodBias;
 	}
 	// "Getters/Setters" </editor-fold>
+
+	public TextureWrap getWrap()
+	{
+		return wrap;
+	}
+
+	public void setWrap(TextureWrap wrap)
+	{
+		this.wrap = wrap;
+	}
+
+	public MQColor getBorderColor()
+	{
+		return borderColor;
+	}
+
+	public void setBorderColor(MQColor borderColor)
+	{
+		this.borderColor = borderColor;
+	}
 }

@@ -107,6 +107,14 @@ public abstract class Camera extends AbstractAsset
 		return new Vector3f(getCameraLookAt());
 	}
 
+	public Vector3f getLook()
+	{
+		Vector3f look = new Vector3f(getCameraLookAt());
+		look.sub(getCameraPosition());
+
+		return look;
+	}
+
 	public Vector3f getForwardDirection()
 	{
 		Vector3f forward = new Vector3f(0.0f, 0.0f, -1.0f);

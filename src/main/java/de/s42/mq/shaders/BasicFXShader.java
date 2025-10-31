@@ -13,6 +13,7 @@ package de.s42.mq.shaders;
 
 import de.s42.dl.DLAttribute.AttributeDL;
 import de.s42.mq.buffers.FXBuffer;
+import de.s42.mq.rendering.RenderContext;
 import static org.lwjgl.opengl.GL11.*;
 import static org.lwjgl.opengl.GL33.*;
 
@@ -44,9 +45,9 @@ public class BasicFXShader extends Shader
 	}
 
 	@Override
-	public void beforeRendering()
+	public void beforeRendering(RenderContext context)
 	{
-		super.beforeRendering();
+		super.beforeRendering(context);
 
 		if (inBuffer != null) {
 
@@ -63,7 +64,7 @@ public class BasicFXShader extends Shader
 	}
 
 	@Override
-	public void afterRendering()
+	public void afterRendering(RenderContext context)
 	{
 		if (inBuffer != null) {
 			unsetTexture(0);
@@ -73,7 +74,7 @@ public class BasicFXShader extends Shader
 			}
 		}
 
-		super.afterRendering();
+		super.afterRendering(context);
 	}
 
 	// <editor-fold desc="Getters/Setters" defaultstate="collapsed">

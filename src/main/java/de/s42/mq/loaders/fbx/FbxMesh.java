@@ -108,7 +108,7 @@ public class FbxMesh extends MeshGroup
 			if (scene.mMeshes() == null) {
 				throw new InvalidInstance("No meshes found in file " + FilesHelper.createMavenNetbeansFileConsoleLink(source));
 			}
-			log.debug("Loaded scene " + scene.mNumMeshes());
+			log.trace("Loaded scene " + scene.mNumMeshes());
 			AINode node = scene.mRootNode();
 			loadMetaData(scene.mMetaData(), this);
 			loadNodes(scene, node);
@@ -183,7 +183,7 @@ public class FbxMesh extends MeshGroup
 						ByteBuffer buff = aiMetaDataEntry.mData(4);
 						Float prop = buff.getFloat();
 
-						log.debug("Custom Float Data in " + nodeContainer.getName() + " " + key + " : " + prop);
+						log.trace("Custom Float Data in " + nodeContainer.getName() + " " + key + " : " + prop);
 
 						nodeContainer.setCustomProperty(key, prop);
 					} else if (aiMetaDataEntry.mType() == AI_AISTRING) {
@@ -194,7 +194,7 @@ public class FbxMesh extends MeshGroup
 						buff = buff.slice(buff.position() + 4, (int) len);
 						String prop = StandardCharsets.UTF_8.decode(buff).toString();
 
-						log.debug("Custom String Data in " + nodeContainer.getName() + " " + key + " : '" + prop + "'");
+						log.trace("Custom String Data in " + nodeContainer.getName() + " " + key + " : '" + prop + "'");
 
 						nodeContainer.setCustomProperty(key, prop);
 					}

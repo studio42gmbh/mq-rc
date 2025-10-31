@@ -31,6 +31,7 @@ import de.s42.mq.data.*;
 import de.s42.mq.materials.CubeTexture;
 import de.s42.mq.materials.Texture;
 import de.s42.mq.meshes.Mesh;
+import de.s42.mq.rendering.RenderContext;
 import java.nio.ByteBuffer;
 import java.nio.FloatBuffer;
 import java.nio.IntBuffer;
@@ -158,6 +159,9 @@ public abstract class Shader extends AbstractAsset
 
 	@AttributeDL(defaultValue = "false")
 	protected boolean renderTransparent = false;
+
+	@AttributeDL(defaultValue = "0.0000001")
+	protected float alphaDiscard = 0.0000001f;
 
 	protected Camera camera;
 
@@ -289,7 +293,7 @@ public abstract class Shader extends AbstractAsset
 		super.unload();
 	}
 
-	public void beforeRendering()
+	public void beforeRendering(RenderContext context)
 	{
 		assert getCullType() != null;
 
@@ -336,7 +340,7 @@ public abstract class Shader extends AbstractAsset
 		}
 	}
 
-	public void afterRendering()
+	public void afterRendering(RenderContext context)
 	{
 		glPolygonMode(GL_FRONT_AND_BACK, GL_FILL);
 		glUseProgram(0);
@@ -402,8 +406,8 @@ public abstract class Shader extends AbstractAsset
 			if (evaluated != null) {
 				log.error("Invalid shader:\n" + evaluated);
 			} else if (sourceBuf != null) {
-				sourceBuf.reset();
-				log.error("Invalid shader:\n" + (new String(sourceBuf.array())));
+				//sourceBuf.reset();
+				//log.error("Invalid shader:\n" + (new String(sourceBuf.array())));
 			}
 			throw new Exception("Could not compile shader: " + shaderLog);
 		}
@@ -427,7 +431,7 @@ public abstract class Shader extends AbstractAsset
 			String attribName = glGetActiveAttrib(shaderProgramId, i, size, type);
 			int location = glGetAttribLocation(shaderProgramId, attribName);
 			attributes.put(attribName, location);
-			log.debug("Attribute", attribName, location, size.get(0), type.get(0));
+			log.trace("Attribute", attribName, location, size.get(0), type.get(0));
 		}
 	}
 
@@ -453,7 +457,7 @@ public abstract class Shader extends AbstractAsset
 			String uniformName = glGetActiveUniformName(shaderProgramId, i);
 			int location = glGetUniformLocation(shaderProgramId, uniformName);
 			uniforms.put(uniformName, location);
-			log.debug("Uniform", uniformName, location);
+			log.trace("Uniform", uniformName, location);
 		}
 	}
 
@@ -671,6 +675,19 @@ public abstract class Shader extends AbstractAsset
 	public void setUniform(int uniformLocation, Matrix4f value)
 	{
 		assert value != null;
+
+		if (uniformLocation == -1) {
+			return;
+		}
+
+		glUniformMatrix4fv(uniformLocation, false, value.get(matrixBuffer));
+	}
+
+	public void setUniformOpt(int uniformLocation, Matrix4f value)
+	{
+		if (value == null) {
+			return;
+		}
 
 		if (uniformLocation == -1) {
 			return;
@@ -985,5 +1002,15 @@ public abstract class Shader extends AbstractAsset
 	public void setDepthFunc(DepthFunc depthFunc)
 	{
 		this.depthFunc = depthFunc;
+	}
+
+	public float getAlphaDiscard()
+	{
+		return alphaDiscard;
+	}
+
+	public void setAlphaDiscard(float alphaDiscard)
+	{
+		this.alphaDiscard = alphaDiscard;
 	}
 }

@@ -20,6 +20,7 @@ import de.s42.mq.data.FloatData;
 import de.s42.mq.data.Vector2Data;
 import de.s42.mq.data.Vector4Data;
 import de.s42.mq.meshes.Quad;
+import de.s42.mq.rendering.RenderContext;
 import de.s42.mq.ui.layout.Layout;
 import de.s42.mq.ui.layout.LayoutOptions;
 
@@ -114,7 +115,7 @@ public class Panel extends Quad implements UIComponent
 			return;
 		}
 
-		log.debug("Loading panel " + getName());
+		log.trace("Loading panel " + getName());
 
 		setDynamicVertices(true);
 
@@ -132,7 +133,7 @@ public class Panel extends Quad implements UIComponent
 	}
 
 	@Override
-	public void render()
+	public void render(RenderContext context)
 	{
 		assert getLayout() != null : "getLayout() != null for " + this;
 		assert getLayoutOptions() != null : "getLayoutOptions() != null for " + this;
@@ -143,7 +144,7 @@ public class Panel extends Quad implements UIComponent
 			lay.layout(this, getLayoutOptions());
 		}
 
-		super.render();
+		super.render(context);
 	}
 
 	@Override
@@ -249,7 +250,6 @@ public class Panel extends Quad implements UIComponent
 	{
 		this.uiManager = uiManager;
 	}
-	// "Getters/Setters" </editor-fold>
 
 	@Override
 	public boolean isFocusable()
@@ -262,4 +262,5 @@ public class Panel extends Quad implements UIComponent
 	{
 		this.focusable = focusable;
 	}
+	// "Getters/Setters" </editor-fold>
 }

@@ -18,6 +18,7 @@ import de.s42.mq.assets.AbstractAsset;
 import de.s42.mq.cameras.Camera;
 import de.s42.mq.core.Copyable;
 import de.s42.mq.materials.Material;
+import de.s42.mq.rendering.RenderContext;
 import de.s42.mq.util.Transform;
 import java.lang.reflect.InvocationTargetException;
 import java.util.ArrayList;
@@ -62,7 +63,7 @@ public abstract class Mesh<ChildType extends Object> extends AbstractAsset imple
 	@AttributeDL(ignore = true)
 	protected MeshGroup parent;
 
-	public abstract void render();
+	public abstract void render(RenderContext context);
 
 	@Override
 	public Mesh copy()

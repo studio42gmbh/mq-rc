@@ -23,7 +23,9 @@ import de.s42.mq.core.Copyable;
 import de.s42.mq.data.ColorData;
 import de.s42.mq.data.FloatData;
 import de.s42.mq.data.StringData;
+import de.s42.mq.materials.Material;
 import de.s42.mq.meshes.Mesh;
+import de.s42.mq.rendering.RenderContext;
 import de.s42.mq.ui.UIComponent;
 import de.s42.mq.ui.UIManager;
 import de.s42.mq.ui.layout.Layout;
@@ -185,7 +187,7 @@ public class Text extends Mesh implements UIComponent, Copyable
 
 		super.load();
 
-		log.debug("Generating font cache", maxCharCount);
+		log.trace("Generating font cache", maxCharCount);
 		vao = glGenVertexArrays();
 		glBindVertexArray(vao);
 
@@ -453,8 +455,9 @@ public class Text extends Mesh implements UIComponent, Copyable
 	}
 
 	@Override
-	public void render()
+	public void render(RenderContext context)
 	{
+		assert context != null : "context != null";
 		assert isLoaded();
 		assert getMaterial() != null;
 		assert getMaterial().isLoaded();
@@ -470,7 +473,9 @@ public class Text extends Mesh implements UIComponent, Copyable
 		}
 
 		// log.debug("Render " + font.getFace() + " " + getText());
-		FontShader shader = (FontShader) getMaterial().getShader();
+		// Use override material if given
+		Material mat = (context.getOverrideMaterial() != null) ? context.getOverrideMaterial() : material;
+		FontShader shader = (FontShader) mat.getShader();
 
 		// Apply layout if given
 		Layout lay = getLayout();
@@ -500,7 +505,7 @@ public class Text extends Mesh implements UIComponent, Copyable
 		// @todo Change formula to better manage scaling
 		float edgeSize = Math.max(0.001f, font.getSmoothingFactor() / Math.max(1.0f, fontScreenSize));
 
-		material.beforeRendering();
+		mat.beforeRendering(context);
 		shader.setMesh(this);
 		shader.setBaseTexture(getFont().getPages().get(0).getTexture());
 
@@ -512,7 +517,7 @@ public class Text extends Mesh implements UIComponent, Copyable
 		shader.setTint2(getColor2());
 		shader.getEdge2Size().setFloatValue(edgeSize);
 
-		shader.beforeRendering();
+		shader.beforeRendering(context);
 
 		glBindVertexArray(vao);
 
@@ -546,7 +551,8 @@ public class Text extends Mesh implements UIComponent, Copyable
 
 		glBindVertexArray(0);
 
-		shader.afterRendering();
+		shader.afterRendering(context);
+		mat.afterRendering(context);
 	}
 
 	@Override

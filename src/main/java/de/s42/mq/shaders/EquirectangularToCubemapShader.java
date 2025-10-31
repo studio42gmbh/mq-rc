@@ -13,6 +13,7 @@ package de.s42.mq.shaders;
 
 import de.s42.dl.DLAttribute.AttributeDL;
 import de.s42.mq.materials.Texture;
+import de.s42.mq.rendering.RenderContext;
 
 /**
  * Path vertexShaderSource @required @isFile; Path fragmentShaderSource @required @isFile; boolean depthTest : false;
@@ -51,9 +52,9 @@ public class EquirectangularToCubemapShader extends Shader
 	}
 
 	@Override
-	public void beforeRendering()
+	public void beforeRendering(RenderContext context)
 	{
-		super.beforeRendering();
+		super.beforeRendering(context);
 
 		assert camera != null;
 		assert equirectangularTexture != null;
@@ -68,11 +69,11 @@ public class EquirectangularToCubemapShader extends Shader
 	}
 
 	@Override
-	public void afterRendering()
+	public void afterRendering(RenderContext context)
 	{
 		unsetTexture(0);
 
-		super.afterRendering();
+		super.afterRendering(context);
 	}
 
 	// <editor-fold desc="Getters/Setters" defaultstate="collapsed">

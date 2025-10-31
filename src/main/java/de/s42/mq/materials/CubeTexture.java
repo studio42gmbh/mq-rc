@@ -17,6 +17,7 @@ import de.s42.mq.buffers.FrameBuffer;
 import de.s42.mq.cameras.Camera;
 import de.s42.mq.cameras.PerspectiveCamera;
 import de.s42.mq.meshes.Cube;
+import de.s42.mq.rendering.DefaultRenderContext;
 import de.s42.mq.shaders.EquirectangularToCubemapShader;
 import org.joml.Vector3f;
 import static org.lwjgl.opengl.GL11.*;
@@ -151,7 +152,8 @@ public class CubeTexture extends Texture
 
 				glFramebufferTexture2D(GL_FRAMEBUFFER, GL_COLOR_ATTACHMENT0, GL_TEXTURE_CUBE_MAP_POSITIVE_X + i, textureId, m);
 
-				cube.render();
+				DefaultRenderContext context = new DefaultRenderContext();
+				cube.render(context);
 			}
 		}
 

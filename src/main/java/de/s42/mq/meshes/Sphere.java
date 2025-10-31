@@ -1,25 +1,31 @@
 /*
  * Copyright Studio 42 GmbH 2021. All rights reserved.
- *  
+ *
  * Unless required by applicable law or agreed to in writing, software
  * distributed under the License is distributed on an "AS IS" BASIS,
  * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
  * See the License for the specific language governing permissions and
  * limitations under the License.
- *  
+ *
  * For details to the License read https://www.s42m.de/license
  */
 package de.s42.mq.meshes;
 
 import de.s42.dl.DLAttribute.AttributeDL;
 import de.s42.dl.exceptions.DLException;
+import de.s42.log.LogManager;
+import de.s42.log.Logger;
+import de.s42.mq.materials.Material;
+import de.s42.mq.rendering.RenderContext;
 import de.s42.mq.shaders.Shader;
 import java.nio.FloatBuffer;
 import java.nio.IntBuffer;
-import de.s42.log.LogManager;
-import de.s42.log.Logger;
 import org.joml.Vector3f;
-import static org.lwjgl.opengl.GL46.*;
+import static org.lwjgl.opengl.GL11.*;
+import static org.lwjgl.opengl.GL15.*;
+import static org.lwjgl.opengl.GL20.glEnableVertexAttribArray;
+import static org.lwjgl.opengl.GL20.glVertexAttribPointer;
+import static org.lwjgl.opengl.GL30.*;
 import org.lwjgl.system.MemoryUtil;
 
 /**
@@ -76,9 +82,9 @@ public class Sphere<ChildType extends Object> extends Mesh<ChildType>
 		vao = glGenVertexArrays();
 		glBindVertexArray(vao);
 
-		log.debug("Generating sphere", rings * sectors);
+		log.trace("Generating sphere", rings * sectors);
 
-		// Generate vertex buffer		
+		// Generate vertex buffer
 		vbo = glGenBuffers();
 		glBindBuffer(GL_ARRAY_BUFFER, vbo);
 		float PI = (float) Math.PI;
@@ -110,7 +116,7 @@ public class Sphere<ChildType extends Object> extends Mesh<ChildType>
 		glBufferData(GL_ARRAY_BUFFER, fb, GL_STATIC_DRAW);
 		MemoryUtil.memFree(fb);
 
-		// Generate index/element buffer 
+		// Generate index/element buffer
 		ibo = glGenBuffers();
 		glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, ibo);
 		IntBuffer ib = MemoryUtil.memAllocInt((rings - 1) * (sectors - 1) * 6);
@@ -145,19 +151,22 @@ public class Sphere<ChildType extends Object> extends Mesh<ChildType>
 	}
 
 	@Override
-	public void render()
+	public void render(RenderContext context)
 	{
+		assert context != null : "context != null";
 		assert material != null;
 		assert material.isLoaded();
 		assert isLoaded();
 
-		Shader shader = material.getShader();
+		// Use override material if given
+		Material mat = (context.getOverrideMaterial() != null) ? context.getOverrideMaterial() : material;
+		Shader shader = mat.getShader();
 
 		updateModelMatrix();
 
-		material.beforeRendering();
+		mat.beforeRendering(context);
 		shader.setMesh(this);
-		shader.beforeRendering();
+		shader.beforeRendering(context);
 
 		glBindVertexArray(vao);
 
@@ -183,7 +192,8 @@ public class Sphere<ChildType extends Object> extends Mesh<ChildType>
 
 		glBindBuffer(GL_ARRAY_BUFFER, 0);
 		glBindVertexArray(0);
-		shader.afterRendering();
+		shader.afterRendering(context);
+		mat.afterRendering(context);
 	}
 
 	public float getRadius()

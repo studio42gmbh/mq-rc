@@ -12,6 +12,7 @@
 package de.s42.mq.shaders;
 
 import de.s42.mq.data.FloatData;
+import de.s42.mq.rendering.RenderContext;
 
 /**
  *
@@ -40,13 +41,13 @@ public class HighPassFilterShader extends BasicFXShader
 	}
 
 	@Override
-	public void beforeRendering()
+	public void beforeRendering(RenderContext context)
 	{
 		assert thresholdLow != null;
 		assert thresholdHigh != null;
 		assert intensity != null;
 
-		super.beforeRendering();
+		super.beforeRendering(context);
 
 		setUniform(thresholdLowUniform, thresholdLow);
 		setUniform(thresholdHighUniform, thresholdHigh);

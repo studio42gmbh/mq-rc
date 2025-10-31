@@ -15,6 +15,7 @@ import de.s42.dl.DLAttribute.AttributeDL;
 import de.s42.log.LogManager;
 import de.s42.log.Logger;
 import de.s42.mq.buffers.FXBuffer;
+import de.s42.mq.rendering.RenderContext;
 import static org.lwjgl.opengl.GL33.glBindSampler;
 
 /**
@@ -41,9 +42,9 @@ public class CombineFXShader extends BasicFXShader
 	}
 
 	@Override
-	public void beforeRendering()
+	public void beforeRendering(RenderContext context)
 	{
-		super.beforeRendering();
+		super.beforeRendering(context);
 
 		if (inBuffer2 != null) {
 
@@ -57,7 +58,7 @@ public class CombineFXShader extends BasicFXShader
 	}
 
 	@Override
-	public void afterRendering()
+	public void afterRendering(RenderContext context)
 	{
 		if (inBuffer2 != null) {
 			unsetTexture(1);
@@ -67,7 +68,7 @@ public class CombineFXShader extends BasicFXShader
 			}
 		}
 
-		super.afterRendering();
+		super.afterRendering(context);
 	}
 
 	// <editor-fold desc="Getters/Setters" defaultstate="collapsed">

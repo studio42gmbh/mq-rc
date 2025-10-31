@@ -1,35 +1,34 @@
 /*
  * Copyright Studio 42 GmbH 2021. All rights reserved.
- *  
+ *
  * Unless required by applicable law or agreed to in writing, software
  * distributed under the License is distributed on an "AS IS" BASIS,
  * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
  * See the License for the specific language governing permissions and
  * limitations under the License.
- *  
+ *
  * For details to the License read https://www.s42m.de/license
  */
 package de.s42.mq.meshes;
 
-import de.s42.dl.DLAnnotation.AnnotationDL;
 import de.s42.dl.DLAttribute.AttributeDL;
 import de.s42.dl.exceptions.DLException;
+import de.s42.log.LogManager;
+import de.s42.log.Logger;
 import de.s42.mq.data.IntegerData;
+import de.s42.mq.materials.Material;
+import de.s42.mq.rendering.RenderContext;
 import de.s42.mq.shaders.ParticlesShader;
 import de.s42.mq.util.MQMath;
 import java.security.SecureRandom;
-import de.s42.log.LogManager;
-import de.s42.log.Logger;
-import de.s42.mq.dl.annotations.EditableDLAnnotation;
-import de.s42.mq.dl.annotations.InDegreesDLAnnotation;
-import de.s42.mq.dl.annotations.MaxDLAnnotation;
-import de.s42.mq.dl.annotations.MinDLAnnotation;
-import de.s42.mq.dl.annotations.StepDLAnnotation;
-import static org.lwjgl.opengl.GL15.GL_ARRAY_BUFFER;
-import static org.lwjgl.opengl.GL15.glBindBuffer;
-import static org.lwjgl.opengl.GL30.glBindVertexArray;
-import static org.lwjgl.opengl.GL30.glGenVertexArrays;
-import static org.lwjgl.opengl.GL46.*;
+import static org.lwjgl.opengl.GL11.GL_FLOAT;
+import static org.lwjgl.opengl.GL11.GL_TRIANGLES;
+import static org.lwjgl.opengl.GL15.*;
+import static org.lwjgl.opengl.GL20.glEnableVertexAttribArray;
+import static org.lwjgl.opengl.GL20.glVertexAttribPointer;
+import static org.lwjgl.opengl.GL30.*;
+import static org.lwjgl.opengl.GL31.glDrawArraysInstanced;
+import static org.lwjgl.opengl.GL33.glVertexAttribDivisor;
 
 /**
  *
@@ -42,7 +41,7 @@ public class Particles extends Mesh
 
 	@AttributeDL(required = true)
 	protected int count;
-	
+
 	@AttributeDL(required = true)
 	//@AnnotationDL(value = EditableDLAnnotation.DEFAULT_SYMBOL)
 	//@AnnotationDL(value = MinDLAnnotation.DEFAULT_SYMBOL, parameters = "0")
@@ -73,12 +72,12 @@ public class Particles extends Mesh
 		assert count > 0;
 		this.count = count;
 	}
-	
+
 	@Override
 	public Particles copy()
 	{
-		Particles copy = (Particles)super.copy();
-		
+		Particles copy = (Particles) super.copy();
+
 		copy.count = count;
 		copy.displayCount = displayCount;
 		copy.vao = vao;
@@ -86,19 +85,19 @@ public class Particles extends Mesh
 		copy.seedsBuffer = seedsBuffer;
 
 		return copy;
-	}	
+	}
 
 	@Override
 	public void load() throws DLException
 	{
 		assert count > 0;
-		
+
 		if (isLoaded()) {
 			return;
 		}
-		
+
 		super.load();
-		
+
 		log.info("Generating particles {}", count);
 
 		vao = glGenVertexArrays();
@@ -118,7 +117,7 @@ public class Particles extends Mesh
 		glBufferData(GL_ARRAY_BUFFER, seeds, GL_STATIC_DRAW);
 		glBindBuffer(GL_ARRAY_BUFFER, 0);
 
-		// Generate vertex buffer		
+		// Generate vertex buffer
 		vbo = glGenBuffers();
 		glBindBuffer(GL_ARRAY_BUFFER, vbo);
 		glBufferData(GL_ARRAY_BUFFER, quadVertices, GL_STATIC_DRAW);
@@ -138,25 +137,28 @@ public class Particles extends Mesh
 		vbo = -1;
 		glDeleteVertexArrays(vao);
 		vao = -1;
-		
+
 		super.unload();
 	}
 
 	@Override
-	public void render()
+	public void render(RenderContext context)
 	{
+		assert context != null : "context != null";
 		assert material != null;
 		assert material.isLoaded();
 		assert isLoaded();
 		assert material.getShader() instanceof ParticlesShader;
 
-		ParticlesShader shader = (ParticlesShader) material.getShader();
-		
+		// Use override material if given
+		Material mat = (context.getOverrideMaterial() != null) ? context.getOverrideMaterial() : material;
+		ParticlesShader shader = (ParticlesShader) mat.getShader();
+
 		updateModelMatrix();
-		
-		material.beforeRendering();
+
+		mat.beforeRendering(context);
 		shader.setMesh(this);
-		shader.beforeRendering();
+		shader.beforeRendering(context);
 
 		glBindVertexArray(vao);
 
@@ -181,7 +183,8 @@ public class Particles extends Mesh
 
 		glBindVertexArray(0);
 
-		shader.afterRendering();
+		shader.afterRendering(context);
+		mat.afterRendering(context);
 	}
 
 	public int getCount()
