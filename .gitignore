@@ -18,3 +18,4 @@ hs_err_pid*
 # all built files
 /target/
 /src/main/resources/de/s42/mq/rc/mq-rc.version
+Thumbs.db
