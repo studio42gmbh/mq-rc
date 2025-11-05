@@ -46,7 +46,7 @@ type de.s42.mq.shaders.postfx.PostFXShader @java extends de.s42.mq.shaders.Shade
 	FloatData vignetteEnd  /*@editable*/ /*@min(0.0)*/ /*@max(2.0)*/ /*@step(0.05)*/;
 	ColorData vignetteColor /*@editable*/;
 	FloatData chromaticAbberationStrength /*@editable*/ /*@min(0.0)*/ /*@max(1000.0)*/ /*@step(0.1)*/;
-	BlitMode blitMode : DEFAULT;
+	BlitMode blitMode : TONEMAP_ACES;
 	FloatData lookupIntensity /*@editable*/ /*@min(0.0)*/ /*@max(1000.0)*/ /*@step(0.1)*/;
 	FloatData barrelPower /*@editable*/ /*@min(0.0)*/ /*@max(1000.0)*/ /*@step(0.1)*/;
 	Texture lookup;

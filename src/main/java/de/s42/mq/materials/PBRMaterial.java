@@ -16,6 +16,7 @@ import de.s42.dl.exceptions.DLException;
 import de.s42.mq.MQColor;
 import de.s42.mq.rendering.RenderContext;
 import de.s42.mq.shaders.PBRShader;
+import de.s42.mq.ui.editable;
 import java.nio.file.Path;
 import org.joml.Vector2f;
 import org.joml.Vector3f;
@@ -77,12 +78,25 @@ public class PBRMaterial extends Material
 	protected boolean irradianceTextureLoaded;
 	protected boolean brdfLUTTextureLoaded;
 
+	@editable
 	protected MQColor tint = new MQColor(1.0f);
+
+	@editable
 	protected Vector2f normalScale = new Vector2f(1.0f);
+
+	@editable
 	protected float roughnessScale = 1.0f;
+
+	@editable
 	protected float roughnessOffset = 0.0f;
+
+	@editable
 	protected float metalnessScale = 1.0f;
+
+	@editable
 	protected float metalnessOffset = 0.0f;
+
+	@editable
 	protected Vector3f emissiveScale = new Vector3f(1.0f);
 
 	// ATTENTION: This field helps DL to change the type of shader to PBRShader in type reflection

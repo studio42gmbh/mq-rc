@@ -12,7 +12,6 @@
 package de.s42.mq.ui;
 
 import de.s42.dl.DLAttribute.AttributeDL;
-import de.s42.dl.exceptions.DLException;
 import de.s42.mq.core.Copyable;
 import de.s42.mq.core.Entity;
 import de.s42.mq.input.KeyInputHandler;
@@ -36,7 +35,7 @@ public interface UIComponent extends Copyable, Entity, KeyInputHandler
 	@AttributeDL(ignore = true)
 	public void setUiManager(UIManager uiManager);
 
-	public void handleClick(int x, int y) throws DLException;
+	public void handleClick(int x, int y) throws Exception;
 
 	public Layout getLayout();
 

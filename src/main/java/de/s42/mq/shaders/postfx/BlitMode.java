@@ -17,17 +17,18 @@ package de.s42.mq.shaders.postfx;
  */
 public enum BlitMode
 {
-	DEFAULT(0),
-	RED_CHANNEL(1),
-	GREEN_CHANNEL(2),
-	BLUE_CHANNEL(3),
-	ALPHA_CHANNEL(4),
-	LUMINANCE(5),
-	INVERTED(6),
-	LINEAR_COLORS(7),
-	JUST_GAMMA(8),
-	TONEMAP_ACES(9),
-	IDENTIFIER(10);
+	LINEAR_COLORS(0),
+	JUST_GAMMA(1),
+	TONEMAP_LINEAR(2),
+	TONEMAP_ACES(3),
+	SINGLE_CHANNEL(4),
+	RED_CHANNEL(5),
+	GREEN_CHANNEL(6),
+	BLUE_CHANNEL(7),
+	ALPHA_CHANNEL(8),
+	LUMINANCE(9),
+	INVERTED(10),
+	IDENTIFIER(11),;
 
 	public final int blitModeId;
 	private static int maxBlitModeId = -1;

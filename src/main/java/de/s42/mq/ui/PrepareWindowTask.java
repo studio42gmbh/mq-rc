@@ -41,7 +41,7 @@ public class PrepareWindowTask extends AbstractWindowTask
 	{
 		assert window != null;
 
-		log.info("Window", window.getName(), window.getWidth(), "x", window.getHeight());
+		log.debug("Window", window.getName(), window.getWidth(), "x", window.getHeight());
 
 		glfwSetErrorCallback(errorCallback = GLFWErrorCallback.createPrint(System.err));
 
@@ -92,7 +92,7 @@ public class PrepareWindowTask extends AbstractWindowTask
 		} // windowed mode
 		else {
 
-			log.info("Starting windowed", window.getWidth(), window.getHeight(), vidmode.refreshRate());
+			log.info("Starting windowed", window.getWidth(), window.getHeight(), vidmode.width(), vidmode.height(), vidmode.refreshRate());
 
 			glfwWindowHint(GLFW_RESIZABLE, GLFW_TRUE);
 			glfwWindowHint(GLFW_DECORATED, window.isDecorated() ? GLFW_TRUE : GLFW_FALSE);
@@ -102,7 +102,12 @@ public class PrepareWindowTask extends AbstractWindowTask
 			);
 
 			//glfwSetWindowMonitor(window.getGlfwWindowHandle(), 0, 0, 0, window.getWidth(), window.getHeight(), 60);
-			glfwSetWindowPos(window.getGlfwWindowHandle(), (vidmode.width() - window.getWidth()) / 2, (vidmode.height() - window.getHeight()) / 2);
+			int left = (window.getLeft() != -1) ? window.getLeft() : ((vidmode.width() - window.getWidth()) / 2);
+			int top = (window.getTop() != -1) ? window.getTop() : ((vidmode.height() - window.getHeight()) / 2);
+
+			glfwSetWindowPos(window.getGlfwWindowHandle(), left, top);
+			// @todo allow to configure size limits
+			glfwSetWindowSizeLimits(window.getGlfwWindowHandle(), 400, 300, 10000, 10000);
 			try (MemoryStack frame = MemoryStack.stackPush()) {
 				IntBuffer framebufferSize = frame.mallocInt(2);
 				nglfwGetFramebufferSize(window.getGlfwWindowHandle(), memAddress(framebufferSize), memAddress(framebufferSize) + 4);

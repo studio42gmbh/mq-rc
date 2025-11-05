@@ -108,8 +108,8 @@ public class SSAOShader extends Shader
 
 		HaltonSequenceGenerator gen = new HaltonSequenceGenerator(2);
 
-		points = new float[100];
-		for (int i = 0; i < 20; ++i) {
+		points = new float[256];
+		for (int i = 0; i < 128; ++i) {
 
 			double[] vec = gen.nextVector();
 

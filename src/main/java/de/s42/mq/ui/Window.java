@@ -46,6 +46,12 @@ public class Window extends AbstractAsset
 	@AttributeDL(required = true)
 	protected int height;
 
+	@AttributeDL(required = false, defaultValue = "-1")
+	protected int left = -1;
+
+	@AttributeDL(required = true, defaultValue = "-1")
+	protected int top = -1;
+
 	@AttributeDL(required = false, defaultValue = "-")
 	protected String title = "-";
 
@@ -331,5 +337,25 @@ public class Window extends AbstractAsset
 		this.height = height;
 		this.dimension.setValue(width, height);
 		setResized(true);
+	}
+
+	public int getLeft()
+	{
+		return left;
+	}
+
+	public void setLeft(int left)
+	{
+		this.left = left;
+	}
+
+	public int getTop()
+	{
+		return top;
+	}
+
+	public void setTop(int top)
+	{
+		this.top = top;
 	}
 }

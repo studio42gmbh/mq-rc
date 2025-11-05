@@ -13,12 +13,11 @@ package de.s42.mq.meshes;
 
 import de.s42.dl.DLAttribute.AttributeDL;
 import de.s42.dl.exceptions.DLException;
-import de.s42.log.LogManager;
-import de.s42.log.Logger;
 import de.s42.mq.data.IntegerData;
 import de.s42.mq.materials.Material;
 import de.s42.mq.rendering.RenderContext;
 import de.s42.mq.shaders.ParticlesShader;
+import de.s42.mq.ui.editable;
 import de.s42.mq.util.MQMath;
 import java.security.SecureRandom;
 import static org.lwjgl.opengl.GL11.GL_FLOAT;
@@ -37,8 +36,7 @@ import static org.lwjgl.opengl.GL33.glVertexAttribDivisor;
 public class Particles extends Mesh
 {
 
-	private final static Logger log = LogManager.getLogger(Particles.class.getName());
-
+	//private final static Logger log = LogManager.getLogger(Particles.class.getName());
 	@AttributeDL(required = true)
 	protected int count;
 
@@ -47,6 +45,7 @@ public class Particles extends Mesh
 	//@AnnotationDL(value = MinDLAnnotation.DEFAULT_SYMBOL, parameters = "0")
 	//@AnnotationDL(value = MaxDLAnnotation.DEFAULT_SYMBOL, parameters = "1000000")
 	//@AnnotationDL(value = StepDLAnnotation.DEFAULT_SYMBOL, parameters = "1")
+	@editable
 	protected IntegerData displayCount = new IntegerData();
 
 	protected final static float quadVertices[] = {
@@ -98,7 +97,7 @@ public class Particles extends Mesh
 
 		super.load();
 
-		log.info("Generating particles {}", count);
+		log.trace("Generating particles", count);
 
 		vao = glGenVertexArrays();
 		glBindVertexArray(vao);
@@ -148,10 +147,14 @@ public class Particles extends Mesh
 		assert material != null;
 		assert material.isLoaded();
 		assert isLoaded();
-		assert material.getShader() instanceof ParticlesShader;
 
 		// Use override material if given
 		Material mat = (context.getOverrideMaterial() != null) ? context.getOverrideMaterial() : material;
+
+		if (!(mat.getShader() instanceof ParticlesShader)) {
+			return;
+		}
+
 		ParticlesShader shader = (ParticlesShader) mat.getShader();
 
 		updateModelMatrix();

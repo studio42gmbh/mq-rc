@@ -19,6 +19,7 @@ import de.s42.mq.cameras.Camera;
 import de.s42.mq.core.Copyable;
 import de.s42.mq.materials.Material;
 import de.s42.mq.rendering.RenderContext;
+import de.s42.mq.ui.editable;
 import de.s42.mq.util.Transform;
 import java.lang.reflect.InvocationTargetException;
 import java.util.ArrayList;
@@ -39,6 +40,7 @@ public abstract class Mesh<ChildType extends Object> extends AbstractAsset imple
 
 	//private final static Logger log = LogManager.getLogger(Mesh.class.getName());
 	@AttributeDL(defaultValue = "false")
+	@editable
 	protected boolean flipNormals = false;
 
 	protected Material material;
@@ -46,9 +48,23 @@ public abstract class Mesh<ChildType extends Object> extends AbstractAsset imple
 	@AttributeDL(defaultValue = "-1")
 	protected int identifier = -1;
 
+	@editable
 	protected String[] layers;
 
+	// Pseudo property to allow editing
+	@editable
+	protected Vector3f position;
+
+	// Pseudo property to allow editing
+	@editable
+	protected Vector3f scale;
+
+	// Pseudo property to allow editing
+	@editable
+	protected Quaternionf rotation;
+
 	@AttributeDL(ignore = true)
+	//@editable
 	protected final Transform transform = new Transform();
 
 	@AttributeDL(ignore = true)

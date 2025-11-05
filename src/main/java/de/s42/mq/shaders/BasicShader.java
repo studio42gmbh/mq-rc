@@ -17,6 +17,7 @@ import de.s42.mq.MQColor;
 import de.s42.mq.data.ColorData;
 import de.s42.mq.materials.Texture;
 import de.s42.mq.rendering.RenderContext;
+import de.s42.mq.ui.editable;
 
 /**
  *
@@ -30,6 +31,7 @@ public class BasicShader extends Shader
 	protected Texture baseTexture;
 
 	@AttributeDL(required = false)
+	@editable
 	protected ColorData tint = new ColorData(MQColor.White);
 
 	protected int viewMatrixUniform = -1;

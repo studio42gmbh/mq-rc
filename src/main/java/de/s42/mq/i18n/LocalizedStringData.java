@@ -80,6 +80,7 @@ public class LocalizedStringData extends StringData
 		}
 
 		value = (String) val;
+		l10nRevision = l10n.getRevision();
 
 		return value;
 	}

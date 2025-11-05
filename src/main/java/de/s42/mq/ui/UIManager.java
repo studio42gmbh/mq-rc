@@ -12,7 +12,6 @@
 package de.s42.mq.ui;
 
 import de.s42.dl.annotations.persistence.DontPersistDLAnnotation.dontPersist;
-import de.s42.dl.exceptions.DLException;
 import de.s42.dl.types.DLContainer;
 import de.s42.mq.assets.AbstractAsset;
 import java.util.*;
@@ -85,7 +84,7 @@ public class UIManager extends AbstractAsset implements DLContainer<UIComponent>
 		componentsByIdentifier.remove(component.getIdentifier());
 	}
 
-	public void handleClick(int identifier, int x, int y) throws DLException
+	public void handleClick(int identifier, int x, int y) throws Exception
 	{
 		UIComponent component = componentsByIdentifier.get(identifier);
 

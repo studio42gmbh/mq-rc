@@ -26,7 +26,6 @@
 package de.s42.mq.ui;
 
 import de.s42.dl.DLAttribute.AttributeDL;
-import de.s42.dl.exceptions.DLException;
 import de.s42.mq.core.AbstractEntity;
 import de.s42.mq.ui.layout.Layout;
 import de.s42.mq.ui.layout.LayoutOptions;
@@ -50,7 +49,7 @@ public abstract class AbstractUIComponent extends AbstractEntity implements UICo
 	protected LayoutOptions layoutOptions;
 
 	@Override
-	public void handleClick(int x, int y) throws DLException
+	public void handleClick(int x, int y) throws Exception
 	{
 		// Implement
 	}

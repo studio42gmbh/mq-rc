@@ -38,6 +38,7 @@ module de.sft.mq.rc
 	exports de.s42.mq.dl.types;
 	exports de.s42.mq.editor;
 	exports de.s42.mq.editor.dataeditors;
+	exports de.s42.mq.events;
 	exports de.s42.mq.fonts;
 	exports de.s42.mq.fonts.fnt;
 	exports de.s42.mq.i18n;

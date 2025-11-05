@@ -42,6 +42,10 @@ import de.s42.mq.dl.types.Vector4DLType;
 import de.s42.mq.editor.AbstractDataEditor;
 import de.s42.mq.editor.DataEditor;
 import de.s42.mq.editor.dataeditors.*;
+import de.s42.mq.events.BaseEvent;
+import de.s42.mq.events.DefaultEventManager;
+import de.s42.mq.events.Event;
+import de.s42.mq.events.EventManager;
 import de.s42.mq.fonts.Text.HorizontalAlignment;
 import de.s42.mq.fonts.Text.VerticalAlignment;
 import de.s42.mq.fonts.*;
@@ -373,6 +377,12 @@ public class MQDLCore extends DefaultCore
 		defineType(createType(RenderShaderTask.class), "RenderShaderTask");
 		defineType(createType(RenderFXShaderTask.class), "RenderFXShaderTask");
 		defineType(createType(RenderCombineFXShaderTask.class), "RenderCombineFXShaderTask");
+
+		// Events
+		defineType(Event.class, "Event");
+		defineType(BaseEvent.class, "BaseEvent");
+		defineType(EventManager.class, "EventManager");
+		defineType(DefaultEventManager.class, "DefaultEventManager");
 
 		// Data Maps
 		DLInstance colors = createInstance(getType(MapDLType.DEFAULT_SYMBOL).orElseThrow(), "Colors");

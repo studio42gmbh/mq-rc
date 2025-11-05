@@ -11,6 +11,7 @@
  */
 package de.s42.mq.meshes;
 
+import de.s42.base.collections.ListHelper;
 import de.s42.dl.DLAttribute.AttributeDL;
 import de.s42.dl.exceptions.DLException;
 import de.s42.log.LogManager;
@@ -18,6 +19,7 @@ import de.s42.log.Logger;
 import de.s42.mq.cameras.Camera;
 import de.s42.mq.data.BooleanData;
 import de.s42.mq.rendering.RenderContext;
+import de.s42.mq.ui.editable;
 import java.util.*;
 import java.util.function.Predicate;
 import org.joml.Quaternionf;
@@ -33,6 +35,7 @@ public class MeshGroup extends Mesh
 	private final static Logger log = LogManager.getLogger(MeshGroup.class.getName());
 
 	@AttributeDL(required = false)
+	@editable
 	protected BooleanData enabled = new BooleanData(true);
 
 	protected final List<Mesh> meshes = Collections.synchronizedList(new ArrayList());
@@ -200,7 +203,7 @@ public class MeshGroup extends Mesh
 	@Override
 	public List getChildren()
 	{
-		return Collections.unmodifiableList(animations);
+		return Collections.unmodifiableList(ListHelper.concatenate(meshes, animations));
 	}
 
 	public List<Mesh> getMeshes()
