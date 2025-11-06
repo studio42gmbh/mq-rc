@@ -23,7 +23,7 @@ import de.s42.mq.ui.editor;
  *
  * @author Benjamin Schiller
  */
-public class BasicShader extends Shader
+public class BasicShader extends PlainShader
 {
 
 	//private final static Logger log = LogManager.getLogger(BasicShader.class.getName());
@@ -34,38 +34,12 @@ public class BasicShader extends Shader
 	@editor
 	protected ColorData tint = new ColorData(MQColor.White);
 
-	protected int viewMatrixUniform = -1;
-	protected int projectionMatrixUniform = -1;
-	protected int modelMatrixUniform = -1;
 	protected int identifierUniform = -1;
 	protected int tintUniform = -1;
 	protected int alphaDiscardUniform = -1;
 	protected int totalTimeUniform = -1;
 	protected int deltaTimeUniform = -1;
 	protected int tickUniform = -1;
-
-	@Override
-	protected void loadShader()
-	{
-		// Samplers
-		setUniform("baseSampler", 0);
-
-		// Uniforms
-		viewMatrixUniform = getUniformLocationOpt("viewMatrix");
-		projectionMatrixUniform = getUniformLocationOpt("projectionMatrix");
-		modelMatrixUniform = getUniformLocationOpt("modelMatrix");
-		identifierUniform = getUniformLocationOpt("identifier");
-		tintUniform = getUniformLocationOpt("tint");
-		alphaDiscardUniform = getUniformLocationOpt("alphaDiscard");
-		totalTimeUniform = getUniformLocationOpt("totalTime");
-		deltaTimeUniform = getUniformLocationOpt("deltaTime");
-		tickUniform = getUniformLocationOpt("tick");
-
-		// Attributes
-		inputPosition = getAttributeLocationOpt("position");
-		inputNormal = getAttributeLocationOpt("normal");
-		inputTextureCoords = getAttributeLocationOpt("texCoords");
-	}
 
 	@Override
 	public void load() throws DLException
@@ -93,6 +67,31 @@ public class BasicShader extends Shader
 		}
 
 		super.unload();
+	}
+
+	@Override
+	protected void loadShader() throws DLException
+	{
+		super.loadShader();
+
+		// Samplers
+		setUniform("baseSampler", 0);
+
+		// Uniforms
+		viewMatrixUniform = getUniformLocationOpt("viewMatrix");
+		projectionMatrixUniform = getUniformLocationOpt("projectionMatrix");
+		modelMatrixUniform = getUniformLocationOpt("modelMatrix");
+		identifierUniform = getUniformLocationOpt("identifier");
+		tintUniform = getUniformLocationOpt("tint");
+		alphaDiscardUniform = getUniformLocationOpt("alphaDiscard");
+		totalTimeUniform = getUniformLocationOpt("totalTime");
+		deltaTimeUniform = getUniformLocationOpt("deltaTime");
+		tickUniform = getUniformLocationOpt("tick");
+
+		// Attributes
+		inputPosition = getAttributeLocationOpt("position");
+		inputNormal = getAttributeLocationOpt("normal");
+		inputTextureCoords = getAttributeLocationOpt("texCoords");
 	}
 
 	@Override
@@ -132,21 +131,6 @@ public class BasicShader extends Shader
 	}
 
 	// <editor-fold desc="Getters/Setters" defaultstate="collapsed">
-	public int getViewMatrixUniform()
-	{
-		return viewMatrixUniform;
-	}
-
-	public int getProjectionMatrixUniform()
-	{
-		return projectionMatrixUniform;
-	}
-
-	public int getModelMatrixUniform()
-	{
-		return modelMatrixUniform;
-	}
-
 	public Texture getBaseTexture()
 	{
 		return baseTexture;

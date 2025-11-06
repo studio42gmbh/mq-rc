@@ -11,6 +11,7 @@
  */
 package de.s42.mq.shaders;
 
+import de.s42.dl.exceptions.DLException;
 import de.s42.log.LogManager;
 import de.s42.log.Logger;
 import de.s42.mq.cameras.Camera;
@@ -20,10 +21,10 @@ import de.s42.mq.data.Vector3Data;
 import de.s42.mq.materials.CubeTexture;
 import de.s42.mq.materials.Texture;
 import de.s42.mq.rendering.RenderContext;
+import de.s42.mq.ui.editor;
 import de.s42.mq.util.HaltonSequenceGenerator;
 import org.joml.Vector2f;
 import org.joml.Vector3f;
-import de.s42.mq.ui.editor;
 
 /**
  *
@@ -75,7 +76,7 @@ public class PBRShader extends BasicShader
 	protected int shadowBiasUniform = -1;
 
 	@Override
-	protected void loadShader()
+	protected void loadShader() throws DLException
 	{
 		super.loadShader();
 

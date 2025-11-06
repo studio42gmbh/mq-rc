@@ -28,6 +28,7 @@ import de.s42.mq.assets.AbstractAsset;
 import de.s42.mq.buffers.FXBuffer;
 import de.s42.mq.cameras.Camera;
 import de.s42.mq.data.*;
+import de.s42.mq.dlt.UniformOrConst;
 import de.s42.mq.materials.CubeTexture;
 import de.s42.mq.materials.Texture;
 import de.s42.mq.meshes.Mesh;
@@ -174,6 +175,10 @@ public abstract class Shader extends AbstractAsset
 	@AttributeDL(defaultValue = "0.0000001")
 	@editor
 	protected float alphaDiscard = 0.0000001f;
+
+	@AttributeDL(defaultValue = "false")
+	@editor(editable = false)
+	protected boolean develop = false;
 
 	protected Camera camera;
 
@@ -384,9 +389,13 @@ public abstract class Shader extends AbstractAsset
 			options.setCacheCompiledTemplate(true);
 			CompiledTemplate compiled = DLT.compile(source, options);
 
-			DefaultTemplateContext context = new DefaultTemplateContext();
+			DefaultTemplateContext context = new DefaultTemplateContext(source.toAbsolutePath().toString());
+			context.addModifier(new UniformOrConst());
 			context.setBinding("shader", this);
 			evaluated = compiled.evaluate(context);
+
+			log.trace("Generated:\n", evaluated);
+
 		} // Otherwise load file memory mapped
 		else {
 			sourceBuf = getAssetManager().getSourceAsByteBuffer(source);
@@ -1024,5 +1033,15 @@ public abstract class Shader extends AbstractAsset
 	public void setAlphaDiscard(float alphaDiscard)
 	{
 		this.alphaDiscard = alphaDiscard;
+	}
+
+	public boolean isDevelop()
+	{
+		return develop;
+	}
+
+	public void setDevelop(boolean develop)
+	{
+		this.develop = develop;
 	}
 }

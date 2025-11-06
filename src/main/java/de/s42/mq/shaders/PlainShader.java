@@ -27,32 +27,14 @@ public class PlainShader extends Shader
 	protected int modelMatrixUniform = -1;
 
 	@Override
-	protected void loadShader()
+	protected void loadShader() throws DLException
 	{
+		super.loadShader();
+
 		viewMatrixUniform = getUniformLocationOpt("viewMatrix");
 		projectionMatrixUniform = getUniformLocationOpt("projectionMatrix");
 		modelMatrixUniform = getUniformLocationOpt("modelMatrix");
 		inputPosition = getAttributeLocationOpt("position");
-	}
-
-	@Override
-	public void load() throws DLException
-	{
-		if (isLoaded()) {
-			return;
-		}
-
-		super.load();
-	}
-
-	@Override
-	public void unload() throws DLException
-	{
-		if (!isLoaded()) {
-			return;
-		}
-
-		super.unload();
 	}
 
 	@Override
@@ -68,12 +50,6 @@ public class PlainShader extends Shader
 		setUniform(projectionMatrixUniform, camera.getProjectionMatrix());
 
 		setDraw6ColorAttachments();
-	}
-
-	@Override
-	public void afterRendering(RenderContext context)
-	{
-		super.afterRendering(context);
 	}
 
 	// <editor-fold desc="Getters/Setters" defaultstate="collapsed">
