@@ -19,7 +19,7 @@ import de.s42.mq.data.IntegerData;
 import de.s42.mq.materials.Texture;
 import de.s42.mq.rendering.RenderContext;
 import de.s42.mq.shaders.Shader;
-import de.s42.mq.ui.editable;
+import de.s42.mq.ui.editor;
 
 /**
  *
@@ -43,7 +43,7 @@ public class PostFXShader extends Shader
 	protected int barrelPowerUniform;
 
 	@AttributeDL(defaultValue = "TONEMAP_ACES")
-	@editable
+	@editor
 	protected BlitMode blitMode = BlitMode.TONEMAP_ACES;
 
 	@AttributeDL(required = true)
@@ -51,25 +51,25 @@ public class PostFXShader extends Shader
 
 	protected Texture lookup;
 
-	@editable
+	@editor
 	protected FloatData exposure = new FloatData();
 
-	@editable
+	@editor
 	protected FloatData vignetteStart = new FloatData();
 
-	@editable
+	@editor
 	protected FloatData vignetteEnd = new FloatData();
 
-	@editable
+	@editor
 	protected ColorData vignetteColor = new ColorData();
 
-	@editable
+	@editor
 	protected FloatData lookupIntensity = new FloatData();
 
-	@editable
+	@editor
 	protected FloatData barrelPower = new FloatData(1.0f);
 
-	@editable
+	@editor
 	protected FloatData chromaticAbberationStrength = new FloatData();
 
 	@Override

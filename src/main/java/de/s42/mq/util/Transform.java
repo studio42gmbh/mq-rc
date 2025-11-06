@@ -111,6 +111,11 @@ public final class Transform
 		return new Vector3f(wPos.x / wPos.w, wPos.y / wPos.w, wPos.z / wPos.w);
 	}
 
+	public Vector3f getWorldScale()
+	{
+		return matrix.getScale(new Vector3f());
+	}
+
 	public Vector3f getWorldDirection()
 	{
 		return (new Vector3f(1.0f, 0.0f, 0.0f)).mulDirection(matrix);

@@ -20,10 +20,10 @@ import de.s42.mq.data.Vector3Data;
 import de.s42.mq.materials.CubeTexture;
 import de.s42.mq.materials.Texture;
 import de.s42.mq.rendering.RenderContext;
-import de.s42.mq.ui.editable;
 import de.s42.mq.util.HaltonSequenceGenerator;
 import org.joml.Vector2f;
 import org.joml.Vector3f;
+import de.s42.mq.ui.editor;
 
 /**
  *
@@ -48,22 +48,22 @@ public class PBRShader extends BasicShader
 	protected CubeTexture irradianceTexture;
 	protected Texture brdfLUTTexture;
 
-	@editable
+	@editor
 	protected Vector2Data normalScale = new Vector2Data(new Vector2f(1.0f));
 
-	@editable
+	@editor
 	protected FloatData roughnessScale = new FloatData(1.0f);
 
-	@editable
+	@editor
 	protected FloatData roughnessOffset = new FloatData(0.0f);
 
-	@editable
+	@editor
 	protected FloatData metalnessScale = new FloatData(1.0f);
 
-	@editable
+	@editor
 	protected FloatData metalnessOffset = new FloatData(0.0f);
 
-	@editable
+	@editor
 	protected Vector3Data emissiveScale = new Vector3Data(new Vector3f(1.0f));
 
 	protected float[] points;

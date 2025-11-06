@@ -11,7 +11,7 @@
  */
 package de.s42.mq.core;
 
-import de.s42.mq.ui.editable;
+import de.s42.mq.ui.editor;
 
 /**
  *
@@ -20,7 +20,7 @@ import de.s42.mq.ui.editable;
 public abstract class AbstractEntity implements Entity
 {
 
-	@editable
+	@editor
 	protected String name;
 
 	@Override

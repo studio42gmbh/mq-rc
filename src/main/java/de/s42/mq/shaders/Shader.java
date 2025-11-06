@@ -32,7 +32,7 @@ import de.s42.mq.materials.CubeTexture;
 import de.s42.mq.materials.Texture;
 import de.s42.mq.meshes.Mesh;
 import de.s42.mq.rendering.RenderContext;
-import de.s42.mq.ui.editable;
+import de.s42.mq.ui.editor;
 import java.nio.ByteBuffer;
 import java.nio.FloatBuffer;
 import java.nio.IntBuffer;
@@ -132,47 +132,47 @@ public abstract class Shader extends AbstractAsset
 	}
 
 	@AttributeDL(defaultValue = "BACK")
-	@editable
+	@editor
 	protected CullType cullType = CullType.BACK;
 
 	@AttributeDL(defaultValue = "ONE")
-	@editable
+	@editor
 	protected BlendFunc sourceFunc = BlendFunc.ONE;
 
 	@AttributeDL(defaultValue = "ONE")
-	@editable
+	@editor
 	protected BlendFunc destFunc = BlendFunc.ONE;
 
 	@AttributeDL(defaultValue = "LESS")
-	@editable
+	@editor
 	protected DepthFunc depthFunc = DepthFunc.LESS;
 
 	@AttributeDL(defaultValue = "true")
-	@editable
+	@editor
 	protected boolean depthTest = true;
 
 	@AttributeDL(defaultValue = "true")
-	@editable
+	@editor
 	protected boolean depthWrite = true;
 
 	@AttributeDL(defaultValue = "true")
-	@editable
+	@editor
 	protected boolean cullFace = true;
 
 	@AttributeDL(defaultValue = "false")
-	@editable
+	@editor
 	protected boolean stencilTest = false;
 
 	@AttributeDL(defaultValue = "false")
-	@editable
+	@editor
 	protected boolean wireframe = false;
 
 	@AttributeDL(defaultValue = "false")
-	@editable
+	@editor
 	protected boolean renderTransparent = false;
 
 	@AttributeDL(defaultValue = "0.0000001")
-	@editable
+	@editor
 	protected float alphaDiscard = 0.0000001f;
 
 	protected Camera camera;

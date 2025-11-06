@@ -41,8 +41,8 @@ import static org.lwjgl.assimp.Assimp.*;
 public class FbxMesh extends MeshGroup
 {
 
+	@SuppressWarnings("FieldNameHidesFieldInSuperclass")
 	private final static Logger log = LogManager.getLogger(FbxMesh.class.getName());
-
 	// used to filter out default properties from blender export
 	protected final static List<String> defaultProperties = Arrays.asList(
 		"UserProperties",
@@ -88,6 +88,8 @@ public class FbxMesh extends MeshGroup
 			return;
 		}
 
+		long startTime = System.nanoTime();
+
 		/* @todo might wan to check which of these loading flags should be configurable */
 		//| aiProcess_FindDegenerates
 		//| aiProcess_FindInvalidData
@@ -101,19 +103,26 @@ public class FbxMesh extends MeshGroup
 			aiProcess_JoinIdenticalVertices
 			| aiProcess_Triangulate
 			| aiProcess_FlipUVs
-			| aiProcess_ImproveCacheLocality)) {
+			| aiProcess_ImproveCacheLocality
+			| aiProcess_GenNormals
+			| aiProcess_CalcTangentSpace
+		)) {
 			if (scene == null) {
 				throw new IllegalStateException(aiGetErrorString());
 			}
 			if (scene.mMeshes() == null) {
 				throw new InvalidInstance("No meshes found in file " + FilesHelper.createMavenNetbeansFileConsoleLink(source));
 			}
-			log.trace("Loaded scene " + scene.mNumMeshes());
+
 			AINode node = scene.mRootNode();
 			loadMetaData(scene.mMetaData(), this);
 			loadNodes(scene, node);
 			super.load();
+
+			long duration = (System.nanoTime() - startTime) / 1000000L;
+
 			//logHierarchy();
+			log.debug("Loaded " + source.toAbsolutePath() + " with " + scene.mNumMeshes() + " meshes in " + duration + " ms.");
 		}
 	}
 

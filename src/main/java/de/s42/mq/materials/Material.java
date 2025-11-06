@@ -18,9 +18,9 @@ import de.s42.mq.cameras.Camera;
 import de.s42.mq.rendering.RenderContext;
 import de.s42.mq.shaders.Shader;
 import de.s42.mq.shaders.Shader.CullType;
-import de.s42.mq.ui.editable;
 import java.util.HashMap;
 import java.util.Map;
+import de.s42.mq.ui.editor;
 
 /**
  *
@@ -36,11 +36,11 @@ public abstract class Material extends AbstractAsset
 	protected Shader shader;
 
 	@AttributeDL(required = false)
-	@editable
+	@editor
 	protected CullType cullType;
 
 	@AttributeDL(required = false)
-	@editable
+	@editor
 	protected float alphaDiscard = -1.0f;
 
 	//protected boolean shaderLoaded;

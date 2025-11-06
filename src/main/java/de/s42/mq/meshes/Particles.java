@@ -17,7 +17,6 @@ import de.s42.mq.data.IntegerData;
 import de.s42.mq.materials.Material;
 import de.s42.mq.rendering.RenderContext;
 import de.s42.mq.shaders.ParticlesShader;
-import de.s42.mq.ui.editable;
 import de.s42.mq.util.MQMath;
 import java.security.SecureRandom;
 import static org.lwjgl.opengl.GL11.GL_FLOAT;
@@ -28,6 +27,7 @@ import static org.lwjgl.opengl.GL20.glVertexAttribPointer;
 import static org.lwjgl.opengl.GL30.*;
 import static org.lwjgl.opengl.GL31.glDrawArraysInstanced;
 import static org.lwjgl.opengl.GL33.glVertexAttribDivisor;
+import de.s42.mq.ui.editor;
 
 /**
  *
@@ -45,7 +45,7 @@ public class Particles extends Mesh
 	//@AnnotationDL(value = MinDLAnnotation.DEFAULT_SYMBOL, parameters = "0")
 	//@AnnotationDL(value = MaxDLAnnotation.DEFAULT_SYMBOL, parameters = "1000000")
 	//@AnnotationDL(value = StepDLAnnotation.DEFAULT_SYMBOL, parameters = "1")
-	@editable
+	@editor
 	protected IntegerData displayCount = new IntegerData();
 
 	protected final static float quadVertices[] = {

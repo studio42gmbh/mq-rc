@@ -19,7 +19,7 @@ import de.s42.log.Logger;
 import de.s42.mq.cameras.Camera;
 import de.s42.mq.data.BooleanData;
 import de.s42.mq.rendering.RenderContext;
-import de.s42.mq.ui.editable;
+import de.s42.mq.ui.editor;
 import java.util.*;
 import java.util.function.Predicate;
 import org.joml.Quaternionf;
@@ -32,10 +32,11 @@ import org.joml.Vector3f;
 public class MeshGroup extends Mesh
 {
 
+	@SuppressWarnings("FieldNameHidesFieldInSuperclass")
 	private final static Logger log = LogManager.getLogger(MeshGroup.class.getName());
 
 	@AttributeDL(required = false)
-	@editable
+	@editor
 	protected BooleanData enabled = new BooleanData(true);
 
 	protected final List<Mesh> meshes = Collections.synchronizedList(new ArrayList());
@@ -338,6 +339,13 @@ public class MeshGroup extends Mesh
 	public void setRotation(Quaternionf rotation)
 	{
 		super.setRotation(rotation);
+		setModelMatrixDirty(true);
+	}
+
+	@Override
+	public void setScale(Vector3f scale)
+	{
+		super.setScale(scale);
 		setModelMatrixDirty(true);
 	}
 

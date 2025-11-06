@@ -37,6 +37,18 @@ import java.lang.annotation.Target;
 @Retention(RetentionPolicy.RUNTIME)
 @Target(value = {ElementType.FIELD})
 //@DLAnnotationType(RequiredDLAnnotation.class)
-public @interface editable
+public @interface editor
 {
+
+	public final static String AUTO_BY_DATA_TYPE = "AutoByDataType";
+
+	public String editorType() default AUTO_BY_DATA_TYPE;
+
+	public String editorConfig() default "";
+
+	public String editorGroup() default "";
+
+	public int editorIndex() default 0;
+
+	public boolean editable() default true;
 }
