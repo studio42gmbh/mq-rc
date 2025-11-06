@@ -49,22 +49,22 @@ public class PBRShader extends BasicShader
 	protected CubeTexture irradianceTexture;
 	protected Texture brdfLUTTexture;
 
-	@editor
+	@editor(editorGroup = "pbr")
 	protected Vector2Data normalScale = new Vector2Data(new Vector2f(1.0f));
 
-	@editor
+	@editor(editorGroup = "pbr")
 	protected FloatData roughnessScale = new FloatData(1.0f);
 
-	@editor
+	@editor(editorGroup = "pbr")
 	protected FloatData roughnessOffset = new FloatData(0.0f);
 
-	@editor
+	@editor(editorGroup = "pbr")
 	protected FloatData metalnessScale = new FloatData(1.0f);
 
-	@editor
+	@editor(editorGroup = "pbr")
 	protected FloatData metalnessOffset = new FloatData(0.0f);
 
-	@editor
+	@editor(editorGroup = "pbr")
 	protected Vector3Data emissiveScale = new Vector3Data(new Vector3f(1.0f));
 
 	protected float[] points;

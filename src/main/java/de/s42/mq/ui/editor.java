@@ -41,12 +41,13 @@ public @interface editor
 {
 
 	public final static String AUTO_BY_DATA_TYPE = "AutoByDataType";
+	public final static String DEFAULT_GROUP = "_default";
 
 	public String editorType() default AUTO_BY_DATA_TYPE;
 
 	public String editorConfig() default "";
 
-	public String editorGroup() default "";
+	public String editorGroup() default DEFAULT_GROUP;
 
 	public int editorIndex() default 0;
 

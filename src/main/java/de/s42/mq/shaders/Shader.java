@@ -133,35 +133,35 @@ public abstract class Shader extends AbstractAsset
 	}
 
 	@AttributeDL(defaultValue = "BACK")
-	@editor
+	@editor(editorGroup = "culling")
 	protected CullType cullType = CullType.BACK;
 
 	@AttributeDL(defaultValue = "ONE")
-	@editor
+	@editor(editorGroup = "blending")
 	protected BlendFunc sourceFunc = BlendFunc.ONE;
 
 	@AttributeDL(defaultValue = "ONE")
-	@editor
+	@editor(editorGroup = "blending")
 	protected BlendFunc destFunc = BlendFunc.ONE;
 
 	@AttributeDL(defaultValue = "LESS")
-	@editor
+	@editor(editorGroup = "depth")
 	protected DepthFunc depthFunc = DepthFunc.LESS;
 
 	@AttributeDL(defaultValue = "true")
-	@editor
+	@editor(editorGroup = "depth")
 	protected boolean depthTest = true;
 
 	@AttributeDL(defaultValue = "true")
-	@editor
+	@editor(editorGroup = "depth")
 	protected boolean depthWrite = true;
 
 	@AttributeDL(defaultValue = "true")
-	@editor
+	@editor(editorGroup = "culling")
 	protected boolean cullFace = true;
 
 	@AttributeDL(defaultValue = "false")
-	@editor
+	@editor(editorGroup = "culling")
 	protected boolean stencilTest = false;
 
 	@AttributeDL(defaultValue = "false")
@@ -169,15 +169,15 @@ public abstract class Shader extends AbstractAsset
 	protected boolean wireframe = false;
 
 	@AttributeDL(defaultValue = "false")
-	@editor
+	@editor(editorGroup = "blending")
 	protected boolean renderTransparent = false;
 
 	@AttributeDL(defaultValue = "0.0000001")
-	@editor
+	@editor(editorGroup = "blending")
 	protected float alphaDiscard = 0.0000001f;
 
 	@AttributeDL(defaultValue = "false")
-	@editor(editable = false)
+	@editor(editable = false, editorGroup = "develop")
 	protected boolean develop = false;
 
 	protected Camera camera;

@@ -17,8 +17,8 @@ import de.s42.mq.data.FloatData;
 import de.s42.mq.data.Vector2Data;
 import de.s42.mq.materials.Texture;
 import de.s42.mq.rendering.RenderContext;
-import org.joml.Vector3f;
 import de.s42.mq.ui.editor;
+import org.joml.Vector3f;
 
 /**
  *
@@ -53,40 +53,40 @@ public class ParticlesShader extends Shader
 	protected FloatData time = new FloatData();
 	protected Vector2Data spriteMapSize = new Vector2Data();
 
-	@editor
+	@editor(editorGroup = "particles")
 	protected FloatData timeScale = new FloatData();
 
-	@editor
+	@editor(editorGroup = "particles")
 	protected FloatData noiseScale = new FloatData();
 
-	@editor
+	@editor(editorGroup = "particles")
 	protected FloatData scaleScale = new FloatData();
 
-	@editor
+	@editor(editorGroup = "particles")
 	protected FloatData baseScale = new FloatData();
 
-	@editor
+	@editor(editorGroup = "particles")
 	protected FloatData baseSpread = new FloatData();
 
-	@editor
+	@editor(editorGroup = "particles")
 	protected FloatData noiseSpeed = new FloatData();
 
-	@editor
+	@editor(editorGroup = "particles")
 	protected FloatData rotationSpeed = new FloatData();
 
-	@editor
+	@editor(editorGroup = "particles")
 	protected Vector3f velocity = new Vector3f();
 
-	@editor
+	@editor(editorGroup = "particles")
 	protected FloatData maxAge = new FloatData();
 
-	@editor
+	@editor(editorGroup = "particles")
 	protected FloatData ageJitter = new FloatData();
 
-	@editor
+	@editor(editorGroup = "particles")
 	protected ColorData tint = new ColorData();
 
-	@editor
+	@editor(editorGroup = "blending")
 	protected FloatData alphaThreshold = new FloatData();
 
 	protected Texture baseTexture;

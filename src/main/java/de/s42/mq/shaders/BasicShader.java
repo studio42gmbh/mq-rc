@@ -31,7 +31,7 @@ public class BasicShader extends PlainShader
 	protected Texture baseTexture;
 
 	@AttributeDL(required = false)
-	@editor
+	@editor(editorGroup = "texture")
 	protected ColorData tint = new ColorData(MQColor.White);
 
 	protected int identifierUniform = -1;

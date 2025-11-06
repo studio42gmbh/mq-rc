@@ -14,12 +14,11 @@ package de.s42.mq.loaders.obj;
 import de.s42.dl.DLAttribute.AttributeDL;
 import de.s42.dl.annotations.files.IsFileDLAnnotation.isFile;
 import de.s42.dl.exceptions.DLException;
-import de.s42.log.LogManager;
-import de.s42.log.Logger;
 import de.s42.mq.materials.Material;
 import de.s42.mq.meshes.Mesh;
 import de.s42.mq.rendering.RenderContext;
 import de.s42.mq.shaders.Shader;
+import de.s42.mq.ui.editor;
 import java.nio.FloatBuffer;
 import java.nio.IntBuffer;
 import java.nio.file.Path;
@@ -38,10 +37,10 @@ import org.lwjgl.system.MemoryUtil;
 public class ObjMesh extends Mesh
 {
 
-	private final static Logger log = LogManager.getLogger(ObjMesh.class.getName());
-
+	//private final static Logger log = LogManager.getLogger(ObjMesh.class.getName());
 	@AttributeDL(required = true)
 	@isFile
+	@editor(editable = false)
 	private Path source;
 
 	protected int vao = -1;

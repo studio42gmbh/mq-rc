@@ -13,8 +13,6 @@ package de.s42.mq.loaders.fbx;
 
 import de.s42.dl.exceptions.DLException;
 import de.s42.dl.exceptions.InvalidInstance;
-import de.s42.log.LogManager;
-import de.s42.log.Logger;
 import de.s42.mq.materials.Material;
 import de.s42.mq.meshes.Mesh;
 import de.s42.mq.rendering.RenderContext;
@@ -39,8 +37,7 @@ import org.lwjgl.system.MemoryUtil;
 public class FbxSubMesh extends Mesh
 {
 
-	private final static Logger log = LogManager.getLogger(FbxSubMesh.class.getName());
-
+	//private final static Logger log = LogManager.getLogger(FbxSubMesh.class.getName());
 	protected int vao = -1;
 	protected int vertexArrayBuffer = -1;
 	protected int normalArrayBuffer = -1;

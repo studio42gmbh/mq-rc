@@ -40,7 +40,7 @@ public abstract class Mesh<ChildType extends Object> extends AbstractAsset imple
 
 	//private final static Logger log = LogManager.getLogger(Mesh.class.getName());
 	@AttributeDL(defaultValue = "false")
-	@editor(editable = false)
+	@editor(editable = false, editorGroup = "loader")
 	protected boolean flipNormals = false;
 
 	protected Material material;
@@ -48,23 +48,22 @@ public abstract class Mesh<ChildType extends Object> extends AbstractAsset imple
 	@AttributeDL(defaultValue = "-1")
 	protected int identifier = -1;
 
-	@editor
+	@editor(editorGroup = "layering")
 	protected String[] layers;
 
 	// Pseudo property to allow editing
-	@editor
+	@editor(editorGroup = "transform")
 	protected Vector3f position;
 
 	// Pseudo property to allow editing
-	@editor
+	@editor(editorGroup = "transform")
 	protected Vector3f scale;
 
 	// Pseudo property to allow editing
-	@editor
+	@editor(editorGroup = "transform")
 	protected Quaternionf rotation;
 
 	@AttributeDL(ignore = true)
-	//@editor
 	protected final Transform transform = new Transform();
 
 	@AttributeDL(ignore = true)

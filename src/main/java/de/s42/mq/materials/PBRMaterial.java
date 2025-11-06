@@ -16,10 +16,10 @@ import de.s42.dl.exceptions.DLException;
 import de.s42.mq.MQColor;
 import de.s42.mq.rendering.RenderContext;
 import de.s42.mq.shaders.PBRShader;
+import de.s42.mq.ui.editor;
 import java.nio.file.Path;
 import org.joml.Vector2f;
 import org.joml.Vector3f;
-import de.s42.mq.ui.editor;
 
 /**
  *
@@ -30,30 +30,37 @@ public class PBRMaterial extends Material
 
 	@AttributeDL(required = false)
 	//@AnnotationDL(value = IsFileDLAnnotation.DEFAULT_SYMBOL)
+	@editor(editable = false, editorGroup = "texture")
 	protected Path baseSource;
 
 	@AttributeDL(required = false)
 	//@AnnotationDL(value = IsFileDLAnnotation.DEFAULT_SYMBOL)
+	@editor(editable = false, editorGroup = "pbr")
 	protected Path heromeaoSource;
 
 	@AttributeDL(required = false)
 	//@AnnotationDL(value = IsFileDLAnnotation.DEFAULT_SYMBOL)
+	@editor(editable = false, editorGroup = "pbr")
 	protected Path normalSource;
 
 	@AttributeDL(required = false)
 	//@AnnotationDL(value = IsFileDLAnnotation.DEFAULT_SYMBOL)
+	@editor(editable = false, editorGroup = "pbr")
 	protected Path environmentSource;
 
 	@AttributeDL(required = false)
 	//@AnnotationDL(value = IsFileDLAnnotation.DEFAULT_SYMBOL)
+	@editor(editable = false, editorGroup = "pbr")
 	protected Path emtrSource;
 
 	@AttributeDL(required = false)
 	//@AnnotationDL(value = IsFileDLAnnotation.DEFAULT_SYMBOL)
+	@editor(editable = false, editorGroup = "pbr")
 	protected Path irradianceSource;
 
 	@AttributeDL(required = false)
 	//@AnnotationDL(value = IsFileDLAnnotation.DEFAULT_SYMBOL)
+	@editor(editable = false, editorGroup = "pbr")
 	protected Path brdfLUTSource;
 
 	@AttributeDL(required = false)
@@ -78,25 +85,25 @@ public class PBRMaterial extends Material
 	protected boolean irradianceTextureLoaded;
 	protected boolean brdfLUTTextureLoaded;
 
-	@editor
+	@editor(editorGroup = "texture")
 	protected MQColor tint = new MQColor(1.0f);
 
-	@editor
+	@editor(editorGroup = "pbr")
 	protected Vector2f normalScale = new Vector2f(1.0f);
 
-	@editor
+	@editor(editorGroup = "pbr")
 	protected float roughnessScale = 1.0f;
 
-	@editor
+	@editor(editorGroup = "pbr")
 	protected float roughnessOffset = 0.0f;
 
-	@editor
+	@editor(editorGroup = "pbr")
 	protected float metalnessScale = 1.0f;
 
-	@editor
+	@editor(editorGroup = "pbr")
 	protected float metalnessOffset = 0.0f;
 
-	@editor
+	@editor(editorGroup = "pbr")
 	protected Vector3f emissiveScale = new Vector3f(1.0f);
 
 	// ATTENTION: This field helps DL to change the type of shader to PBRShader in type reflection

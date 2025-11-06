@@ -21,6 +21,7 @@ import de.s42.log.Logger;
 import de.s42.mq.assets.Assets;
 import de.s42.mq.materials.Material;
 import de.s42.mq.meshes.MeshGroup;
+import de.s42.mq.ui.editor;
 import java.nio.ByteBuffer;
 import java.nio.charset.StandardCharsets;
 import java.nio.file.Path;
@@ -53,6 +54,7 @@ public class FbxMesh extends MeshGroup
 
 	@AttributeDL(required = true)
 	@isFile
+	@editor(editable = false)
 	protected Path source;
 
 	@AttributeDL(required = false)
