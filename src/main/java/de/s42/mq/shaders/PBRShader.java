@@ -147,7 +147,8 @@ public class PBRShader extends BasicShader
 		if (shadowCamera != null) {
 			setUniform(shadowMatrixUniform, shadowCamera.getViewProjectionMatrix());
 			Vector3f shadowDirection = shadowCamera.getLook().normalize().negate();
-			float shadowBias = -0.01f;
+			// @todo make that configurable
+			float shadowBias = -0.03f;
 			setUniform(shadowDirectionUniform, shadowDirection);
 			setUniform(shadowBiasUniform, shadowBias);
 		}

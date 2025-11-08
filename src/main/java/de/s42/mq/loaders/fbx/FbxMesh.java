@@ -225,7 +225,7 @@ public class FbxMesh extends MeshGroup
 			@SuppressWarnings("null")
 			AIMaterial aiMaterial = AIMaterial.create(scene.mMaterials().get(aiMesh.mMaterialIndex()));
 
-			// really can it get more annoying ...
+			// Really can it get more annoying ...
 			AIString materialNameStr = AIString.calloc();
 			aiGetMaterialString(aiMaterial, AI_MATKEY_NAME, aiTextureType_NONE, 0, materialNameStr);
 			String materialName = materialNameStr.dataString();
