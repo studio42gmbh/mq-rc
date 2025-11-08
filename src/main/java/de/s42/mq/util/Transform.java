@@ -121,6 +121,13 @@ public final class Transform
 		return (new Vector3f(1.0f, 0.0f, 0.0f)).mulDirection(matrix);
 	}
 
+	public Vector3f toWorldDirection(Vector3f local)
+	{
+		assert local != null : "local != null";
+
+		return local.mulDirection(matrix);
+	}
+
 	public Quaternionf getWorldRotation()
 	{
 		return matrix.getNormalizedRotation(new Quaternionf());
