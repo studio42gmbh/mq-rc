@@ -23,31 +23,32 @@
  * THE SOFTWARE.
  */
 //</editor-fold>
-package de.s42.mq.rendering;
+package de.s42.mq.collision;
 
-import de.s42.mq.cameras.Camera;
-import de.s42.mq.materials.Material;
-import de.s42.mq.materials.Texture;
-import de.s42.mq.shaders.Shader.CullType;
+import org.joml.Vector3f;
 
 /**
  *
  * @author Benjamin Schiller
+ * @param <CopyType>
  */
-public interface RenderContext
+public abstract class AbstractCollider<CopyType extends AbstractCollider> implements Collider<CopyType>
 {
 
-	public int getTick();
+	protected Object userObject;
 
-	public float getDeltaTime();
+	@Override
+	public abstract boolean intersect(Ray ray, Vector3f result);
 
-	public float getTotalTime();
+	@Override
+	public Object getUserObject()
+	{
+		return userObject;
+	}
 
-	public Material getOverrideMaterial();
-
-	public Camera getShadowCamera();
-
-	public Texture getShadowTexture();
-
-	public CullType getOverrideCullType();
+	@Override
+	public void setUserObject(Object userObject)
+	{
+		this.userObject = userObject;
+	}
 }

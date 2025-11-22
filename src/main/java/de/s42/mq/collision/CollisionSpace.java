@@ -23,31 +23,22 @@
  * THE SOFTWARE.
  */
 //</editor-fold>
-package de.s42.mq.rendering;
+package de.s42.mq.collision;
 
-import de.s42.mq.cameras.Camera;
-import de.s42.mq.materials.Material;
-import de.s42.mq.materials.Texture;
-import de.s42.mq.shaders.Shader.CullType;
+import org.joml.Vector3f;
 
 /**
  *
  * @author Benjamin Schiller
  */
-public interface RenderContext
+public interface CollisionSpace
 {
 
-	public int getTick();
+	void addCollider(Collider collider);
 
-	public float getDeltaTime();
+	void removeCollider(Collider collider);
 
-	public float getTotalTime();
+	void updateCollider(Collider collider);
 
-	public Material getOverrideMaterial();
-
-	public Camera getShadowCamera();
-
-	public Texture getShadowTexture();
-
-	public CullType getOverrideCullType();
+	Collider find(Vector3f position);
 }

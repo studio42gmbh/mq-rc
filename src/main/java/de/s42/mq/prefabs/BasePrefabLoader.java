@@ -48,7 +48,7 @@ public class BasePrefabLoader implements PrefabLoader
 		// Copy or link assets
 		for (Asset asset : ((List<Asset>) prefab.getAssets())) {
 			if (asset instanceof Copyable copyable) {
-				instance.add(copyable.copy());
+				instance.add((Asset) copyable.copy());
 			} else {
 				instance.add(asset);
 			}

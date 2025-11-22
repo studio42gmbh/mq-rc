@@ -312,13 +312,16 @@ public abstract class Shader extends AbstractAsset
 
 	public void beforeRendering(RenderContext context)
 	{
-		assert getCullType() != null;
+		assert context != null : "context != null";
 
 		glUseProgram(getShaderProgramId());
 
 		glEnable(GL_TEXTURE_CUBE_MAP_SEAMLESS);
 
-		if (isCullFace() && getCullType() != CullType.NONE) {
+		if (context.getOverrideCullType() != null) {
+			glCullFace(context.getOverrideCullType().glFormat);
+			glEnable(GL_CULL_FACE);
+		} else if (isCullFace() && getCullType() != CullType.NONE) {
 			glCullFace(getCullType().glFormat);
 			glEnable(GL_CULL_FACE);
 		} else {
@@ -635,6 +638,16 @@ public abstract class Shader extends AbstractAsset
 		setUniform(location, value);
 	}
 
+	public void setUniform(String name, Vector2f value)
+	{
+		Integer location = uniforms.get(name);
+		if (location == null) {
+			return;
+		}
+
+		setUniform(location, value);
+	}
+
 	public void setUniform(int uniformLocation, Vector2f value)
 	{
 		assert value != null;
@@ -644,6 +657,16 @@ public abstract class Shader extends AbstractAsset
 		}
 
 		glUniform2fv(uniformLocation, value.get(vector2Buffer));
+	}
+
+	public void setUniform(String name, Vector3f value)
+	{
+		Integer location = uniforms.get(name);
+		if (location == null) {
+			return;
+		}
+
+		setUniform(location, value);
 	}
 
 	public void setUniform(int uniformLocation, Vector3f value)
@@ -719,6 +742,9 @@ public abstract class Shader extends AbstractAsset
 
 	public void setUniform(String name, ColorData value)
 	{
+		assert name != null : "name != null";
+		assert value != null : "value != null";
+
 		Integer location = uniforms.get(name);
 		if (location == null) {
 			return;
@@ -738,6 +764,30 @@ public abstract class Shader extends AbstractAsset
 
 		MQColor col = value.getValue();
 		glUniform4f(uniformLocation, col.getR(), col.getG(), col.getB(), col.getA());
+	}
+
+	public void setUniform(String name, MQColor value)
+	{
+		assert name != null : "name != null";
+		assert value != null : "value != null";
+
+		Integer location = uniforms.get(name);
+		if (location == null) {
+			return;
+		}
+
+		setUniform(location, value);
+	}
+
+	public void setUniform(int uniformLocation, MQColor value)
+	{
+		assert value != null : "value != null";
+
+		if (uniformLocation == -1) {
+			return;
+		}
+
+		glUniform4f(uniformLocation, value.getR(), value.getG(), value.getB(), value.getA());
 	}
 
 	public void setCubeTextureOpt(CubeTexture texture, int index)

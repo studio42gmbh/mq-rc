@@ -32,6 +32,7 @@ import de.s42.mq.ui.layout.LayoutOptions;
 public class Panel extends Quad implements UIComponent
 {
 
+	@SuppressWarnings("FieldNameHidesFieldInSuperclass")
 	private final static Logger log = LogManager.getLogger(Panel.class.getName());
 
 	/**
@@ -98,7 +99,7 @@ public class Panel extends Quad implements UIComponent
 		// @todo finalize proper copying
 		copy.uiManager = uiManager;
 		copy.layout = layout;
-		copy.layoutOptions = (layoutOptions != null) ? layoutOptions.copy() : null;
+		copy.layoutOptions = (layoutOptions != null) ? (LayoutOptions) layoutOptions.copy() : null;
 		copy.dimensionUI.setValue(dimensionUI.getValue());
 		copy.backgroundColor.setValue(backgroundColor.getValue());
 		copy.borderRadius.setValue(borderRadius.getValue());

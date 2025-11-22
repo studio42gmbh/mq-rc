@@ -28,6 +28,7 @@ package de.s42.mq.rendering;
 import de.s42.mq.cameras.Camera;
 import de.s42.mq.materials.Material;
 import de.s42.mq.materials.Texture;
+import de.s42.mq.shaders.Shader.CullType;
 
 /**
  *
@@ -47,6 +48,8 @@ public class DefaultRenderContext implements RenderContext
 	protected Camera shadowCamera;
 
 	protected Texture shadowTexture;
+
+	protected CullType overrideCullType;
 
 	@Override
 	public int getTick()
@@ -112,5 +115,15 @@ public class DefaultRenderContext implements RenderContext
 	public void setShadowTexture(Texture shadowTexture)
 	{
 		this.shadowTexture = shadowTexture;
+	}
+
+	public CullType getOverrideCullType()
+	{
+		return overrideCullType;
+	}
+
+	public void setOverrideCullType(CullType overrideCullType)
+	{
+		this.overrideCullType = overrideCullType;
 	}
 }

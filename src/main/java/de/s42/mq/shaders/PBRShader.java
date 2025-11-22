@@ -67,6 +67,9 @@ public class PBRShader extends BasicShader
 	@editor(editorGroup = "pbr")
 	protected Vector3Data emissiveScale = new Vector3Data(new Vector3f(1.0f));
 
+	@editor(editorGroup = "pbr")
+	protected float shadowBias = -0.02f;
+
 	protected float[] points;
 	protected int pointsOffset;
 
@@ -147,8 +150,6 @@ public class PBRShader extends BasicShader
 		if (shadowCamera != null) {
 			setUniform(shadowMatrixUniform, shadowCamera.getViewProjectionMatrix());
 			Vector3f shadowDirection = shadowCamera.getLook().normalize().negate();
-			// @todo make that configurable
-			float shadowBias = -0.03f;
 			setUniform(shadowDirectionUniform, shadowDirection);
 			setUniform(shadowBiasUniform, shadowBias);
 		}
@@ -298,6 +299,16 @@ public class PBRShader extends BasicShader
 	public void setEmissiveScale(Vector3Data emissiveScale)
 	{
 		this.emissiveScale = emissiveScale;
+	}
+
+	public float getShadowBias()
+	{
+		return shadowBias;
+	}
+
+	public void setShadowBias(float shadowBias)
+	{
+		this.shadowBias = shadowBias;
 	}
 	// </editor-fold>
 }

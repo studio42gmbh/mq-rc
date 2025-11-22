@@ -68,6 +68,7 @@ public abstract class Camera extends AbstractAsset
 		if (isUpdateViewMatrix()) {
 			viewMatrix.setLookAt(cameraPosition, cameraLookAt, cameraUp);
 			viewProjectionMatrix.set(projectionMatrix).mul(viewMatrix);
+			//viewProjectionMatrix.set(viewMatrix).mul(projectionMatrix);
 			setUpdateViewMatrix(false);
 		}
 	}
@@ -79,6 +80,25 @@ public abstract class Camera extends AbstractAsset
 		screenPosition.mul(viewProjectionMatrix);
 
 		return new Vector3f(screenPosition.x / screenPosition.w, screenPosition.y / screenPosition.w, screenPosition.z / screenPosition.w);
+	}
+
+	/**
+	 * The screen positio is given in normalized cam space [-1, 1] - make sure to consider -y
+	 * https://stackoverflow.com/questions/7692988/opengl-math-projecting-screen-space-to-world-space-coords
+	 *
+	 * @param x Left -1 to Right 1
+	 * @param y Top 1 to Bottom -1
+	 * @return The worldposition at camera near plane
+	 */
+	public Vector3f fromScreenPosition(float x, float y)
+	{
+		Vector4f camSpacePosition = new Vector4f(x, y, -1.0f, 1.0f);
+
+		Matrix4f matrix = (new Matrix4f(viewProjectionMatrix)).invert();
+
+		camSpacePosition = camSpacePosition.mul(matrix);
+
+		return new Vector3f(camSpacePosition.x / camSpacePosition.w, camSpacePosition.y / camSpacePosition.w, camSpacePosition.z / camSpacePosition.w);
 	}
 
 	public void rotateAroundLookAt(float roationY, float distance, float y)

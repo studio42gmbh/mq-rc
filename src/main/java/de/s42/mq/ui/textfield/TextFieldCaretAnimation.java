@@ -61,7 +61,7 @@ public class TextFieldCaretAnimation implements MeshAnimation
 		String text = textfield.getText().getValue();
 		Text textComponent = textfield.getTextComponent();
 		Text caretComponent = textfield.getCaretComponent();
-		UILayoutOptions options = textComponent.getLayoutOptions().copy();
+		UILayoutOptions options = (UILayoutOptions) textComponent.getLayoutOptions().copy();
 
 		// Translate to startpos
 		Vector2f textDimension = textComponent.computeDimension(text);

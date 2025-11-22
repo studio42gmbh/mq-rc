@@ -27,6 +27,11 @@
 			<version>1.0.4-DEV</version>
 		</dependency>
 		<dependency>
+			<groupId>de.s42</groupId>
+			<artifactId>dlui</artifactId>
+			<version>1.0.3-DEV</version>
+		</dependency>
+		<dependency>
 			<groupId>org.joml</groupId>
 			<artifactId>joml</artifactId>
 			<version>${joml.version}</version>

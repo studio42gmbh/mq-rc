@@ -136,6 +136,55 @@ public class PBRMaterial extends Material
 	}
 
 	@Override
+	public PBRMaterial copy()
+	{
+		PBRMaterial copy = new PBRMaterial();
+
+		copy.name = name;
+		copy.loaded = loaded;
+
+		copy.baseSource = baseSource;
+		copy.heromeaoSource = heromeaoSource;
+		copy.normalSource = normalSource;
+		copy.emtrSource = emtrSource;
+		copy.environmentSource = environmentSource;
+		copy.irradianceSource = irradianceSource;
+		copy.brdfLUTSource = brdfLUTSource;
+
+		copy.environmentTexture = environmentTexture;
+		copy.irradianceTexture = irradianceTexture;
+		copy.brdfLUTTexture = brdfLUTTexture;
+		copy.baseTexture = baseTexture;
+		copy.heromeaoTexture = heromeaoTexture;
+		copy.normalTexture = normalTexture;
+		copy.emtrTexture = emtrTexture;
+
+		copy.baseTextureLoaded = baseTextureLoaded;
+		copy.heromeaoTextureLoaded = heromeaoTextureLoaded;
+		copy.normalTextureLoaded = normalTextureLoaded;
+		copy.emtrTextureLoaded = emtrTextureLoaded;
+		copy.environmentTextureLoaded = environmentTextureLoaded;
+		copy.irradianceTextureLoaded = irradianceTextureLoaded;
+		copy.brdfLUTTextureLoaded = brdfLUTTextureLoaded;
+
+		copy.camera = camera;
+		copy.shader = shader;
+		copy.cullType = cullType;
+		copy.alphaDiscard = alphaDiscard;
+		copy.customProperties.putAll(customProperties);
+
+		copy.tint = new MQColor(tint);
+		copy.normalScale = new Vector2f(normalScale);
+		copy.roughnessScale = roughnessScale;
+		copy.roughnessOffset = roughnessOffset;
+		copy.metalnessScale = metalnessScale;
+		copy.metalnessOffset = metalnessOffset;
+		copy.emissiveScale = new Vector3f(emissiveScale);
+
+		return copy;
+	}
+
+	@Override
 	public PBRShader getShader()
 	{
 		return (PBRShader) super.getShader();

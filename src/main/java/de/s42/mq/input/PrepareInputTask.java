@@ -12,10 +12,11 @@
 package de.s42.mq.input;
 
 import de.s42.dl.DLAttribute.AttributeDL;
+import de.s42.log.LogManager;
+import de.s42.log.Logger;
 import de.s42.mq.ui.AbstractWindowTask;
 import static org.lwjgl.glfw.GLFW.*;
 import org.lwjgl.glfw.*;
-import static org.lwjgl.glfw.GLFW.*;
 
 /**
  *
@@ -24,7 +25,8 @@ import static org.lwjgl.glfw.GLFW.*;
 public class PrepareInputTask extends AbstractWindowTask implements InputTask
 {
 
-	//private final static Logger log = LogManager.getLogger(PrepareInputTask.class.getName());
+	private final static Logger log = LogManager.getLogger(PrepareInputTask.class.getName());
+
 	@AttributeDL(required = true)
 	protected Input input;
 
@@ -90,7 +92,7 @@ public class PrepareInputTask extends AbstractWindowTask implements InputTask
 			{
 				input.handleMouseCursor(xpos, ypos);
 
-				//log.debug("Mouse {} {}", xpos, ypos);
+				//log.debug("Mouse", xpos, ypos);
 			}
 		});
 

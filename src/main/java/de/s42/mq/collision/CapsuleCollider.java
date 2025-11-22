@@ -23,31 +23,63 @@
  * THE SOFTWARE.
  */
 //</editor-fold>
-package de.s42.mq.rendering;
+package de.s42.mq.collision;
 
-import de.s42.mq.cameras.Camera;
-import de.s42.mq.materials.Material;
-import de.s42.mq.materials.Texture;
-import de.s42.mq.shaders.Shader.CullType;
+import org.joml.Vector3f;
 
 /**
+ * See https://gist.github.com/jdryg/ecde24d34aa0ce2d4d87
  *
  * @author Benjamin Schiller
  */
-public interface RenderContext
+public final class CapsuleCollider extends AbstractCollider
 {
 
-	public int getTick();
+	public Vector3f position1;
+	public Vector3f position2;
+	public float radius;
 
-	public float getDeltaTime();
+	public CapsuleCollider()
+	{
+	}
 
-	public float getTotalTime();
+	public CapsuleCollider(Vector3f position1, Vector3f position2, float radius)
+	{
+		this.position1 = position1;
+		this.position2 = position2;
+		this.radius = radius;
+	}
 
-	public Material getOverrideMaterial();
+	@Override
+	public boolean contains(Vector3f position)
+	{
+		// @todo
+		return false;
+	}
 
-	public Camera getShadowCamera();
+	@Override
+	public boolean intersect(Ray ray, Vector3f result)
+	{
+		// @todo https://gist.github.com/jdryg/ecde24d34aa0ce2d4d87
 
-	public Texture getShadowTexture();
+		return false;
+	}
 
-	public CullType getOverrideCullType();
+	@Override
+	public Vector3f getOrigin()
+	{
+		throw new UnsupportedOperationException("Not supported yet.");
+	}
+
+	@Override
+	public void setOrigin(Vector3f origin)
+	{
+		throw new UnsupportedOperationException("Not supported yet.");
+	}
+
+	@Override
+	public Object copy()
+	{
+		throw new UnsupportedOperationException("Not supported yet.");
+	}
 }

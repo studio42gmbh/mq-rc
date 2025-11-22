@@ -23,31 +23,66 @@
  * THE SOFTWARE.
  */
 //</editor-fold>
-package de.s42.mq.rendering;
+package de.s42.mq.collision;
 
-import de.s42.mq.cameras.Camera;
-import de.s42.mq.materials.Material;
-import de.s42.mq.materials.Texture;
-import de.s42.mq.shaders.Shader.CullType;
+import de.s42.mq.core.Copyable;
+import org.joml.Vector3f;
 
 /**
  *
  * @author Benjamin Schiller
+ * @param <CopyType>
  */
-public interface RenderContext
+public interface Collider<CopyType extends Collider> extends Copyable<CopyType>
 {
 
-	public int getTick();
+	/**
+	 * Set higher that the float min epsilon to avoid irregular results
+	 */
+	public final static float COLLIDER_EPSILON = 0.000001f;
 
-	public float getDeltaTime();
+	/**
+	 * Returns the intersection point into the result vector
+	 *
+	 * @param ray
+	 * @param result
+	 * @return
+	 */
+	boolean intersect(Ray ray, Vector3f result);
 
-	public float getTotalTime();
+	/**
+	 * Retuirns true if the given point is contained in the given collider
+	 *
+	 * @param position
+	 * @return
+	 */
+	boolean contains(Vector3f position);
 
-	public Material getOverrideMaterial();
+	/**
+	 * Returns the origin of the collider
+	 *
+	 * @return
+	 */
+	Vector3f getOrigin();
 
-	public Camera getShadowCamera();
+	/**
+	 * Sets the origin of the collider
+	 *
+	 * @param origin
+	 */
+	void setOrigin(Vector3f origin);
 
-	public Texture getShadowTexture();
+	/**
+	 * Return an associated user object
+	 *
+	 * @return
+	 */
+	Object getUserObject();
 
-	public CullType getOverrideCullType();
+	/**
+	 * Set the user object
+	 *
+	 * @param userObject
+	 */
+	void setUserObject(Object userObject);
 }

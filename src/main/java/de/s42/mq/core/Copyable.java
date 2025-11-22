@@ -14,9 +14,10 @@ package de.s42.mq.core;
 /**
  *
  * @author Benjamin Schiller
+ * @param <CopyType>
  */
-public interface Copyable
+public interface Copyable<CopyType>
 {
 
-	public <CopyType extends Object> CopyType copy();
+	public CopyType copy();
 }

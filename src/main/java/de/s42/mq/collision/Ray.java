@@ -23,31 +23,35 @@
  * THE SOFTWARE.
  */
 //</editor-fold>
-package de.s42.mq.rendering;
+package de.s42.mq.collision;
 
-import de.s42.mq.cameras.Camera;
-import de.s42.mq.materials.Material;
-import de.s42.mq.materials.Texture;
-import de.s42.mq.shaders.Shader.CullType;
+import de.s42.mq.core.Copyable;
+import org.joml.Vector3f;
 
 /**
+ * See https://github.com/jMonkeyEngine/jmonkeyengine/blob/master/jme3-core/src/main/java/com/jme3/math/Ray.java
  *
  * @author Benjamin Schiller
  */
-public interface RenderContext
+public final class Ray implements Copyable<Ray>
 {
 
-	public int getTick();
+	public Vector3f origin;
+	public Vector3f direction;
 
-	public float getDeltaTime();
+	public Ray()
+	{
+	}
 
-	public float getTotalTime();
+	public Ray(Vector3f origin, Vector3f direction)
+	{
+		this.direction = direction;
+		this.origin = origin;
+	}
 
-	public Material getOverrideMaterial();
-
-	public Camera getShadowCamera();
-
-	public Texture getShadowTexture();
-
-	public CullType getOverrideCullType();
+	@Override
+	public Ray copy()
+	{
+		return new Ray(new Vector3f(origin), new Vector3f(direction));
+	}
 }

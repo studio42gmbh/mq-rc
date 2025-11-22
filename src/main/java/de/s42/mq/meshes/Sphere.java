@@ -13,8 +13,6 @@ package de.s42.mq.meshes;
 
 import de.s42.dl.DLAttribute.AttributeDL;
 import de.s42.dl.exceptions.DLException;
-import de.s42.log.LogManager;
-import de.s42.log.Logger;
 import de.s42.mq.materials.Material;
 import de.s42.mq.rendering.RenderContext;
 import de.s42.mq.shaders.Shader;
@@ -36,16 +34,15 @@ import org.lwjgl.system.MemoryUtil;
 public class Sphere<ChildType extends Object> extends Mesh<ChildType>
 {
 
-	private final static Logger log = LogManager.getLogger(Sphere.class.getName());
-
+	//private final static Logger log = LogManager.getLogger(Sphere.class.getName());
 	@AttributeDL(required = false, defaultValue = "1.0")
 	protected float radius = 1.0f;
 
 	@AttributeDL(required = false, defaultValue = "10")
-	protected int rings;
+	protected int rings = 10;
 
 	@AttributeDL(required = false, defaultValue = "10")
-	protected int sectors;
+	protected int sectors = 10;
 
 	protected int vao = -1;
 	protected int vbo = -1;
@@ -53,6 +50,20 @@ public class Sphere<ChildType extends Object> extends Mesh<ChildType>
 
 	public Sphere()
 	{
+	}
+
+	@Override
+	public Sphere copy()
+	{
+		Sphere copy = (Sphere) super.copy();
+		copy.radius = radius;
+		copy.rings = rings;
+		copy.sectors = sectors;
+		copy.vao = vao;
+		copy.vbo = vbo;
+		copy.ibo = ibo;
+
+		return copy;
 	}
 
 	public Sphere(float radius, int rings, int sectors)
@@ -69,9 +80,9 @@ public class Sphere<ChildType extends Object> extends Mesh<ChildType>
 	@Override
 	public void load() throws DLException
 	{
-		assert radius > 0.0;
-		assert rings > 3;
-		assert sectors > 3;
+		assert radius > 0.0 : "radius > 0.0";
+		assert rings > 3 : "rings";
+		assert sectors > 3 : "sectors";
 
 		if (isLoaded()) {
 			return;

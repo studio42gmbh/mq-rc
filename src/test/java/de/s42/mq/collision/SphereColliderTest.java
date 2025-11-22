@@ -23,31 +23,57 @@
  * THE SOFTWARE.
  */
 //</editor-fold>
-package de.s42.mq.rendering;
+package de.s42.mq.collision;
 
-import de.s42.mq.cameras.Camera;
-import de.s42.mq.materials.Material;
-import de.s42.mq.materials.Texture;
-import de.s42.mq.shaders.Shader.CullType;
+import de.s42.log.LogLevel;
+import de.s42.log.LogManager;
+import de.s42.log.Logger;
+import org.joml.Vector3f;
+import org.testng.annotations.Test;
 
 /**
  *
  * @author Benjamin Schiller
  */
-public interface RenderContext
+public class SphereColliderTest
 {
 
-	public int getTick();
+	private final static Logger log = LogManager.getLogger(SphereColliderTest.class.getName());
 
-	public float getDeltaTime();
+	protected final static Ray[] RAYS = {
+		new Ray(new Vector3f(), (new Vector3f(1.0f, 0.0f, 0.0f)).normalize()),
+		new Ray(new Vector3f(), (new Vector3f(1.0f, 0.1f, 0.0f)).normalize()),
+		new Ray(new Vector3f(), (new Vector3f(1.0f, 0.0f, 0.2f)).normalize())};
 
-	public float getTotalTime();
+	protected final static int COUNT = 1000000000;
 
-	public Material getOverrideMaterial();
+	@Test(enabled = false)
+	public void testIntersectPerformance()
+	{
+		for (int r = 0; r < 10; ++r) {
 
-	public Camera getShadowCamera();
+			SphereCollider collider = new SphereCollider(new Vector3f(2.0f, (float) Math.random() * 0.01f, 0.0f), 0.2f);
+			Vector3f result = new Vector3f();
+			int c = 0;
+			int h = 0;
 
-	public Texture getShadowTexture();
+			log.start("testIntersect");
 
-	public CullType getOverrideCullType();
+			while (c < COUNT) {
+
+				for (int i = 0; i < RAYS.length; ++i) {
+
+					if (collider.intersect(RAYS[i], result)) {
+						h++;
+					}
+
+					c++;
+				}
+			}
+
+			log.stop(LogLevel.INFO, "testIntersect", c);
+			log.info("Hits", h);
+		}
+	}
+
 }

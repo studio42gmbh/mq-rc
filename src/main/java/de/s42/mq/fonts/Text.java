@@ -159,7 +159,7 @@ public class Text extends Mesh implements UIComponent, Copyable
 
 		copy.font = font;
 		copy.layout = layout;
-		copy.layoutOptions = (layoutOptions != null) ? layoutOptions.copy() : null;
+		copy.layoutOptions = (layoutOptions != null) ? (LayoutOptions) layoutOptions.copy() : null;
 		copy.buffer = buffer;
 		copy.text.setValue(text.getValue());
 		copy.color.setValue(color.getValue());

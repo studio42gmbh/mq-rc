@@ -15,6 +15,7 @@ import de.s42.dl.DLAttribute.AttributeDL;
 import de.s42.dl.exceptions.DLException;
 import de.s42.mq.assets.AbstractAsset;
 import de.s42.mq.cameras.Camera;
+import de.s42.mq.core.Copyable;
 import de.s42.mq.rendering.RenderContext;
 import de.s42.mq.shaders.Shader;
 import de.s42.mq.shaders.Shader.CullType;
@@ -26,7 +27,7 @@ import java.util.Map;
  *
  * @author Benjamin Schiller
  */
-public abstract class Material extends AbstractAsset
+public abstract class Material extends AbstractAsset implements Copyable
 {
 
 	@AttributeDL(required = false)

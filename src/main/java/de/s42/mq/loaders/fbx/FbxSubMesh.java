@@ -17,7 +17,12 @@ import de.s42.mq.materials.Material;
 import de.s42.mq.meshes.Mesh;
 import de.s42.mq.rendering.RenderContext;
 import de.s42.mq.shaders.Shader;
+import de.s42.mq.util.AABB;
 import java.nio.IntBuffer;
+import org.joml.Matrix4f;
+import org.joml.Vector3f;
+import org.joml.Vector4f;
+import org.lwjgl.assimp.AIAABB;
 import org.lwjgl.assimp.AIFace;
 import org.lwjgl.assimp.AIMesh;
 import org.lwjgl.assimp.AIVector3D;
@@ -47,6 +52,8 @@ public class FbxSubMesh extends Mesh
 
 	protected AIMesh aiMesh;
 
+	protected final AABB aabb = new AABB();
+
 	public FbxSubMesh()
 	{
 	}
@@ -62,6 +69,7 @@ public class FbxSubMesh extends Mesh
 		copy.uvArrayBuffer = uvArrayBuffer;
 		copy.elementArrayBuffer = elementArrayBuffer;
 		copy.elementCount = elementCount;
+		copy.aabb.set(aabb);
 
 		return copy;
 	}
@@ -123,6 +131,12 @@ public class FbxSubMesh extends Mesh
 
 		glBindVertexArray(0);
 
+		AIAABB aiAabb = aiMesh.mAABB();
+
+		aabb.setMin(new Vector3f(aiAabb.mMin().x(), aiAabb.mMin().y(), aiAabb.mMin().z()));
+		aabb.setMax(new Vector3f(aiAabb.mMax().x(), aiAabb.mMax().y(), aiAabb.mMax().z()));
+
+		//log.debug("AABB", aabb);
 		aiMesh = null;
 
 		log.trace("Loaded mesh " + faceCount);
@@ -149,10 +163,10 @@ public class FbxSubMesh extends Mesh
 	public void render(RenderContext context)
 	{
 		assert context != null : "context != null";
-		assert material != null;
-		assert material.isLoaded();
-		assert material.getShader().isLoaded();
-		assert isLoaded();
+		assert material != null : "material != null";
+		assert material.isLoaded() : "material.isLoaded()";
+		assert material.getShader().isLoaded() : "material.getShader().isLoaded()";
+		assert isLoaded() : "isLoaded()";
 
 		// Use override material if given
 		Material mat = (context.getOverrideMaterial() != null) ? context.getOverrideMaterial() : material;
@@ -204,6 +218,41 @@ public class FbxSubMesh extends Mesh
 	public void setAiMesh(AIMesh aiMesh)
 	{
 		this.aiMesh = aiMesh;
+	}
+
+	public AABB getLocalAABB()
+	{
+		return new AABB(aabb);
+	}
+
+	/**
+	 * Calculates the current AABB in world coordinates
+	 *
+	 * @todo optimize performance - like everywhere
+	 * @return
+	 */
+	@Override
+	public AABB getAABB()
+	{
+		//updateModelMatrix();
+		AABB result = new AABB();
+		result.setMax(new Vector3f(Float.NEGATIVE_INFINITY));
+		result.setMin(new Vector3f(Float.POSITIVE_INFINITY));
+
+		Vector3f[] corners = aabb.getCornerVectors();
+
+		Matrix4f matrix = getTransform().getMatrix();
+
+		for (Vector3f corner : corners) {
+
+			Vector4f wPos = (new Vector4f(corner, 1.0f)).mul(matrix);
+
+			corner = new Vector3f(wPos.x / wPos.w, wPos.y / wPos.w, wPos.z / wPos.w);
+
+			result.merge(corner);
+		}
+
+		return result;
 	}
 	// </editor-fold>
 }

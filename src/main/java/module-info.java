@@ -18,6 +18,7 @@ module de.sft.mq.rc
 	requires org.antlr.antlr4.runtime;
 	requires de.sft.dl;
 	requires de.sft.dlt;
+	requires de.sft.dlui;
 	requires org.lwjgl;
 	requires org.lwjgl.glfw;
 	requires org.lwjgl.opengl;
@@ -31,6 +32,7 @@ module de.sft.mq.rc
 	exports de.s42.mq.assets;
 	exports de.s42.mq.buffers;
 	exports de.s42.mq.cameras;
+	exports de.s42.mq.collision;
 	exports de.s42.mq.core;
 	exports de.s42.mq.data;
 	exports de.s42.mq.debug;

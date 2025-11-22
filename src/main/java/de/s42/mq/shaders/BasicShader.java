@@ -78,9 +78,6 @@ public class BasicShader extends PlainShader
 		setUniform("baseSampler", 0);
 
 		// Uniforms
-		viewMatrixUniform = getUniformLocationOpt("viewMatrix");
-		projectionMatrixUniform = getUniformLocationOpt("projectionMatrix");
-		modelMatrixUniform = getUniformLocationOpt("modelMatrix");
 		identifierUniform = getUniformLocationOpt("identifier");
 		tintUniform = getUniformLocationOpt("tint");
 		alphaDiscardUniform = getUniformLocationOpt("alphaDiscard");
@@ -89,7 +86,6 @@ public class BasicShader extends PlainShader
 		tickUniform = getUniformLocationOpt("tick");
 
 		// Attributes
-		inputPosition = getAttributeLocationOpt("position");
 		inputNormal = getAttributeLocationOpt("normal");
 		inputTextureCoords = getAttributeLocationOpt("texCoords");
 	}
@@ -105,9 +101,6 @@ public class BasicShader extends PlainShader
 		setTextureOpt(getBaseTexture(), 0);
 
 		setUniform(identifierUniform, mesh.getIdentifier());
-		setUniform(modelMatrixUniform, mesh.getModelMatrix());
-		setUniform(viewMatrixUniform, camera.getViewMatrix());
-		setUniform(projectionMatrixUniform, camera.getProjectionMatrix());
 		setUniform(identifierUniform, mesh.getIdentifier());
 		setUniform(tintUniform, tint);
 		setUniform(alphaDiscardUniform, alphaDiscard);
@@ -117,8 +110,6 @@ public class BasicShader extends PlainShader
 
 		if (mesh.getIdentifier() > 0) {
 			setDraw7ColorAttachments();
-		} else {
-			setDraw6ColorAttachments();
 		}
 	}
 

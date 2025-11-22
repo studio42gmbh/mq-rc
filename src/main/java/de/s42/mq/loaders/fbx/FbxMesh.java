@@ -108,6 +108,7 @@ public class FbxMesh extends MeshGroup
 			| aiProcess_ImproveCacheLocality
 			| aiProcess_GenNormals
 			| aiProcess_CalcTangentSpace
+			| aiProcess_GenBoundingBoxes
 		)) {
 			if (scene == null) {
 				throw new IllegalStateException(aiGetErrorString());
@@ -222,10 +223,9 @@ public class FbxMesh extends MeshGroup
 
 			String meshName = aiMesh.mName().dataString();
 
+			// Really can it get more annoying ...
 			@SuppressWarnings("null")
 			AIMaterial aiMaterial = AIMaterial.create(scene.mMaterials().get(aiMesh.mMaterialIndex()));
-
-			// Really can it get more annoying ...
 			AIString materialNameStr = AIString.calloc();
 			aiGetMaterialString(aiMaterial, AI_MATKEY_NAME, aiTextureType_NONE, 0, materialNameStr);
 			String materialName = materialNameStr.dataString();
@@ -289,21 +289,28 @@ public class FbxMesh extends MeshGroup
 
 		Matrix4f nodeGlobalTransform = (new Matrix4f(nodeTransform)).mulLocal(globalTransform);
 
-		// manages rotations and offsets
+		// Manages rotations and offsets
 		MeshGroup originContainer = new MeshGroup();
 		originContainer.setName(nodeName + "Origin");
 		Matrix4f originTransform = getOriginTransform(nodeTransform, globalTransform);
 		originContainer.setFromMatrix(originTransform);
 		nodeMeshContainer.addMesh(originContainer);
 
-		// is an identity node that allowss to manipulate the mesh easily later
+		// Is an identity node that allowss to manipulate the mesh easily later
 		MeshGroup childContainer = new MeshGroup();
 		childContainer.setName(nodeName);
 		originContainer.addMesh(childContainer);
 
+		/* Simpler version without Origin container ...
+		MeshGroup childContainer = new MeshGroup();
+		Matrix4f originTransform = getOriginTransform(nodeTransform, globalTransform);
+		childContainer.setFromMatrix(originTransform);
+		childContainer.setName(nodeName);
+		nodeMeshContainer.addMesh(childContainer);
+		 */
 		loadMetaData(node.mMetadata(), childContainer);
 
-		// load the meshes into the conbtainer
+		// load the meshes into the container
 		Matrix4f meshTransform = getMeshTransform(nodeTransform, globalTransform, nodeGlobalTransform);
 		loadSubMeshes(scene, node, childContainer, meshTransform);
 

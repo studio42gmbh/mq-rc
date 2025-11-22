@@ -40,6 +40,7 @@ import static org.lwjgl.glfw.GLFW.*;
 public class Textfield extends MeshGroup implements UIComponent
 {
 
+	@SuppressWarnings("FieldNameHidesFieldInSuperclass")
 	private final static Logger log = LogManager.getLogger(Textfield.class.getName());
 
 	@required
@@ -89,7 +90,7 @@ public class Textfield extends MeshGroup implements UIComponent
 			// @todo finalize proper copying
 			copy.text.setValue(text.getValue());
 			copy.layout = layout;
-			copy.layoutOptions = (layoutOptions != null) ? layoutOptions.copy() : null;
+			copy.layoutOptions = (layoutOptions != null) ? (LayoutOptions) layoutOptions.copy() : null;
 			copy.uiManager = uiManager;
 			copy.textOptions = textOptions.copy();
 			copy.panelOptions = panelOptions.copy();
@@ -238,7 +239,7 @@ public class Textfield extends MeshGroup implements UIComponent
 
 	protected void updateLayoutOptions()
 	{
-		UILayoutOptions options = layoutOptions.copy();
+		UILayoutOptions options = (UILayoutOptions) layoutOptions.copy();
 
 		options.translateLeftTop(textInsets.x, textInsets.y);
 		options.translateRightBottom(-textInsets.z, -textInsets.w);

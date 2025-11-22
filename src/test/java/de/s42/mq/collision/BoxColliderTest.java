@@ -23,31 +23,21 @@
  * THE SOFTWARE.
  */
 //</editor-fold>
-package de.s42.mq.rendering;
+package de.s42.mq.collision;
 
-import de.s42.mq.cameras.Camera;
-import de.s42.mq.materials.Material;
-import de.s42.mq.materials.Texture;
-import de.s42.mq.shaders.Shader.CullType;
+import org.testng.annotations.Test;
 
 /**
  *
  * @author Benjamin Schiller
  */
-public interface RenderContext
+public class BoxColliderTest
 {
 
-	public int getTick();
+	@Test(enabled = false)
+	public void testIntersect()
+	{
+		// @todo
+	}
 
-	public float getDeltaTime();
-
-	public float getTotalTime();
-
-	public Material getOverrideMaterial();
-
-	public Camera getShadowCamera();
-
-	public Texture getShadowTexture();
-
-	public CullType getOverrideCullType();
 }

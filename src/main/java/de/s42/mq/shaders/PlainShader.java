@@ -31,9 +31,12 @@ public class PlainShader extends Shader
 	{
 		super.loadShader();
 
+		// Uniforms
 		viewMatrixUniform = getUniformLocationOpt("viewMatrix");
 		projectionMatrixUniform = getUniformLocationOpt("projectionMatrix");
 		modelMatrixUniform = getUniformLocationOpt("modelMatrix");
+
+		// Attributes
 		inputPosition = getAttributeLocationOpt("position");
 	}
 

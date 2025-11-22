@@ -30,6 +30,7 @@ import de.s42.mq.buffers.GBuffer;
 import de.s42.mq.cameras.Camera;
 import de.s42.mq.cameras.OrthographicCamera;
 import de.s42.mq.cameras.PerspectiveCamera;
+import de.s42.mq.collision.*;
 import de.s42.mq.core.AbstractEntity;
 import de.s42.mq.core.Entity;
 import de.s42.mq.data.*;
@@ -96,6 +97,7 @@ import de.s42.mq.ui.layout.uilayout.UILayoutOptions;
 import de.s42.mq.ui.textfield.TextFieldCaretAnimation;
 import de.s42.mq.ui.textfield.TextFieldFocusAnimation;
 import de.s42.mq.ui.textfield.Textfield;
+import de.s42.mq.util.AABB;
 import de.s42.mq.util.Transform;
 import java.io.IOException;
 import java.nio.file.Files;
@@ -147,10 +149,10 @@ public class MQDLCore extends DefaultCore
 		defineType(new Vector3DLType(objectType), Vector3f.class.getName(), "vec3");
 		defineType(new Vector4DLType(objectType), Vector4f.class.getName(), "vec4");
 		defineType(new ColorDLType(objectType), "MQColor", MQColor.class.getName());
-		defineType(createType(AtomicInteger.class));
-		defineType(createType(Matrix4f.class));
-		defineType(createType(Quaternionf.class));
-		defineType(createType(Transform.class));
+		defineType(AtomicInteger.class);
+		defineType(Matrix4f.class, "Matrix4");
+		defineType(Quaternionf.class);
+		defineType(Transform.class, "Transform");
 
 		// Enum
 		defineType(createEnum(CullType.class), "CullType");
@@ -170,6 +172,19 @@ public class MQDLCore extends DefaultCore
 		// Base
 		defineType(createType(Entity.class), "Entity");
 		defineType(createType(AbstractEntity.class), "AbstractEntity");
+
+		//Colliders
+		defineType(AABB.class, "AABB");
+		defineType(Ray.class, "Ray");
+		defineType(Collider.class, "Collider");
+		defineType(AbstractCollider.class, "AbstractCollider");
+		defineType(PlaneCollider.class, "PlaneCollider");
+		defineType(SphereCollider.class, "SphereCollider");
+		defineType(BoxCollider.class, "BoxCollider");
+		defineType(CapsuleCollider.class, "CapsuleCollider");
+
+		defineType(CollisionSpace.class, "CollisionSpace");
+		defineType(DefaultCollisionSpace.class, "DefaultCollisionSpace");
 
 		// Data
 		defineType(createType(Data.class), "Data");

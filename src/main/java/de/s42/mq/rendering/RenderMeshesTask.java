@@ -20,6 +20,7 @@ import de.s42.mq.data.FloatData;
 import de.s42.mq.data.IntegerData;
 import de.s42.mq.materials.Material;
 import de.s42.mq.meshes.MeshGroup;
+import de.s42.mq.shaders.Shader.CullType;
 import de.s42.mq.ui.AbstractWindowTask;
 
 /**
@@ -44,6 +45,9 @@ public class RenderMeshesTask extends AbstractWindowTask
 
 	@AttributeDL(required = false)
 	protected Material overrideMaterial;
+
+	@AttributeDL(required = false)
+	protected CullType overrideCullType;
 
 	protected FloatData totalTime = new FloatData();
 	protected FloatData deltaTime = new FloatData();
@@ -104,6 +108,7 @@ public class RenderMeshesTask extends AbstractWindowTask
 		meshes.setLayers(layers);
 
 		DefaultRenderContext context = new DefaultRenderContext();
+		context.setOverrideCullType(overrideCullType);
 		context.setOverrideMaterial(overrideMaterial);
 		context.setTick(tick.getIntegerValue());
 		context.setDeltaTime(deltaTime.getFloatValue());
@@ -219,6 +224,16 @@ public class RenderMeshesTask extends AbstractWindowTask
 	public void setShadowBuffer(FXBuffer shadowBuffer)
 	{
 		this.shadowBuffer = shadowBuffer;
+	}
+
+	public CullType getOverrideCullType()
+	{
+		return overrideCullType;
+	}
+
+	public void setOverrideCullType(CullType overrideCullType)
+	{
+		this.overrideCullType = overrideCullType;
 	}
 	// "Getters/Setters" </editor-fold>
 }

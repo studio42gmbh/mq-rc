@@ -104,6 +104,16 @@ public final class Transform
 		return matrix;
 	}
 
+	public Transform translate(Vector3f translate)
+	{
+		assert translate != null : "translate != null";
+
+		position.add(translate);
+		dirty = true;
+
+		return this;
+	}
+
 	public Vector3f getWorldPosition()
 	{
 		Vector4f wPos = (new Vector4f(0.0f, 0.0f, 0.0f, 1.0f)).mul(matrix);
@@ -140,7 +150,7 @@ public final class Transform
 
 	public void setPosition(Vector3f position)
 	{
-		assert position != null;
+		assert position != null : "position != null";
 
 		this.position.set(position);
 		dirty = true;
@@ -153,7 +163,7 @@ public final class Transform
 
 	public void setScale(Vector3f scale)
 	{
-		assert scale != null;
+		assert scale != null : "scale != null";
 
 		this.scale.set(scale);
 		dirty = true;
@@ -166,7 +176,7 @@ public final class Transform
 
 	public void setRotation(Quaternionf rotation)
 	{
-		assert rotation != null;
+		assert rotation != null : "rotation != null";
 
 		this.rotation.identity().mul(rotation);
 		dirty = true;

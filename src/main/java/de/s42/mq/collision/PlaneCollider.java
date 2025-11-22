@@ -23,31 +23,72 @@
  * THE SOFTWARE.
  */
 //</editor-fold>
-package de.s42.mq.rendering;
+package de.s42.mq.collision;
 
-import de.s42.mq.cameras.Camera;
-import de.s42.mq.materials.Material;
-import de.s42.mq.materials.Texture;
-import de.s42.mq.shaders.Shader.CullType;
+import org.joml.Vector3f;
 
 /**
  *
  * @author Benjamin Schiller
  */
-public interface RenderContext
+public final class PlaneCollider extends AbstractCollider
 {
 
-	public int getTick();
+	public Vector3f origin;
+	public Vector3f normal;
 
-	public float getDeltaTime();
+	public PlaneCollider()
+	{
+	}
 
-	public float getTotalTime();
+	public PlaneCollider(Vector3f origin, Vector3f normal)
+	{
+		this.origin = origin;
+		this.normal = normal;
+	}
 
-	public Material getOverrideMaterial();
+	@Override
+	public boolean contains(Vector3f position)
+	{
+		return false;
+	}
 
-	public Camera getShadowCamera();
+	@Override
+	public boolean intersect(Ray ray, Vector3f result)
+	{
+		float denominator = normal.dot(ray.direction);
 
-	public Texture getShadowTexture();
+		// Coplanar
+		if (denominator > -COLLIDER_EPSILON && denominator < COLLIDER_EPSILON) {
+			return false;
+		}
 
-	public CullType getOverrideCullType();
+		float t = origin.sub(ray.origin, new Vector3f()).dot(normal) / denominator;
+
+		if (t < COLLIDER_EPSILON) {
+			return false;
+		}
+
+		result.set(ray.direction).mul(t).add(ray.origin);
+
+		return true;
+	}
+
+	@Override
+	public Vector3f getOrigin()
+	{
+		return origin;
+	}
+
+	@Override
+	public void setOrigin(Vector3f origin)
+	{
+		throw new UnsupportedOperationException("Not supported yet.");
+	}
+
+	@Override
+	public Object copy()
+	{
+		throw new UnsupportedOperationException("Not supported yet.");
+	}
 }

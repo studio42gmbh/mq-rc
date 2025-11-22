@@ -18,8 +18,10 @@ import de.s42.log.LogManager;
 import de.s42.log.Logger;
 import de.s42.mq.cameras.Camera;
 import de.s42.mq.data.BooleanData;
+import de.s42.mq.materials.Material;
 import de.s42.mq.rendering.RenderContext;
 import de.s42.mq.ui.editor;
+import de.s42.mq.util.AABB;
 import java.util.*;
 import java.util.function.Predicate;
 import org.joml.Quaternionf;
@@ -116,9 +118,9 @@ public class MeshGroup extends Mesh
 	public void render(RenderContext context)
 	{
 		assert context != null : "context != null";
-		assert enabled != null;
-		assert isLoaded();
-		assert getCamera() != null;
+		assert enabled != null : "enabled != null";
+		assert isLoaded() : "isLoaded()";
+		assert getCamera() != null : "getCamera() != null";
 
 		if (!enabled.getBooleanValue()) {
 			return;
@@ -205,6 +207,26 @@ public class MeshGroup extends Mesh
 	public List getChildren()
 	{
 		return Collections.unmodifiableList(ListHelper.concatenate(meshes, animations));
+	}
+
+	/**
+	 * Computes the current AABB in world coordinates
+	 *
+	 * @return
+	 */
+	@Override
+	public AABB getAABB()
+	{
+		//updateModelMatrix();
+		List<Mesh> subMeshes = findMeshesByFilter((t) -> true);
+
+		AABB result = new AABB();
+
+		for (Mesh subMesh : subMeshes) {
+			result.merge(subMesh.getAABB());
+		}
+
+		return result;
 	}
 
 	public List<Mesh> getMeshes()
@@ -319,6 +341,16 @@ public class MeshGroup extends Mesh
 	}
 
 	@Override
+	public void updateModelMatrix(boolean force)
+	{
+		super.updateModelMatrix(force);
+
+		for (Mesh mesh : meshes) {
+			mesh.updateModelMatrix(force);
+		}
+	}
+
+	@Override
 	public void setModelMatrixDirty(boolean modelMatrixDirty)
 	{
 		super.setModelMatrixDirty(modelMatrixDirty);
@@ -424,6 +456,21 @@ public class MeshGroup extends Mesh
 				meshGroup.setLayersDeep(layers);
 			} else if (mesh != null) {
 				mesh.setLayers(layers);
+			}
+		}
+	}
+
+	public void setMaterialDeep(Material material)
+	{
+		assert material != null : "material != null";
+
+		setMaterial(material);
+
+		for (Mesh mesh : meshes) {
+			if (mesh instanceof MeshGroup meshGroup) {
+				meshGroup.setMaterialDeep(material);
+			} else if (mesh != null) {
+				mesh.setMaterial(material);
 			}
 		}
 	}

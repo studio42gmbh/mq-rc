@@ -23,31 +23,49 @@
  * THE SOFTWARE.
  */
 //</editor-fold>
-package de.s42.mq.rendering;
+package de.s42.mq.collision;
 
-import de.s42.mq.cameras.Camera;
-import de.s42.mq.materials.Material;
-import de.s42.mq.materials.Texture;
-import de.s42.mq.shaders.Shader.CullType;
+import java.util.HashSet;
+import java.util.Set;
+import org.joml.Vector3f;
 
 /**
- *
+ * @todo This should get optimized by a relevant bvh (https://en.wikipedia.org/wiki/Bounding_volume_hierarchy)
  * @author Benjamin Schiller
  */
-public interface RenderContext
+public class DefaultCollisionSpace implements CollisionSpace
 {
 
-	public int getTick();
+	protected final Set<Collider> colliders = new HashSet<>();
 
-	public float getDeltaTime();
+	@Override
+	public void addCollider(Collider collider)
+	{
+		colliders.add(collider);
+	}
 
-	public float getTotalTime();
+	@Override
+	public void removeCollider(Collider collider)
+	{
+		colliders.remove(collider);
+	}
 
-	public Material getOverrideMaterial();
+	@Override
+	public void updateCollider(Collider collider)
+	{
+		// do nothing for now
+	}
 
-	public Camera getShadowCamera();
+	@Override
+	public Collider find(Vector3f position)
+	{
+		for (Collider collider : colliders) {
+			if (collider.contains(position)) {
+				return collider;
+			}
+		}
 
-	public Texture getShadowTexture();
+		return null;
+	}
 
-	public CullType getOverrideCullType();
 }

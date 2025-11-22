@@ -20,6 +20,7 @@ import de.s42.mq.core.Copyable;
 import de.s42.mq.materials.Material;
 import de.s42.mq.rendering.RenderContext;
 import de.s42.mq.ui.editor;
+import de.s42.mq.util.AABB;
 import de.s42.mq.util.Transform;
 import java.lang.reflect.InvocationTargetException;
 import java.util.ArrayList;
@@ -104,6 +105,12 @@ public abstract class Mesh<ChildType extends Object> extends AbstractAsset imple
 		} catch (IllegalAccessException | IllegalArgumentException | InstantiationException | NoSuchMethodException | SecurityException | InvocationTargetException ex) {
 			throw new RuntimeException("Error copying mesh " + ex.getMessage(), ex);
 		}
+	}
+
+	public AABB getAABB()
+	{
+		// @todo implement
+		return (new AABB()).translate(getPosition());
 	}
 
 	@Override
@@ -414,5 +421,18 @@ public abstract class Mesh<ChildType extends Object> extends AbstractAsset imple
 			setParentMatrix(null);
 			setCamera(null);
 		}
+	}
+
+	public <ParentType extends MeshGroup> ParentType getParentOfType(Class<ParentType> parentType)
+	{
+		MeshGroup p = parent;
+		while (p != null) {
+			if (parentType.isAssignableFrom(p.getClass())) {
+				return (ParentType) p;
+			}
+			p = p.parent;
+		}
+
+		return null;
 	}
 }

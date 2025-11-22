@@ -23,31 +23,57 @@
  * THE SOFTWARE.
  */
 //</editor-fold>
-package de.s42.mq.rendering;
+package de.s42.mq.data;
 
-import de.s42.mq.cameras.Camera;
-import de.s42.mq.materials.Material;
-import de.s42.mq.materials.Texture;
-import de.s42.mq.shaders.Shader.CullType;
+import de.s42.base.beans.InvalidBean;
+import de.s42.dl.ui.bindings.DefaultBinding;
+import java.util.Objects;
 
 /**
  *
  * @author Benjamin Schiller
+ * @param <ObjectType>
+ * @param <DataType>
  */
-public interface RenderContext
+public class DefaultDataBinding<ObjectType, DataType extends Data> extends DefaultBinding<ObjectType, DataType>
 {
 
-	public int getTick();
+	protected Object currentDataValue;
 
-	public float getDeltaTime();
+	public DefaultDataBinding(ObjectType object, String name) throws InvalidBean
+	{
+		super(object, name);
+	}
 
-	public float getTotalTime();
+	@Override
+	public boolean updateValue()
+	{
+		try {
+			DataType value = property.read(object);
 
-	public Material getOverrideMaterial();
+			// Just update if the value has changed
+			if (!Objects.equals(currentValue, value)) {
+				currentValue = value;
+				if (currentValue != null) {
+					currentDataValue = value.getValue();
+				} else {
+					currentDataValue = null;
+				}
+				updateListeners(value);
+				return true;
+			}
 
-	public Camera getShadowCamera();
+			// Just update if the value of the data has changed
+			Object dataValue = value.getValue();
+			if (!Objects.equals(currentDataValue, dataValue)) {
+				currentDataValue = dataValue;
+				updateListeners(value);
+				return true;
+			}
 
-	public Texture getShadowTexture();
-
-	public CullType getOverrideCullType();
+			return false;
+		} catch (InvalidBean ex) {
+			throw new RuntimeException(ex);
+		}
+	}
 }

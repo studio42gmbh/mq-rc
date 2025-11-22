@@ -17,6 +17,7 @@ import de.s42.log.Logger;
 import de.s42.mq.materials.Material;
 import de.s42.mq.rendering.RenderContext;
 import de.s42.mq.shaders.Shader;
+import de.s42.mq.util.AABB;
 import static org.lwjgl.opengl.GL11.*;
 import static org.lwjgl.opengl.GL15.*;
 import static org.lwjgl.opengl.GL20.glEnableVertexAttribArray;
@@ -31,6 +32,16 @@ public class Cube extends Mesh
 {
 
 	private final static Logger log = LogManager.getLogger(Cube.class.getName());
+
+	public static Cube fromAABB(AABB aabb)
+	{
+		Cube cube = new Cube();
+
+		cube.setPosition(aabb.getCenter());
+		cube.setScale(aabb.getDelta().mul(0.5f));
+
+		return cube;
+	}
 
 	public final float CUBE_VERTICES[] = {
 		// back face
@@ -128,9 +139,9 @@ public class Cube extends Mesh
 	public void render(RenderContext context)
 	{
 		assert context != null : "context != null";
-		assert material != null;
-		assert material.isLoaded();
-		assert isLoaded();
+		assert material != null : "material != null";
+		assert material.isLoaded() : "material.isLoaded()";
+		assert isLoaded() : "isLoaded()";
 
 		// Use override material if given
 		Material mat = (context.getOverrideMaterial() != null) ? context.getOverrideMaterial() : material;
@@ -151,12 +162,12 @@ public class Cube extends Mesh
 			glEnableVertexAttribArray(shader.getInputPosition());
 		}
 
-		if (shader.getInputPosition() > -1) {
+		if (shader.getInputNormal() > -1) {
 			glVertexAttribPointer(shader.getInputNormal(), 3, GL_FLOAT, false, (3 + 3 + 2) * 4, 3 * 4L);
 			glEnableVertexAttribArray(shader.getInputNormal());
 		}
 
-		if (shader.getInputPosition() > -1) {
+		if (shader.getInputTextureCoords() > -1) {
 			glVertexAttribPointer(shader.getInputTextureCoords(), 2, GL_FLOAT, false, (3 + 3 + 2) * 4, (3 + 3) * 4L);
 			glEnableVertexAttribArray(shader.getInputTextureCoords());
 		}

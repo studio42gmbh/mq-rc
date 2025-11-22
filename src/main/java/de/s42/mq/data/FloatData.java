@@ -11,6 +11,8 @@
  */
 package de.s42.mq.data;
 
+import de.s42.base.conversion.ConversionHelper;
+
 /**
  *
  * @author Benjamin Schiller
@@ -22,6 +24,15 @@ public class FloatData extends AbstractNumberData<Float>
 	protected float min;
 	protected float max;
 	protected float step;
+
+	static {
+
+		ConversionHelper.addConverter(
+			String.class, FloatData.class,
+			(source) -> {
+				return new FloatData(Float.parseFloat(source));
+			});
+	}
 
 	public FloatData()
 	{

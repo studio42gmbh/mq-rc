@@ -44,6 +44,7 @@ import java.util.List;
 public class Image extends Quad implements UIComponent, UIAction
 {
 
+	@SuppressWarnings("FieldNameHidesFieldInSuperclass")
 	private final static Logger log = LogManager.getLogger(Image.class.getName());
 
 	@DontPersistDLAnnotation.dontPersist
@@ -127,7 +128,7 @@ public class Image extends Quad implements UIComponent, UIAction
 		copy.buffer = buffer;
 		copy.texture = texture;
 		copy.layout = layout;
-		copy.layoutOptions = (layoutOptions != null) ? layoutOptions.copy() : null;
+		copy.layoutOptions = (layoutOptions != null) ? (LayoutOptions) layoutOptions.copy() : null;
 		copy.smooth = smooth;
 		copy.screenUvs = screenUvs;
 		copy.borderRadius.setValue(borderRadius.getValue());

@@ -22,7 +22,7 @@ import org.joml.Vector3f;
 public final class MQMath
 {
 
-	public static final float EPSILON = 0.000001f;
+	public static final float EPSILON = Float.MIN_VALUE;
 	public static final float ONE_MINUS_EPSILON = 1.0f - EPSILON;
 	public static final float ONE_PLUS_EPSILON = 1.0f + EPSILON;
 	public static final float PI = (float) Math.PI;
