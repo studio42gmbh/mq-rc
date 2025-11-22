@@ -145,4 +145,14 @@ public final class MQMath
 	{
 		return ThreadLocalRandom.current().nextFloat(min, max);
 	}
+
+	public static float floorStep(float value, float step)
+	{
+		return (float) Math.floor(value / step) * step;
+	}
+
+	public static float ceilStep(float value, float step)
+	{
+		return (float) Math.ceil(value / step) * step;
+	}
 }
