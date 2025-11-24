@@ -12,15 +12,12 @@
 package de.s42.mq.meshes;
 
 import de.s42.base.collections.ListHelper;
-import de.s42.dl.DLAttribute.AttributeDL;
 import de.s42.dl.exceptions.DLException;
 import de.s42.log.LogManager;
 import de.s42.log.Logger;
 import de.s42.mq.cameras.Camera;
-import de.s42.mq.data.BooleanData;
 import de.s42.mq.materials.Material;
 import de.s42.mq.rendering.RenderContext;
-import de.s42.mq.ui.editor;
 import de.s42.mq.util.AABB;
 import java.util.*;
 import java.util.function.Predicate;
@@ -37,10 +34,6 @@ public class MeshGroup extends Mesh
 	@SuppressWarnings("FieldNameHidesFieldInSuperclass")
 	private final static Logger log = LogManager.getLogger(MeshGroup.class.getName());
 
-	@AttributeDL(required = false)
-	@editor
-	protected BooleanData enabled = new BooleanData(true);
-
 	protected final List<Mesh> meshes = Collections.synchronizedList(new ArrayList());
 	protected final Map<String, Object> customProperties = new HashMap<>();
 
@@ -49,7 +42,7 @@ public class MeshGroup extends Mesh
 	{
 		MeshGroup copy = (MeshGroup) super.copy();
 
-		copy.enabled = new BooleanData(enabled.getBooleanValue());
+		copy.enabled = enabled;
 		copy.layers = layers;
 		copy.customProperties.putAll(customProperties);
 
@@ -63,9 +56,7 @@ public class MeshGroup extends Mesh
 	@Override
 	public void update(float elapsedTime)
 	{
-		assert enabled != null;
-
-		if (!enabled.getBooleanValue()) {
+		if (!enabled) {
 			return;
 		}
 
@@ -118,11 +109,10 @@ public class MeshGroup extends Mesh
 	public void render(RenderContext context)
 	{
 		assert context != null : "context != null";
-		assert enabled != null : "enabled != null";
 		assert isLoaded() : "isLoaded()";
 		assert getCamera() != null : "getCamera() != null";
 
-		if (!enabled.getBooleanValue()) {
+		if (!enabled) {
 			return;
 		}
 
@@ -144,20 +134,12 @@ public class MeshGroup extends Mesh
 
 		mesh.setCamera(getCamera());
 
-		if (mesh.getMaterial() != null) {
-			mesh.getMaterial().beforeRendering(context);
-		}
-
 		if (mesh instanceof MeshGroup meshGroup) {
 			// @todo: should i preserve the layers of contained meshgroups?
 			meshGroup.setLayers(getLayers());
 			meshGroup.render(context);
 		} else if (shallBeRendered(mesh)) {
 			mesh.render(context);
-		}
-
-		if (mesh.getMaterial() != null) {
-			mesh.getMaterial().afterRendering(context);
 		}
 	}
 
@@ -391,16 +373,6 @@ public class MeshGroup extends Mesh
 		}
 	}
 
-	public BooleanData getEnabled()
-	{
-		return enabled;
-	}
-
-	public void setEnabled(BooleanData enabled)
-	{
-		this.enabled = enabled;
-	}
-
 	protected void logHierarchy(Mesh mesh, int indent)
 	{
 		String indentStr = "";
@@ -471,6 +443,19 @@ public class MeshGroup extends Mesh
 				meshGroup.setMaterialDeep(material);
 			} else if (mesh != null) {
 				mesh.setMaterial(material);
+			}
+		}
+	}
+
+	public void setEnabledDeep(boolean enabled)
+	{
+		setEnabled(enabled);
+
+		for (Mesh mesh : meshes) {
+			if (mesh instanceof MeshGroup meshGroup) {
+				meshGroup.setEnabledDeep(enabled);
+			} else if (mesh != null) {
+				mesh.setEnabled(enabled);
 			}
 		}
 	}

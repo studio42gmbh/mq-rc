@@ -114,6 +114,9 @@ public class Image extends Quad implements UIComponent, UIAction
 	@AttributeDL(required = false, defaultValue = "true")
 	protected boolean focusable = true;
 
+	@AttributeDL(required = false, defaultValue = "true")
+	protected boolean visible = true;
+
 	protected boolean textureLoaded;
 	protected float originalWidth;
 
@@ -235,6 +238,10 @@ public class Image extends Quad implements UIComponent, UIAction
 	public void render(RenderContext context)
 	{
 		assert context != null : "context != null";
+
+		if (!isVisible()) {
+			return;
+		}
 
 		// make sure the texture gets set from the buffer
 		if (buffer != null) {
@@ -443,6 +450,18 @@ public class Image extends Quad implements UIComponent, UIAction
 	public void setFocusable(boolean focusable)
 	{
 		this.focusable = focusable;
+	}
+
+	@Override
+	public boolean isVisible()
+	{
+		return visible;
+	}
+
+	@Override
+	public void setVisible(boolean visible)
+	{
+		this.visible = visible;
 	}
 	// "Getters/Setters" </editor-fold>
 }

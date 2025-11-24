@@ -64,6 +64,10 @@ public abstract class Mesh<ChildType extends Object> extends AbstractAsset imple
 	@editor(editorGroup = "transform")
 	protected Quaternionf rotation;
 
+	@AttributeDL(required = false, defaultValue = "true")
+	@editor
+	protected boolean enabled = true;
+
 	@AttributeDL(ignore = true)
 	protected final Transform transform = new Transform();
 
@@ -403,6 +407,16 @@ public abstract class Mesh<ChildType extends Object> extends AbstractAsset imple
 		assert transform != null;
 
 		this.transform.set(transform);
+	}
+
+	public boolean isEnabled()
+	{
+		return enabled;
+	}
+
+	public void setEnabled(boolean enabled)
+	{
+		this.enabled = enabled;
 	}
 
 	public MeshGroup getParent()

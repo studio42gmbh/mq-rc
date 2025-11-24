@@ -48,4 +48,8 @@ public interface UIComponent extends Copyable, Entity, KeyInputHandler
 	public boolean isFocusable();
 
 	public void setFocusable(boolean focusable);
+
+	public boolean isVisible();
+
+	public void setVisible(boolean visible);
 }

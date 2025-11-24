@@ -23,6 +23,7 @@ import de.s42.mq.data.StringData;
 import de.s42.mq.fonts.Text;
 import de.s42.mq.fonts.TextOptions;
 import de.s42.mq.meshes.MeshGroup;
+import de.s42.mq.rendering.RenderContext;
 import de.s42.mq.ui.Panel;
 import de.s42.mq.ui.PanelOptions;
 import de.s42.mq.ui.UIComponent;
@@ -68,6 +69,9 @@ public class Textfield extends MeshGroup implements UIComponent
 
 	@AttributeDL(defaultValue = "true")
 	protected boolean focusable = true;
+
+	@AttributeDL(required = false, defaultValue = "true")
+	protected boolean visible = true;
 
 	@dontPersist
 	protected Text textComponent = new Text();
@@ -237,6 +241,16 @@ public class Textfield extends MeshGroup implements UIComponent
 
 	}
 
+	@Override
+	public void render(RenderContext context)
+	{
+		if (!isVisible()) {
+			return;
+		}
+
+		super.render(context);
+	}
+
 	protected void updateLayoutOptions()
 	{
 		UILayoutOptions options = (UILayoutOptions) layoutOptions.copy();
@@ -392,6 +406,18 @@ public class Textfield extends MeshGroup implements UIComponent
 	public void setTextInsets(Vector4f textInsets)
 	{
 		this.textInsets.set(textInsets);
+	}
+
+	@Override
+	public boolean isVisible()
+	{
+		return visible;
+	}
+
+	@Override
+	public void setVisible(boolean visible)
+	{
+		this.visible = visible;
 	}
 	// "Getters/Setters" </editor-fold>
 }

@@ -41,6 +41,8 @@ public abstract class AbstractUIComponent extends AbstractEntity implements UICo
 
 	protected boolean focusable;
 
+	protected boolean visible;
+
 	@AttributeDL(ignore = true)
 	protected UIManager uiManager;
 
@@ -126,5 +128,17 @@ public abstract class AbstractUIComponent extends AbstractEntity implements UICo
 	public void setFocusable(boolean focusable)
 	{
 		this.focusable = focusable;
+	}
+
+	@Override
+	public boolean isVisible()
+	{
+		return visible;
+	}
+
+	@Override
+	public void setVisible(boolean visible)
+	{
+		this.visible = visible;
 	}
 }

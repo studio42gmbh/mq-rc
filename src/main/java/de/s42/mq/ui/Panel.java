@@ -79,6 +79,9 @@ public class Panel extends Quad implements UIComponent
 	@AttributeDL(required = false, defaultValue = "false")
 	protected boolean focusable = false;
 
+	@AttributeDL(required = false, defaultValue = "true")
+	protected boolean visible = true;
+
 	public void setOptions(PanelOptions options)
 	{
 		assert options != null;
@@ -138,6 +141,10 @@ public class Panel extends Quad implements UIComponent
 	{
 		assert getLayout() != null : "getLayout() != null for " + this;
 		assert getLayoutOptions() != null : "getLayoutOptions() != null for " + this;
+
+		if (!isVisible()) {
+			return;
+		}
 
 		// apply layout if given
 		Layout lay = getLayout();
@@ -262,6 +269,18 @@ public class Panel extends Quad implements UIComponent
 	public void setFocusable(boolean focusable)
 	{
 		this.focusable = focusable;
+	}
+
+	@Override
+	public boolean isVisible()
+	{
+		return visible;
+	}
+
+	@Override
+	public void setVisible(boolean visible)
+	{
+		this.visible = visible;
 	}
 	// "Getters/Setters" </editor-fold>
 }

@@ -20,6 +20,7 @@ import de.s42.mq.data.StringData;
 import de.s42.mq.fonts.Text;
 import de.s42.mq.fonts.TextOptions;
 import de.s42.mq.meshes.MeshGroup;
+import de.s42.mq.rendering.RenderContext;
 import de.s42.mq.ui.actions.UIAction;
 import de.s42.mq.ui.layout.Layout;
 import de.s42.mq.ui.layout.LayoutOptions;
@@ -56,6 +57,9 @@ public class Button extends MeshGroup implements UIAction, UIComponent
 
 	@AttributeDL(required = false, defaultValue = "true")
 	protected boolean focusable = true;
+
+	@AttributeDL(required = false, defaultValue = "true")
+	protected boolean visible = true;
 
 	@dontPersist
 	protected Text textComponent = new Text();
@@ -180,6 +184,16 @@ public class Button extends MeshGroup implements UIAction, UIComponent
 		super.unload();
 	}
 
+	@Override
+	public void render(RenderContext context)
+	{
+		if (!isVisible()) {
+			return;
+		}
+
+		super.render(context);
+	}
+
 	// <editor-fold desc="Getters/Setters" defaultstate="collapsed">
 	public StringData getText()
 	{
@@ -294,6 +308,18 @@ public class Button extends MeshGroup implements UIAction, UIComponent
 	public void setFocusable(boolean focusable)
 	{
 		this.focusable = focusable;
+	}
+
+	@Override
+	public boolean isVisible()
+	{
+		return visible;
+	}
+
+	@Override
+	public void setVisible(boolean visible)
+	{
+		this.visible = visible;
 	}
 	// "Getters/Setters" </editor-fold>
 }

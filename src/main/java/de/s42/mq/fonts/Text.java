@@ -15,8 +15,6 @@ import de.s42.dl.DLAttribute.AttributeDL;
 import de.s42.dl.annotations.attributes.RequiredDLAnnotation.required;
 import de.s42.dl.annotations.persistence.DontPersistDLAnnotation.dontPersist;
 import de.s42.dl.exceptions.DLException;
-import de.s42.log.LogManager;
-import de.s42.log.Logger;
 import de.s42.mq.MQColor;
 import de.s42.mq.buffers.FrameBuffer;
 import de.s42.mq.core.Copyable;
@@ -48,8 +46,7 @@ import static org.lwjgl.opengl.GL33.glVertexAttribDivisor;
 public class Text extends Mesh implements UIComponent, Copyable
 {
 
-	private final static Logger log = LogManager.getLogger(Text.class.getName());
-
+	//private final static Logger log = LogManager.getLogger(Text.class.getName());
 	public final static float DPI_CORRECT = 72.0f / 96.0f;// ((float) Toolkit.getDefaultToolkit().getScreenResolution()) / 72.0f;
 
 	public static enum VerticalAlignment
@@ -108,6 +105,9 @@ public class Text extends Mesh implements UIComponent, Copyable
 
 	@AttributeDL(defaultValue = "false")
 	protected boolean focusable = false;
+
+	@AttributeDL(required = false, defaultValue = "true")
+	protected boolean visible = true;
 
 	@dontPersist
 	protected int vao = -1;
@@ -377,12 +377,17 @@ public class Text extends Mesh implements UIComponent, Copyable
 		Vector2f lineDimensions = computeDimensionScreenspace(lines[0]);
 		float lineAlignmentOffsetX = 0.0f;
 
-		if (horizontalAlignment == HorizontalAlignment.LEFT) {
-			lineAlignmentOffsetX = 0.0f;
-		} else if (horizontalAlignment == HorizontalAlignment.CENTER) {
-			lineAlignmentOffsetX = -lineDimensions.x * 0.5f;
-		} else if (horizontalAlignment == HorizontalAlignment.RIGHT) {
-			lineAlignmentOffsetX = -lineDimensions.x;
+		if (null != horizontalAlignment) {
+			switch (horizontalAlignment) {
+				case LEFT ->
+					lineAlignmentOffsetX = 0.0f;
+				case CENTER ->
+					lineAlignmentOffsetX = -lineDimensions.x * 0.5f;
+				case RIGHT ->
+					lineAlignmentOffsetX = -lineDimensions.x;
+				default -> {
+				}
+			}
 		}
 
 		for (int c = 0; c < cCount; ++c) {
@@ -397,12 +402,17 @@ public class Text extends Mesh implements UIComponent, Copyable
 
 				// @todo solve issue with newline right at the end of a text
 				lineDimensions = computeDimensionScreenspace(lines[line]);
-				if (horizontalAlignment == HorizontalAlignment.LEFT) {
-					lineAlignmentOffsetX = 0;
-				} else if (horizontalAlignment == HorizontalAlignment.CENTER) {
-					lineAlignmentOffsetX = -lineDimensions.x * 0.5f;
-				} else if (horizontalAlignment == HorizontalAlignment.RIGHT) {
-					lineAlignmentOffsetX = -lineDimensions.x;
+				if (null != horizontalAlignment) {
+					switch (horizontalAlignment) {
+						case LEFT ->
+							lineAlignmentOffsetX = 0;
+						case CENTER ->
+							lineAlignmentOffsetX = -lineDimensions.x * 0.5f;
+						case RIGHT ->
+							lineAlignmentOffsetX = -lineDimensions.x;
+						default -> {
+						}
+					}
 				}
 			}
 
@@ -467,6 +477,10 @@ public class Text extends Mesh implements UIComponent, Copyable
 		assert getFont().isLoaded();
 		assert getLayout() != null;
 		assert getLayoutOptions() != null : "getLayoutOptions() != null for " + getName();
+
+		if (!isVisible()) {
+			return;
+		}
 
 		if (getText().getValue() == null) {
 			return;
@@ -764,6 +778,18 @@ public class Text extends Mesh implements UIComponent, Copyable
 	public void setFocusable(boolean focusable)
 	{
 		this.focusable = focusable;
+	}
+
+	@Override
+	public boolean isVisible()
+	{
+		return visible;
+	}
+
+	@Override
+	public void setVisible(boolean visible)
+	{
+		this.visible = visible;
 	}
 	// "Getters/Setters" </editor-fold>
 }

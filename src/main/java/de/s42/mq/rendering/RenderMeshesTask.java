@@ -13,15 +13,20 @@ package de.s42.mq.rendering;
 
 import de.s42.dl.DLAttribute.AttributeDL;
 import de.s42.dl.exceptions.DLException;
+import de.s42.log.LogManager;
+import de.s42.log.Logger;
 import de.s42.mq.buffers.FXBuffer;
 import de.s42.mq.buffers.FrameBuffer;
 import de.s42.mq.cameras.Camera;
 import de.s42.mq.data.FloatData;
 import de.s42.mq.data.IntegerData;
 import de.s42.mq.materials.Material;
+import de.s42.mq.meshes.Mesh;
 import de.s42.mq.meshes.MeshGroup;
 import de.s42.mq.shaders.Shader.CullType;
 import de.s42.mq.ui.AbstractWindowTask;
+import java.util.Arrays;
+import java.util.List;
 
 /**
  *
@@ -29,6 +34,8 @@ import de.s42.mq.ui.AbstractWindowTask;
  */
 public class RenderMeshesTask extends AbstractWindowTask
 {
+
+	private final static Logger log = LogManager.getLogger(RenderMeshesTask.class.getName());
 
 	@AttributeDL(required = true)
 	protected MeshGroup meshes;
@@ -83,7 +90,7 @@ public class RenderMeshesTask extends AbstractWindowTask
 	@Override
 	protected void runTask()
 	{
-		assert meshes != null;
+		//log.debug("runTask");
 
 		// render main scene into gbuffer
 		if (buffer != null) {
@@ -93,7 +100,6 @@ public class RenderMeshesTask extends AbstractWindowTask
 			window.setRenderViewportToWindow();
 		}
 
-		// set camera into materials of meshes
 		if (camera != null) {
 
 			camera.update();
@@ -101,11 +107,7 @@ public class RenderMeshesTask extends AbstractWindowTask
 			if (overrideMaterial != null) {
 				overrideMaterial.setCamera(camera);
 			}
-
-			meshes.setCamera(camera);
 		}
-
-		meshes.setLayers(layers);
 
 		DefaultRenderContext context = new DefaultRenderContext();
 		context.setOverrideCullType(overrideCullType);
@@ -118,7 +120,22 @@ public class RenderMeshesTask extends AbstractWindowTask
 			context.setShadowTexture(shadowBuffer.getTexture());
 		}
 
-		meshes.render(context);
+		List l = Arrays.asList(layers);
+
+		meshes.updateModelMatrix(true);
+
+		List<Mesh> ms = meshes.findMeshesByFilter((mesh) -> {
+			return !(mesh instanceof MeshGroup)
+				&& mesh.isEnabled()
+				&& mesh.containsLayers(l);
+		});
+
+		for (Mesh m : ms) {
+
+			//log.debug("Mesh", m.getName());
+			m.setCamera(camera);
+			m.render(context);
+		}
 
 		if (buffer != null) {
 			buffer.endRender();
