@@ -31,6 +31,8 @@ import static org.lwjgl.opengl.GL15.*;
 import static org.lwjgl.opengl.GL20.glEnableVertexAttribArray;
 import static org.lwjgl.opengl.GL20.glVertexAttribPointer;
 import static org.lwjgl.opengl.GL30.*;
+import static org.lwjgl.opengl.GL31.glDrawElementsInstanced;
+import static org.lwjgl.opengl.GL33.glVertexAttribDivisor;
 import org.lwjgl.system.MemoryUtil;
 
 /**
@@ -49,6 +51,10 @@ public class FbxSubMesh extends Mesh
 	protected int uvArrayBuffer = -1;
 	protected int elementArrayBuffer = -1;
 	protected int elementCount;
+
+	protected int instanceCount = 1;
+	protected int instancesPositionBuffer = -1;
+	protected float instancePositions[] = new float[3];
 
 	protected AIMesh aiMesh;
 
@@ -69,6 +75,9 @@ public class FbxSubMesh extends Mesh
 		copy.uvArrayBuffer = uvArrayBuffer;
 		copy.elementArrayBuffer = elementArrayBuffer;
 		copy.elementCount = elementCount;
+		copy.instanceCount = instanceCount;
+		copy.instancesPositionBuffer = instancesPositionBuffer;
+		copy.instancePositions = instancePositions;
 		copy.aabb.set(aabb);
 
 		return copy;
@@ -142,6 +151,20 @@ public class FbxSubMesh extends Mesh
 		log.trace("Loaded mesh " + faceCount);
 	}
 
+	public void updateInstanceCount(int instanceCount, float[] instancePositions)
+	{
+		this.instanceCount = instanceCount;
+
+		this.instancePositions = instancePositions;
+
+		//glBindVertexArray(vao);
+		instancesPositionBuffer = glGenBuffers();
+		glBindBuffer(GL_ARRAY_BUFFER, instancesPositionBuffer);
+		glBufferData(GL_ARRAY_BUFFER, instancePositions, GL_DYNAMIC_DRAW);
+		glBindBuffer(GL_ARRAY_BUFFER, 0);
+		//glBindVertexArray(0);
+	}
+
 	@Override
 	public void unload() throws DLException
 	{
@@ -155,12 +178,14 @@ public class FbxSubMesh extends Mesh
 		glDeleteBuffers(normalArrayBuffer);
 		glDeleteBuffers(elementArrayBuffer);
 		elementCount = 0;
+		glDeleteBuffers(instancesPositionBuffer);
 
 		super.unload();
 	}
 
 	@Override
-	public void render(RenderContext context)
+	public void render(RenderContext context
+	)
 	{
 		assert context != null : "context != null";
 		assert material != null : "material != null";
@@ -180,6 +205,8 @@ public class FbxSubMesh extends Mesh
 
 		glBindVertexArray(vao);
 
+		glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, elementArrayBuffer);
+
 		if (shader.getInputPosition() > -1) {
 			glBindBuffer(GL_ARRAY_BUFFER, vertexArrayBuffer);
 			glEnableVertexAttribArray(shader.getInputPosition());
@@ -198,9 +225,21 @@ public class FbxSubMesh extends Mesh
 			glVertexAttribPointer(shader.getInputTextureCoords(), 2, GL_FLOAT, false, 3 * 4, 0);
 		}
 
-		glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, elementArrayBuffer);
+		// instance positions
+		if (instanceCount > 1 && shader.getInstancePositionsAttribute() > -1) {
 
-		glDrawElements(GL_TRIANGLES, elementCount, GL_UNSIGNED_INT, 0);
+			glBindBuffer(GL_ARRAY_BUFFER, instancesPositionBuffer);
+			glEnableVertexAttribArray(shader.getInstancePositionsAttribute());
+			glVertexAttribPointer(shader.getInstancePositionsAttribute(), 3, GL_FLOAT, false, 3 * 4, 0);
+			glVertexAttribDivisor(shader.getInstancePositionsAttribute(), 1);
+
+			glDrawElementsInstanced(GL_TRIANGLES, elementCount, GL_UNSIGNED_INT, 0, instanceCount);
+		} else {
+
+			glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, elementArrayBuffer);
+
+			glDrawElements(GL_TRIANGLES, elementCount, GL_UNSIGNED_INT, 0);
+		}
 
 		//glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, 0);
 		//glBindBuffer(GL_ARRAY_BUFFER, 0);
@@ -208,8 +247,8 @@ public class FbxSubMesh extends Mesh
 		shader.afterRendering(context);
 		mat.afterRendering(context);
 	}
-
 	// <editor-fold desc="Getters/Setters" defaultstate="collapsed">
+
 	public AIMesh getAiMesh()
 	{
 		return aiMesh;
@@ -253,6 +292,16 @@ public class FbxSubMesh extends Mesh
 		}
 
 		return result;
+	}
+
+	public int getInstanceCount()
+	{
+		return instanceCount;
+	}
+
+	public float[] getInstancePositions()
+	{
+		return instancePositions;
 	}
 	// </editor-fold>
 }

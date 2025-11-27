@@ -35,9 +35,6 @@ public class PlainShader extends Shader
 		viewMatrixUniform = getUniformLocationOpt("viewMatrix");
 		projectionMatrixUniform = getUniformLocationOpt("projectionMatrix");
 		modelMatrixUniform = getUniformLocationOpt("modelMatrix");
-
-		// Attributes
-		inputPosition = getAttributeLocationOpt("position");
 	}
 
 	@Override

@@ -138,10 +138,7 @@ public class PBRMaterial extends Material
 	@Override
 	public PBRMaterial copy()
 	{
-		PBRMaterial copy = new PBRMaterial();
-
-		copy.name = name;
-		copy.loaded = loaded;
+		PBRMaterial copy = (PBRMaterial) super.copy();
 
 		copy.baseSource = baseSource;
 		copy.heromeaoSource = heromeaoSource;
@@ -167,12 +164,6 @@ public class PBRMaterial extends Material
 		copy.irradianceTextureLoaded = irradianceTextureLoaded;
 		copy.brdfLUTTextureLoaded = brdfLUTTextureLoaded;
 
-		copy.camera = camera;
-		copy.shader = shader;
-		copy.cullType = cullType;
-		copy.alphaDiscard = alphaDiscard;
-		copy.customProperties.putAll(customProperties);
-
 		copy.tint = new MQColor(tint);
 		copy.normalScale = new Vector2f(normalScale);
 		copy.roughnessScale = roughnessScale;
@@ -182,17 +173,6 @@ public class PBRMaterial extends Material
 		copy.emissiveScale = new Vector3f(emissiveScale);
 
 		return copy;
-	}
-
-	@Override
-	public PBRShader getShader()
-	{
-		return (PBRShader) super.getShader();
-	}
-
-	public void setShader(PBRShader shader)
-	{
-		super.setShader(shader);
 	}
 
 	@Override
@@ -330,6 +310,18 @@ public class PBRMaterial extends Material
 		pbrShader.getMetalnessScale().setValue(metalnessScale);
 		pbrShader.getMetalnessOffset().setValue(metalnessOffset);
 		pbrShader.getEmissiveScale().setValue(emissiveScale);
+	}
+
+	// <editor-fold desc="Getters/Setters" defaultstate="collapsed">
+	@Override
+	public PBRShader getShader()
+	{
+		return (PBRShader) super.getShader();
+	}
+
+	public void setShader(PBRShader shader)
+	{
+		super.setShader(shader);
 	}
 
 	public Path getBaseSource()
@@ -541,4 +533,5 @@ public class PBRMaterial extends Material
 	{
 		this.emissiveScale = emissiveScale;
 	}
+	// </editor-fold>
 }

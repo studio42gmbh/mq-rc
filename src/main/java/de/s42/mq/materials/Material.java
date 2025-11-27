@@ -12,6 +12,7 @@
 package de.s42.mq.materials;
 
 import de.s42.dl.DLAttribute.AttributeDL;
+import de.s42.dl.annotations.persistence.DontPersistDLAnnotation.dontPersist;
 import de.s42.dl.exceptions.DLException;
 import de.s42.mq.assets.AbstractAsset;
 import de.s42.mq.cameras.Camera;
@@ -20,6 +21,7 @@ import de.s42.mq.rendering.RenderContext;
 import de.s42.mq.shaders.Shader;
 import de.s42.mq.shaders.Shader.CullType;
 import de.s42.mq.ui.editor;
+import java.lang.reflect.InvocationTargetException;
 import java.util.HashMap;
 import java.util.Map;
 
@@ -47,6 +49,15 @@ public abstract class Material extends AbstractAsset implements Copyable
 	//protected boolean shaderLoaded;
 	protected final Map<String, Object> customProperties = new HashMap<>();
 
+	@dontPersist
+	protected boolean oldCullFace;
+
+	@dontPersist
+	protected CullType oldCullType;
+
+	@dontPersist
+	protected float oldAlphaDiscard;
+
 	protected Material()
 	{
 	}
@@ -58,9 +69,25 @@ public abstract class Material extends AbstractAsset implements Copyable
 		this.shader = shader;
 	}
 
-	protected boolean oldCullFace;
-	protected CullType oldCullType;
-	protected float oldAlphaDiscard;
+	@Override
+	public Material copy()
+	{
+		try {
+			Material copy = getClass().getConstructor().newInstance();
+
+			copy.name = name;
+			copy.loaded = loaded;
+			copy.camera = camera;
+			copy.shader = shader;
+			copy.cullType = cullType;
+			copy.alphaDiscard = alphaDiscard;
+			copy.customProperties.putAll(customProperties);
+
+			return copy;
+		} catch (IllegalAccessException | IllegalArgumentException | InstantiationException | NoSuchMethodException | InvocationTargetException ex) {
+			throw new RuntimeException(ex);
+		}
+	}
 
 	public void beforeRendering(RenderContext context)
 	{

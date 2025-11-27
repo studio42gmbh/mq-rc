@@ -212,6 +212,9 @@ public abstract class Shader extends AbstractAsset
 	protected int inputTextureCoords = -1;
 
 	@dontPersist
+	protected int instancePositionsAttribute = -1;
+
+	@dontPersist
 	private final FloatBuffer matrixBuffer = MemoryUtil.memAllocFloat(16);
 
 	@dontPersist
@@ -235,7 +238,12 @@ public abstract class Shader extends AbstractAsset
 
 	protected void loadShader() throws DLException
 	{
-		// Implement
+		// Attributes
+		inputNormal = getAttributeLocationOpt("normal");
+		inputTextureCoords = getAttributeLocationOpt("texCoords");
+		inputPosition = getAttributeLocationOpt("position");
+
+		instancePositionsAttribute = getAttributeLocationOpt("instancePosition");
 	}
 
 	@Override
@@ -1093,5 +1101,10 @@ public abstract class Shader extends AbstractAsset
 	public void setDevelop(boolean develop)
 	{
 		this.develop = develop;
+	}
+
+	public int getInstancePositionsAttribute()
+	{
+		return instancePositionsAttribute;
 	}
 }

@@ -84,10 +84,6 @@ public class BasicShader extends PlainShader
 		totalTimeUniform = getUniformLocationOpt("totalTime");
 		deltaTimeUniform = getUniformLocationOpt("deltaTime");
 		tickUniform = getUniformLocationOpt("tick");
-
-		// Attributes
-		inputNormal = getAttributeLocationOpt("normal");
-		inputTextureCoords = getAttributeLocationOpt("texCoords");
 	}
 
 	@Override
@@ -140,6 +136,11 @@ public class BasicShader extends PlainShader
 	public void setTint(ColorData tint)
 	{
 		this.tint = tint;
+	}
+
+	public int getInstancePositionsAttribute()
+	{
+		return instancePositionsAttribute;
 	}
 	// </editor-fold>
 }
