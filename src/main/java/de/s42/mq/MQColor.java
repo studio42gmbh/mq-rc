@@ -463,8 +463,9 @@ public class MQColor
 
 	public MQColor blend(MQColor other, float blend)
 	{
-		assert other != null;
-		assert blend >= 0.0f && blend <= 1.0f;
+		assert other != null : "other != null";
+
+		blend = MQMath.saturate(blend);
 
 		float iblend = 1.0f - blend;
 		r = r * iblend + other.r * blend;
@@ -477,8 +478,9 @@ public class MQColor
 
 	public MQColor blendRGB(MQColor other, float blend)
 	{
-		assert other != null;
-		assert blend >= 0.0f && blend <= 1.0;
+		assert other != null : "other != null";
+
+		blend = MQMath.saturate(blend);
 
 		float iblend = 1.0f - blend;
 		r = r * iblend + other.r * blend;

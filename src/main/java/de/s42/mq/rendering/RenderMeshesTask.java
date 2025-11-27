@@ -122,10 +122,11 @@ public class RenderMeshesTask extends AbstractWindowTask
 
 		List l = Arrays.asList(layers);
 
-		meshes.updateModelMatrix(true);
+		meshes.updateModelMatrix();
 
 		List<Mesh> ms = meshes.findMeshesByFilter((mesh) -> {
-			return !(mesh instanceof MeshGroup)
+			return mesh != null
+				&& !(mesh instanceof MeshGroup)
 				&& mesh.isEnabled()
 				&& mesh.containsLayers(l);
 		});

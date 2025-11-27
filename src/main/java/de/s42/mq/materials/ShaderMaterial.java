@@ -28,20 +28,4 @@ public class ShaderMaterial extends Material
 	{
 		super(shader);
 	}
-
-	@Override
-	public ShaderMaterial copy()
-	{
-		ShaderMaterial copy = new ShaderMaterial();
-
-		copy.name = name;
-		copy.loaded = loaded;
-		copy.camera = camera;
-		copy.shader = shader;
-		copy.cullType = cullType;
-		copy.alphaDiscard = alphaDiscard;
-		copy.customProperties.putAll(customProperties);
-
-		return copy;
-	}
 }

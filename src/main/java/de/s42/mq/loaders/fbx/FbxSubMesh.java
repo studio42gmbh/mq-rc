@@ -17,6 +17,7 @@ import de.s42.mq.materials.Material;
 import de.s42.mq.meshes.Mesh;
 import de.s42.mq.rendering.RenderContext;
 import de.s42.mq.shaders.Shader;
+import static de.s42.mq.shaders.Shader.*;
 import de.s42.mq.util.AABB;
 import java.nio.IntBuffer;
 import org.joml.Matrix4f;
@@ -103,6 +104,9 @@ public class FbxSubMesh extends Mesh
 		nglBufferData(GL_ARRAY_BUFFER, AIVector3D.SIZEOF * vertices.remaining(),
 			vertices.address(), GL_STATIC_DRAW);
 
+		glEnableVertexAttribArray(LOCATION_POSITION);
+		glVertexAttribPointer(LOCATION_POSITION, 3, GL_FLOAT, false, 0, 0);
+
 		normalArrayBuffer = glGenBuffers();
 		glBindBuffer(GL_ARRAY_BUFFER, normalArrayBuffer);
 		AIVector3D.Buffer normals = aiMesh.mNormals();
@@ -111,6 +115,9 @@ public class FbxSubMesh extends Mesh
 				normals.address(), GL_STATIC_DRAW);
 		}
 
+		glEnableVertexAttribArray(LOCATION_NORMAL);
+		glVertexAttribPointer(LOCATION_NORMAL, 3, GL_FLOAT, false, 0, 0);
+
 		uvArrayBuffer = glGenBuffers();
 		glBindBuffer(GL_ARRAY_BUFFER, uvArrayBuffer);
 		AIVector3D.Buffer uvs = aiMesh.mTextureCoords(0);
@@ -118,6 +125,9 @@ public class FbxSubMesh extends Mesh
 			nglBufferData(GL_ARRAY_BUFFER, AIVector3D.SIZEOF * uvs.remaining(),
 				uvs.address(), GL_STATIC_DRAW);
 		}
+
+		glEnableVertexAttribArray(LOCATION_UV);
+		glVertexAttribPointer(LOCATION_UV, 2, GL_FLOAT, false, 3 * 4, 0);
 
 		int faceCount = aiMesh.mNumFaces();
 		elementCount = faceCount * 3;
@@ -136,10 +146,8 @@ public class FbxSubMesh extends Mesh
 		glBufferData(GL_ELEMENT_ARRAY_BUFFER, elementArrayBufferData,
 			GL_STATIC_DRAW);
 
-		glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, 0);
-
+		//glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, 0);
 		glBindVertexArray(0);
-
 		AIAABB aiAabb = aiMesh.mAABB();
 
 		aabb.setMin(new Vector3f(aiAabb.mMin().x(), aiAabb.mMin().y(), aiAabb.mMin().z()));
@@ -153,16 +161,22 @@ public class FbxSubMesh extends Mesh
 
 	public void updateInstanceCount(int instanceCount, float[] instancePositions)
 	{
-		this.instanceCount = instanceCount;
+		assert instanceCount > 0 : "instanceCount > 0";
+		assert instancePositions.length == instanceCount * 3 : "instancePositions.length == instanceCount * 3";
 
+		this.instanceCount = instanceCount;
 		this.instancePositions = instancePositions;
 
-		//glBindVertexArray(vao);
+		glBindVertexArray(vao);
 		instancesPositionBuffer = glGenBuffers();
 		glBindBuffer(GL_ARRAY_BUFFER, instancesPositionBuffer);
 		glBufferData(GL_ARRAY_BUFFER, instancePositions, GL_DYNAMIC_DRAW);
-		glBindBuffer(GL_ARRAY_BUFFER, 0);
-		//glBindVertexArray(0);
+
+		glEnableVertexAttribArray(LOCATION_INSTANCE_POSITION);
+		glVertexAttribPointer(LOCATION_INSTANCE_POSITION, 3, GL_FLOAT, false, 0, 0);
+		glVertexAttribDivisor(LOCATION_INSTANCE_POSITION, 1);
+
+		glBindVertexArray(0);
 	}
 
 	@Override
@@ -184,8 +198,7 @@ public class FbxSubMesh extends Mesh
 	}
 
 	@Override
-	public void render(RenderContext context
-	)
+	public void render(RenderContext context)
 	{
 		assert context != null : "context != null";
 		assert material != null : "material != null";
@@ -193,11 +206,11 @@ public class FbxSubMesh extends Mesh
 		assert material.getShader().isLoaded() : "material.getShader().isLoaded()";
 		assert isLoaded() : "isLoaded()";
 
+		updateModelMatrix();
+
 		// Use override material if given
 		Material mat = (context.getOverrideMaterial() != null) ? context.getOverrideMaterial() : material;
 		Shader shader = mat.getShader();
-
-		updateModelMatrix();
 
 		mat.beforeRendering(context);
 		shader.setMesh(this);
@@ -205,45 +218,24 @@ public class FbxSubMesh extends Mesh
 
 		glBindVertexArray(vao);
 
-		glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, elementArrayBuffer);
-
-		if (shader.getInputPosition() > -1) {
-			glBindBuffer(GL_ARRAY_BUFFER, vertexArrayBuffer);
-			glEnableVertexAttribArray(shader.getInputPosition());
-			glVertexAttribPointer(shader.getInputPosition(), 3, GL_FLOAT, false, 0, 0);
-		}
-
-		if (shader.getInputNormal() > -1) {
-			glBindBuffer(GL_ARRAY_BUFFER, normalArrayBuffer);
-			glEnableVertexAttribArray(shader.getInputNormal());
-			glVertexAttribPointer(shader.getInputNormal(), 3, GL_FLOAT, false, 0, 0);
-		}
-
-		if (shader.getInputTextureCoords() > -1) {
-			glBindBuffer(GL_ARRAY_BUFFER, uvArrayBuffer);
-			glEnableVertexAttribArray(shader.getInputTextureCoords());
-			glVertexAttribPointer(shader.getInputTextureCoords(), 2, GL_FLOAT, false, 3 * 4, 0);
-		}
-
-		// instance positions
+		// Instance positions
 		if (instanceCount > 1 && shader.getInstancePositionsAttribute() > -1) {
 
 			glBindBuffer(GL_ARRAY_BUFFER, instancesPositionBuffer);
-			glEnableVertexAttribArray(shader.getInstancePositionsAttribute());
-			glVertexAttribPointer(shader.getInstancePositionsAttribute(), 3, GL_FLOAT, false, 3 * 4, 0);
-			glVertexAttribDivisor(shader.getInstancePositionsAttribute(), 1);
+			glBufferData(GL_ARRAY_BUFFER, instancePositions, GL_DYNAMIC_DRAW);
+
+			// layout(location = 3) in vec3 instancePosition;
+			glEnableVertexAttribArray(3);
+			glVertexAttribPointer(3, 3, GL_FLOAT, false, 0, 0);
+			glVertexAttribDivisor(3, 1);
 
 			glDrawElementsInstanced(GL_TRIANGLES, elementCount, GL_UNSIGNED_INT, 0, instanceCount);
 		} else {
-
-			glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, elementArrayBuffer);
-
 			glDrawElements(GL_TRIANGLES, elementCount, GL_UNSIGNED_INT, 0);
 		}
 
-		//glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, 0);
-		//glBindBuffer(GL_ARRAY_BUFFER, 0);
-		//glBindVertexArray(0);
+		glBindVertexArray(0);
+
 		shader.afterRendering(context);
 		mat.afterRendering(context);
 	}

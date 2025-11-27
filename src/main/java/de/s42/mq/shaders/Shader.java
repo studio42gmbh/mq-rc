@@ -67,6 +67,18 @@ public abstract class Shader extends AbstractAsset
 
 	private final static Logger log = LogManager.getLogger(Shader.class.getName());
 
+	// layout(location = 0) in vec3 position;
+	public final static int LOCATION_POSITION = 0;
+
+	// layout(location = 1) in vec3 normal;
+	public final static int LOCATION_NORMAL = 1;
+
+	// layout(location = 2) in vec2 texCoords;
+	public final static int LOCATION_UV = 2;
+
+	// layout(location = 3) in vec3 instancePosition;
+	public final static int LOCATION_INSTANCE_POSITION = 3;
+
 	public enum CullType
 	{
 		BACK(GL_BACK),
