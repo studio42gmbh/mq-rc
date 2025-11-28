@@ -12,6 +12,7 @@
 package de.s42.mq.meshes;
 
 import de.s42.dl.exceptions.DLException;
+import de.s42.mq.loaders.fbx.MQDebug;
 import de.s42.mq.rendering.RenderContext;
 import static org.lwjgl.opengl.GL11.GL_TRIANGLES;
 import static org.lwjgl.opengl.GL11.glDrawArrays;
@@ -50,6 +51,7 @@ public class ScreenQuad extends Quad
 		// @todo build all meshes to not set material or shader stuff directly!
 		glBindVertexArray(vao);
 		glDrawArrays(GL_TRIANGLES, 0, 3);
+		MQDebug.incDrawCallCount();
 		glBindVertexArray(0);
 	}
 }

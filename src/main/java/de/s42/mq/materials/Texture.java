@@ -337,6 +337,7 @@ public class Texture extends AbstractAsset
 		setMaxLod(7);
 	}
 
+	// <editor-fold desc="Getters/Setters" defaultstate="collapsed">
 	public Vector2f getDimension()
 	{
 		return new Vector2f(width, height);
@@ -563,4 +564,5 @@ public class Texture extends AbstractAsset
 	{
 		this.borderColor = borderColor;
 	}
+	// </editor-fold>
 }

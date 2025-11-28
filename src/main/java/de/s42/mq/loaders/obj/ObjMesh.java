@@ -14,6 +14,7 @@ package de.s42.mq.loaders.obj;
 import de.s42.dl.DLAttribute.AttributeDL;
 import de.s42.dl.annotations.files.IsFileDLAnnotation.isFile;
 import de.s42.dl.exceptions.DLException;
+import de.s42.mq.loaders.fbx.MQDebug;
 import de.s42.mq.materials.Material;
 import de.s42.mq.meshes.Mesh;
 import de.s42.mq.rendering.RenderContext;
@@ -213,6 +214,7 @@ public class ObjMesh extends Mesh
 		}
 
 		glDrawElements(GL_TRIANGLES, elementCount, GL_UNSIGNED_INT, 0L);
+		MQDebug.incDrawCallCount();
 
 		//glBindBuffer(GL_ARRAY_BUFFER, 0);
 		//glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, 0);

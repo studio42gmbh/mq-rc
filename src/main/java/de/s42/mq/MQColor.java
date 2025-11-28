@@ -578,6 +578,17 @@ public class MQColor
 		return new float[]{r, g, b, a};
 	}
 
+	public MQColor getRGB(float[] target, int offset)
+	{
+		assert target != null : "target != null";
+
+		target[offset] = r;
+		target[offset + 1] = g;
+		target[offset + 2] = b;
+
+		return this;
+	}
+
 	public java.awt.Color toAwtColor()
 	{
 		return new java.awt.Color((float) getRClamped(), (float) getGClamped(), (float) getBClamped(), (float) getAClamped());

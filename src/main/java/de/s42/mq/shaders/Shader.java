@@ -76,8 +76,22 @@ public abstract class Shader extends AbstractAsset
 	// layout(location = 2) in vec2 texCoords;
 	public final static int LOCATION_UV = 2;
 
-	// layout(location = 3) in vec3 instancePosition;
-	public final static int LOCATION_INSTANCE_POSITION = 3;
+	// layout(location = 3) in vec3 instanceTransformC1;
+	public final static int LOCATION_INSTANCE_TRANSFORM_C1 = 3;
+
+	// layout(location = 3) in vec3 instanceTransformC2;
+	public final static int LOCATION_INSTANCE_TRANSFORM_C2 = 4;
+
+	// layout(location = 3) in vec3 instanceTransformC3;
+	public final static int LOCATION_INSTANCE_TRANSFORM_C3 = 5;
+
+	// layout(location = 3) in vec3 instanceTransformC4;
+	public final static int LOCATION_INSTANCE_TRANSFORM_C4 = 6;
+
+	// layout(location = 7) in vec3 instanceTint;
+	public final static int LOCATION_INSTANCE_TINT = 7;
+
+	public final static int INSTANCE_DATA_BYTE_SIZE = (12 + 3) * 4;
 
 	public enum CullType
 	{
@@ -224,7 +238,19 @@ public abstract class Shader extends AbstractAsset
 	protected int inputTextureCoords = -1;
 
 	@dontPersist
-	protected int instancePositionsAttribute = -1;
+	protected int instanceTransformC1Attribute = -1;
+
+	@dontPersist
+	protected int instanceTransformC2Attribute = -1;
+
+	@dontPersist
+	protected int instanceTransformC3Attribute = -1;
+
+	@dontPersist
+	protected int instanceTransformC4Attribute = -1;
+
+	@dontPersist
+	protected int instanceTintAttribute = -1;
 
 	@dontPersist
 	private final FloatBuffer matrixBuffer = MemoryUtil.memAllocFloat(16);
@@ -255,7 +281,11 @@ public abstract class Shader extends AbstractAsset
 		inputTextureCoords = getAttributeLocationOpt("texCoords");
 		inputPosition = getAttributeLocationOpt("position");
 
-		instancePositionsAttribute = getAttributeLocationOpt("instancePosition");
+		instanceTransformC1Attribute = getAttributeLocationOpt("instanceTransformC1");
+		instanceTransformC2Attribute = getAttributeLocationOpt("instanceTransformC2");
+		instanceTransformC3Attribute = getAttributeLocationOpt("instanceTransformC3");
+		instanceTransformC4Attribute = getAttributeLocationOpt("instanceTransformC4");
+		instanceTintAttribute = getAttributeLocationOpt("instanceTint");
 	}
 
 	@Override
@@ -960,6 +990,7 @@ public abstract class Shader extends AbstractAsset
 		return Collections.unmodifiableMap(attributes);
 	}
 
+	// <editor-fold desc="Getters/Setters" defaultstate="collapsed">
 	public int getInputPosition()
 	{
 		return inputPosition;
@@ -1115,8 +1146,29 @@ public abstract class Shader extends AbstractAsset
 		this.develop = develop;
 	}
 
-	public int getInstancePositionsAttribute()
+	public int getInstanceTransformC1Attribute()
 	{
-		return instancePositionsAttribute;
+		return instanceTransformC1Attribute;
 	}
+
+	public int getInstanceTransformC2Attribute()
+	{
+		return instanceTransformC2Attribute;
+	}
+
+	public int getInstanceTransformC3Attribute()
+	{
+		return instanceTransformC3Attribute;
+	}
+
+	public int getInstanceTransformC4Attribute()
+	{
+		return instanceTransformC4Attribute;
+	}
+
+	public int getInstanceTintAttribute()
+	{
+		return instanceTintAttribute;
+	}
+	// </editor-fold>
 }

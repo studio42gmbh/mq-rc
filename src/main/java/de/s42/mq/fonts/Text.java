@@ -21,6 +21,7 @@ import de.s42.mq.core.Copyable;
 import de.s42.mq.data.ColorData;
 import de.s42.mq.data.FloatData;
 import de.s42.mq.data.StringData;
+import de.s42.mq.loaders.fbx.MQDebug;
 import de.s42.mq.materials.Material;
 import de.s42.mq.meshes.Mesh;
 import de.s42.mq.rendering.RenderContext;
@@ -562,6 +563,7 @@ public class Text extends Mesh implements UIComponent, Copyable
 		glBindBuffer(GL_ARRAY_BUFFER, 0);
 
 		glDrawArraysInstanced(GL_TRIANGLES, 0, 6, Math.min(getText().getStringValue().length(), maxCharCount));
+		MQDebug.incDrawCallCount();
 
 		glBindVertexArray(0);
 

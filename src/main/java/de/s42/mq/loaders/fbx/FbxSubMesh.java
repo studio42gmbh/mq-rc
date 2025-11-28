@@ -1,18 +1,33 @@
+// <editor-fold desc="The MIT License" defaultstate="collapsed">
 /*
- * Copyright Studio 42 GmbH 2021. All rights reserved.
+ * The MIT License
  *
- * Unless required by applicable law or agreed to in writing, software
- * distributed under the License is distributed on an "AS IS" BASIS,
- * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
- * See the License for the specific language governing permissions and
- * limitations under the License.
+ * Copyright 2025 Studio 42 GmbH ( https://www.s42m.de ).
  *
- * For details to the License read https://www.s42m.de/license
+ * Permission is hereby granted, free of charge, to any person obtaining a copy
+ * of this software and associated documentation files (the "Software"), to deal
+ * in the Software without restriction, including without limitation the rights
+ * to use, copy, modify, merge, publish, distribute, sublicense, and/or sell
+ * copies of the Software, and to permit persons to whom the Software is
+ * furnished to do so, subject to the following conditions:
+ *
+ * The above copyright notice and this permission notice shall be included in
+ * all copies or substantial portions of the Software.
+ *
+ * THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
+ * IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
+ * FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE
+ * AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
+ * LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
+ * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
+ * THE SOFTWARE.
  */
+//</editor-fold>
 package de.s42.mq.loaders.fbx;
 
 import de.s42.dl.exceptions.DLException;
 import de.s42.dl.exceptions.InvalidInstance;
+import de.s42.mq.MQColor;
 import de.s42.mq.materials.Material;
 import de.s42.mq.meshes.Mesh;
 import de.s42.mq.rendering.RenderContext;
@@ -21,6 +36,7 @@ import static de.s42.mq.shaders.Shader.*;
 import de.s42.mq.util.AABB;
 import java.nio.IntBuffer;
 import org.joml.Matrix4f;
+import org.joml.Matrix4x3f;
 import org.joml.Vector3f;
 import org.joml.Vector4f;
 import org.lwjgl.assimp.AIAABB;
@@ -54,8 +70,8 @@ public class FbxSubMesh extends Mesh
 	protected int elementCount;
 
 	protected int instanceCount = 1;
-	protected int instancesPositionBuffer = -1;
-	protected float instancePositions[] = new float[3];
+	protected int instanceDataBuffer = -1;
+	protected float instanceData[] = new float[INSTANCE_DATA_BYTE_SIZE / 4];
 
 	protected AIMesh aiMesh;
 
@@ -77,8 +93,8 @@ public class FbxSubMesh extends Mesh
 		copy.elementArrayBuffer = elementArrayBuffer;
 		copy.elementCount = elementCount;
 		copy.instanceCount = instanceCount;
-		copy.instancesPositionBuffer = instancesPositionBuffer;
-		copy.instancePositions = instancePositions;
+		copy.instanceDataBuffer = instanceDataBuffer;
+		copy.instanceData = instanceData;
 		copy.aabb.set(aabb);
 
 		return copy;
@@ -156,25 +172,39 @@ public class FbxSubMesh extends Mesh
 		//log.debug("AABB", aabb);
 		aiMesh = null;
 
+		// Set initial instance
+		Matrix4f transf = new Matrix4f();
+		transf.identity();
+		Matrix4x3f tr = transf.get4x3(new Matrix4x3f());
+		tr.get(instanceData, 0);
+		// Tint
+		MQColor tint = MQColor.White;
+		tint.getRGB(instanceData, 12);
+
+		updateInstanceData(1, instanceData);
+
 		log.trace("Loaded mesh " + faceCount);
 	}
 
-	public void updateInstanceCount(int instanceCount, float[] instancePositions)
+	/**
+	 * The transforms are given as 4x3 matrix (column major) a - the fourth row will be created in the shader to save
+	 * data. So each element is 12 float
+	 *
+	 * @param instanceCount
+	 * @param instanceData
+	 */
+	public void updateInstanceData(int instanceCount, float[] instanceData)
 	{
 		assert instanceCount > 0 : "instanceCount > 0";
-		assert instancePositions.length == instanceCount * 3 : "instancePositions.length == instanceCount * 3";
+		assert instanceData.length == instanceCount * (INSTANCE_DATA_BYTE_SIZE / 4) : "instanceTransforms.length == instanceCount * (INSTANCE_TRANSFORM_BYTE_SIZE / 4)";
 
 		this.instanceCount = instanceCount;
-		this.instancePositions = instancePositions;
+		this.instanceData = instanceData;
 
 		glBindVertexArray(vao);
-		instancesPositionBuffer = glGenBuffers();
-		glBindBuffer(GL_ARRAY_BUFFER, instancesPositionBuffer);
-		glBufferData(GL_ARRAY_BUFFER, instancePositions, GL_DYNAMIC_DRAW);
-
-		glEnableVertexAttribArray(LOCATION_INSTANCE_POSITION);
-		glVertexAttribPointer(LOCATION_INSTANCE_POSITION, 3, GL_FLOAT, false, 0, 0);
-		glVertexAttribDivisor(LOCATION_INSTANCE_POSITION, 1);
+		instanceDataBuffer = glGenBuffers();
+		glBindBuffer(GL_ARRAY_BUFFER, instanceDataBuffer);
+		glBufferData(GL_ARRAY_BUFFER, instanceData, GL_DYNAMIC_DRAW);
 
 		glBindVertexArray(0);
 	}
@@ -192,7 +222,7 @@ public class FbxSubMesh extends Mesh
 		glDeleteBuffers(normalArrayBuffer);
 		glDeleteBuffers(elementArrayBuffer);
 		elementCount = 0;
-		glDeleteBuffers(instancesPositionBuffer);
+		glDeleteBuffers(instanceDataBuffer);
 
 		super.unload();
 	}
@@ -219,20 +249,39 @@ public class FbxSubMesh extends Mesh
 		glBindVertexArray(vao);
 
 		// Instance positions
-		if (instanceCount > 1 && shader.getInstancePositionsAttribute() > -1) {
+		//if (instanceCount > 1 && shader.getInstanceTransformC1Attribute() > -1) {
+		glBindBuffer(GL_ARRAY_BUFFER, instanceDataBuffer);
+		glBufferData(GL_ARRAY_BUFFER, instanceData, GL_DYNAMIC_DRAW);
 
-			glBindBuffer(GL_ARRAY_BUFFER, instancesPositionBuffer);
-			glBufferData(GL_ARRAY_BUFFER, instancePositions, GL_DYNAMIC_DRAW);
+		int stride = INSTANCE_DATA_BYTE_SIZE;
 
-			// layout(location = 3) in vec3 instancePosition;
-			glEnableVertexAttribArray(3);
-			glVertexAttribPointer(3, 3, GL_FLOAT, false, 0, 0);
-			glVertexAttribDivisor(3, 1);
+		// layout(location = 3) in vec3 instanceTransformC1;
+		glEnableVertexAttribArray(LOCATION_INSTANCE_TRANSFORM_C1);
+		glVertexAttribPointer(LOCATION_INSTANCE_TRANSFORM_C1, 3, GL_FLOAT, false, stride, 0 * 3 * 4);
+		glVertexAttribDivisor(LOCATION_INSTANCE_TRANSFORM_C1, 1);
 
-			glDrawElementsInstanced(GL_TRIANGLES, elementCount, GL_UNSIGNED_INT, 0, instanceCount);
-		} else {
-			glDrawElements(GL_TRIANGLES, elementCount, GL_UNSIGNED_INT, 0);
-		}
+		// layout(location = 4) in vec3 instanceTransformC2;
+		glEnableVertexAttribArray(LOCATION_INSTANCE_TRANSFORM_C2);
+		glVertexAttribPointer(LOCATION_INSTANCE_TRANSFORM_C2, 3, GL_FLOAT, false, stride, 1 * 3 * 4);
+		glVertexAttribDivisor(LOCATION_INSTANCE_TRANSFORM_C2, 1);
+
+		// layout(location = 5) in vec3 instanceTransformC3;
+		glEnableVertexAttribArray(LOCATION_INSTANCE_TRANSFORM_C3);
+		glVertexAttribPointer(LOCATION_INSTANCE_TRANSFORM_C3, 3, GL_FLOAT, false, stride, 2 * 3 * 4);
+		glVertexAttribDivisor(LOCATION_INSTANCE_TRANSFORM_C3, 1);
+
+		// layout(location = 6) in vec3 instanceTransformC4;
+		glEnableVertexAttribArray(LOCATION_INSTANCE_TRANSFORM_C4);
+		glVertexAttribPointer(LOCATION_INSTANCE_TRANSFORM_C4, 3, GL_FLOAT, false, stride, 3 * 3 * 4);
+		glVertexAttribDivisor(LOCATION_INSTANCE_TRANSFORM_C4, 1);
+
+		// layout(location = 7) in vec3 instanceTint;
+		glEnableVertexAttribArray(LOCATION_INSTANCE_TINT);
+		glVertexAttribPointer(LOCATION_INSTANCE_TINT, 3, GL_FLOAT, false, stride, 4 * 3 * 4);
+		glVertexAttribDivisor(LOCATION_INSTANCE_TINT, 1);
+
+		glDrawElementsInstanced(GL_TRIANGLES, elementCount, GL_UNSIGNED_INT, 0, instanceCount);
+		MQDebug.incDrawCallCount();
 
 		glBindVertexArray(0);
 
@@ -291,9 +340,9 @@ public class FbxSubMesh extends Mesh
 		return instanceCount;
 	}
 
-	public float[] getInstancePositions()
+	public float[] getInstanceData()
 	{
-		return instancePositions;
+		return instanceData;
 	}
 	// </editor-fold>
 }

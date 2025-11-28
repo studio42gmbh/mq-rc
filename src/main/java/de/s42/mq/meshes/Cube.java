@@ -14,6 +14,7 @@ package de.s42.mq.meshes;
 import de.s42.dl.exceptions.DLException;
 import de.s42.log.LogManager;
 import de.s42.log.Logger;
+import de.s42.mq.loaders.fbx.MQDebug;
 import de.s42.mq.materials.Material;
 import de.s42.mq.rendering.RenderContext;
 import de.s42.mq.shaders.Shader;
@@ -173,6 +174,7 @@ public class Cube extends Mesh
 		}
 
 		glDrawArrays(GL_TRIANGLES, 0, 36);
+		MQDebug.incDrawCallCount();
 
 		glBindBuffer(GL_ARRAY_BUFFER, 0);
 		glBindVertexArray(0);

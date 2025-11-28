@@ -13,6 +13,7 @@ package de.s42.mq.meshes;
 
 import de.s42.dl.DLAttribute.AttributeDL;
 import de.s42.dl.exceptions.DLException;
+import de.s42.mq.loaders.fbx.MQDebug;
 import de.s42.mq.materials.Material;
 import de.s42.mq.rendering.RenderContext;
 import de.s42.mq.shaders.Shader;
@@ -200,6 +201,7 @@ public class Sphere<ChildType extends Object> extends Mesh<ChildType>
 		}
 
 		glDrawElements(GL_TRIANGLES, (rings - 1) * (sectors - 1) * 6, GL_UNSIGNED_INT, 0L);
+		MQDebug.incDrawCallCount();
 
 		glBindBuffer(GL_ARRAY_BUFFER, 0);
 		glBindVertexArray(0);

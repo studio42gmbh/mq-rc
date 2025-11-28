@@ -137,10 +137,5 @@ public class BasicShader extends PlainShader
 	{
 		this.tint = tint;
 	}
-
-	public int getInstancePositionsAttribute()
-	{
-		return instancePositionsAttribute;
-	}
 	// </editor-fold>
 }

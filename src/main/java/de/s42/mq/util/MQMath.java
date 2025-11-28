@@ -155,4 +155,19 @@ public final class MQMath
 	{
 		return (float) Math.ceil(value / step) * step;
 	}
+
+	public static float floor(float value)
+	{
+		return (float) Math.floor(value);
+	}
+
+	public static float ceil(float value)
+	{
+		return (float) Math.ceil(value);
+	}
+
+	public static float round(float value)
+	{
+		return (float) Math.round(value);
+	}
 }

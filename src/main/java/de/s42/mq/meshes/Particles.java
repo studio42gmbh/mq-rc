@@ -14,9 +14,11 @@ package de.s42.mq.meshes;
 import de.s42.dl.DLAttribute.AttributeDL;
 import de.s42.dl.exceptions.DLException;
 import de.s42.mq.data.IntegerData;
+import de.s42.mq.loaders.fbx.MQDebug;
 import de.s42.mq.materials.Material;
 import de.s42.mq.rendering.RenderContext;
 import de.s42.mq.shaders.ParticlesShader;
+import de.s42.mq.ui.editor;
 import de.s42.mq.util.MQMath;
 import java.security.SecureRandom;
 import static org.lwjgl.opengl.GL11.GL_FLOAT;
@@ -27,7 +29,6 @@ import static org.lwjgl.opengl.GL20.glVertexAttribPointer;
 import static org.lwjgl.opengl.GL30.*;
 import static org.lwjgl.opengl.GL31.glDrawArraysInstanced;
 import static org.lwjgl.opengl.GL33.glVertexAttribDivisor;
-import de.s42.mq.ui.editor;
 
 /**
  *
@@ -183,6 +184,7 @@ public class Particles extends Mesh
 		glBindBuffer(GL_ARRAY_BUFFER, 0);
 
 		glDrawArraysInstanced(GL_TRIANGLES, 0, 6, (int) MQMath.clamp(displayCount.getIntegerValue(), 0, count));
+		MQDebug.incDrawCallCount();
 
 		glBindVertexArray(0);
 
