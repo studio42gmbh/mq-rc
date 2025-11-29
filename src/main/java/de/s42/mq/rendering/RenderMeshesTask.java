@@ -18,6 +18,7 @@ import de.s42.log.Logger;
 import de.s42.mq.buffers.FXBuffer;
 import de.s42.mq.buffers.FrameBuffer;
 import de.s42.mq.cameras.Camera;
+import de.s42.mq.collision.Collider;
 import de.s42.mq.data.FloatData;
 import de.s42.mq.data.IntegerData;
 import de.s42.mq.materials.Material;
@@ -25,8 +26,11 @@ import de.s42.mq.meshes.Mesh;
 import de.s42.mq.meshes.MeshGroup;
 import de.s42.mq.shaders.Shader.CullType;
 import de.s42.mq.ui.AbstractWindowTask;
+import de.s42.mq.ui.UIComponent;
+import de.s42.mq.ui.layout.Layout;
 import java.util.Arrays;
 import java.util.List;
+import org.joml.Matrix4f;
 
 /**
  *
@@ -35,6 +39,7 @@ import java.util.List;
 public class RenderMeshesTask extends AbstractWindowTask
 {
 
+	@SuppressWarnings("unused")
 	private final static Logger log = LogManager.getLogger(RenderMeshesTask.class.getName());
 
 	@AttributeDL(required = true)
@@ -46,6 +51,9 @@ public class RenderMeshesTask extends AbstractWindowTask
 
 	@AttributeDL(required = false)
 	protected Camera camera;
+
+	@AttributeDL(required = false, defaultValue = "false")
+	protected boolean clipMeshes = false;
 
 	@AttributeDL(required = false)
 	protected String[] layers;
@@ -122,8 +130,6 @@ public class RenderMeshesTask extends AbstractWindowTask
 
 		List l = Arrays.asList(layers);
 
-		meshes.updateModelMatrix();
-
 		List<Mesh> ms = meshes.findMeshesByFilter((mesh) -> {
 			return mesh != null
 				&& !(mesh instanceof MeshGroup)
@@ -131,7 +137,29 @@ public class RenderMeshesTask extends AbstractWindowTask
 				&& mesh.containsLayers(l);
 		});
 
+		Matrix4f viewProjection = camera.getViewProjectionMatrix();
+
+		// Update UI
 		for (Mesh m : ms) {
+			if (m instanceof UIComponent uiComponent) {
+				Layout lay = uiComponent.getLayout();
+				if (lay != null) {
+					lay.layout(m, uiComponent.getLayoutOptions());
+				}
+			}
+		}
+
+		meshes.updateModelMatrix(true);
+
+		for (Mesh m : ms) {
+
+			if (clipMeshes) {
+				Collider collider = m.getBoundsCollider();
+
+				if (!collider.intersectsFrustum(viewProjection)) {
+					continue;
+				}
+			}
 
 			//log.debug("Mesh", m.getName());
 			m.setCamera(camera);
@@ -254,4 +282,14 @@ public class RenderMeshesTask extends AbstractWindowTask
 		this.overrideCullType = overrideCullType;
 	}
 	// "Getters/Setters" </editor-fold>
+
+	public boolean isClipMeshes()
+	{
+		return clipMeshes;
+	}
+
+	public void setClipMeshes(boolean clipMeshes)
+	{
+		this.clipMeshes = clipMeshes;
+	}
 }

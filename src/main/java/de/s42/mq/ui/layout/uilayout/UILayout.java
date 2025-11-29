@@ -76,51 +76,64 @@ public class UILayout extends AbstractEntity implements Layout<UILayoutOptions>
 		Vector2f screenSize = new Vector2f(deltaX, -deltaY); // the - is compensate for default quad already turning coordinates to support neutral scale image viewing
 
 		UILayoutFit imageFit = options.getFit();
-		if (mesh instanceof Image image) {
+		switch (mesh) {
+			case Image image -> {
 
-			// apply image fit rules
-			if (imageFit != UILayoutFit.NONE) {
-				Texture t = image.getTexture();
-				Vector2f texSize = new Vector2f(t.getDimension());
-				float textRatio = texSize.x / texSize.y;
-				float displayRatio = displaySize.x / displaySize.y;
+				// apply image fit rules
+				if (imageFit != UILayoutFit.NONE) {
+					Texture t = image.getTexture();
+					Vector2f texSize = new Vector2f(t.getDimension());
+					float textRatio = texSize.x / texSize.y;
+					float displayRatio = displaySize.x / displaySize.y;
 
-				if (imageFit == FIT_X) {
-					screenSize.x = screenSize.y * textRatio / displayRatio;
-				} else if (imageFit == FIT_Y) {
-					screenSize.y = screenSize.x * displayRatio / textRatio;
-				} else if (imageFit == FIT_BOTH) {
-					// @todo fit in both directions
+					if (null != imageFit) {
+						switch (imageFit) {
+							case FIT_X:
+								screenSize.x = screenSize.y * textRatio / displayRatio;
+								break;
+							case FIT_Y:
+								screenSize.y = screenSize.x * displayRatio / textRatio;
+								break;
+							// @todo fit in both directions
+							case FIT_BOTH:
+								break;
+							default:
+								break;
+						}
+					}
 				}
+
+				// set screen uvs
+				if (image.isScreenUvs()) {
+
+					float leftUv = (meshPosition.x - (screenSize.x * 0.5f)) * 0.5f + 0.5f;
+					float rightUv = (meshPosition.x + (screenSize.x * 0.5f)) * 0.5f + 0.5f;
+
+					float topUv = (meshPosition.y + (screenSize.y * 0.5f)) * 0.5f + 0.5f;
+					float bottomUv = (meshPosition.y - (screenSize.y * 0.5f)) * 0.5f + 0.5f;
+
+					image.setUvs(leftUv, topUv, rightUv, bottomUv);
+				}
+
+				image.getDimensionUI().setValue(screenSize.x * displaySize.x * 0.5f, screenSize.y * displaySize.y * 0.5f);
 			}
+			case Text text -> {
 
-			// set screen uvs
-			if (image.isScreenUvs()) {
+				if (text.getVerticalAlignment() == TOP) {
+					meshPosition.y -= deltaY * 0.5f;
+				} else if (text.getVerticalAlignment() == BOTTOM) {
+					meshPosition.y += deltaY * 0.5f;
+				}
 
-				float leftUv = (meshPosition.x - (screenSize.x * 0.5f)) * 0.5f + 0.5f;
-				float rightUv = (meshPosition.x + (screenSize.x * 0.5f)) * 0.5f + 0.5f;
+				if (text.getHorizontalAlignment() == LEFT) {
+					meshPosition.x -= deltaX * 0.5f;
+				} else if (text.getHorizontalAlignment() == RIGHT) {
+					meshPosition.x += deltaX * 0.5f;
+				}
 
-				float topUv = (meshPosition.y + (screenSize.y * 0.5f)) * 0.5f + 0.5f;
-				float bottomUv = (meshPosition.y - (screenSize.y * 0.5f)) * 0.5f + 0.5f;
-
-				image.setUvs(leftUv, topUv, rightUv, bottomUv);
 			}
-
-			image.getDimensionUI().setValue(screenSize.x * displaySize.x * 0.5f, screenSize.y * displaySize.y * 0.5f);
-		} else if (mesh instanceof Text text) {
-
-			if (text.getVerticalAlignment() == TOP) {
-				meshPosition.y -= deltaY * 0.5f;
-			} else if (text.getVerticalAlignment() == BOTTOM) {
-				meshPosition.y += deltaY * 0.5f;
+			default -> {
 			}
-
-			if (text.getHorizontalAlignment() == LEFT) {
-				meshPosition.x -= deltaX * 0.5f;
-			} else if (text.getHorizontalAlignment() == RIGHT) {
-				meshPosition.x += deltaX * 0.5f;
-			}
-
 		}
 
 		meshScale.x = screenSize.x;

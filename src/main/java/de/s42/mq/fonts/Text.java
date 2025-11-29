@@ -29,8 +29,11 @@ import de.s42.mq.ui.UIComponent;
 import de.s42.mq.ui.UIManager;
 import de.s42.mq.ui.layout.Layout;
 import de.s42.mq.ui.layout.LayoutOptions;
+import de.s42.mq.util.AABB;
+import org.joml.Matrix4f;
 import org.joml.Vector2f;
 import org.joml.Vector3f;
+import org.joml.Vector4f;
 import static org.lwjgl.opengl.GL11.GL_FLOAT;
 import static org.lwjgl.opengl.GL11.GL_TRIANGLES;
 import static org.lwjgl.opengl.GL15.*;
@@ -587,6 +590,46 @@ public class Text extends Mesh implements UIComponent, Copyable
 	public void handleClick(int x, int y) throws DLException
 	{
 		// do nothing
+	}
+
+	@Override
+	public AABB getAABB()
+	{
+		if (charData.length == 0) {
+			return super.getAABB();
+		}
+
+		// @todo whole text rendering is a bit wonky in the coordinates ...
+		getScale().set(1.0f);
+		getTransform().update(true);
+		Matrix4f matrix = getTransform().getMatrix();
+
+		// Get first letter left top corner
+		Vector2f lt = new Vector2f();
+		lt.x = charData[0] - charData[2] * 0.0f;
+		lt.y = charData[1] - charData[3] * 1.0f;
+
+		Vector2f rb = new Vector2f();
+		int index = Math.max(0, Math.min(getText().getStringValue().length() - 1, maxCharCount)) * 8;
+		rb.x = charData[index] + charData[index + 2] * 1.0f;
+		rb.y = charData[index + 1] + charData[index + 3] * 0.0f;
+
+		Vector4f min = (new Vector4f(0.0f, 0.0f, 0.0f, 1.0f))
+			.add(lt.x, lt.y, 0.0f, 0.0f)
+			.mul(matrix);
+		min.div(min.w);
+
+		Vector4f max = (new Vector4f(0.0f, 0.0f, 0.0f, 1.0f))
+			.add(rb.x, rb.y, 0.0f, 0.0f)
+			.mul(matrix);
+		max.div(max.w);
+
+		Vector3f aabbMin = min.xyz(new Vector3f());
+		Vector3f aabbMax = max.xyz(new Vector3f());
+
+		log.debug((new Vector3f(aabbMax)).sub(aabbMin), lt.x, lt.y, rb.x, rb.y, text.getStringValue());
+
+		return new AABB(aabbMin, aabbMax);
 	}
 
 	// <editor-fold desc="Getters/Setters" defaultstate="collapsed">

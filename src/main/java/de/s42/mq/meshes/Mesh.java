@@ -16,6 +16,7 @@ import de.s42.dl.exceptions.DLException;
 import de.s42.dl.types.DLContainer;
 import de.s42.mq.assets.AbstractAsset;
 import de.s42.mq.cameras.Camera;
+import de.s42.mq.collision.Collider;
 import de.s42.mq.core.Copyable;
 import de.s42.mq.materials.Material;
 import de.s42.mq.rendering.RenderContext;
@@ -115,6 +116,11 @@ public abstract class Mesh<ChildType extends Object> extends AbstractAsset imple
 	{
 		// @todo implement
 		return (new AABB()).translate(getPosition());
+	}
+
+	public Collider getBoundsCollider()
+	{
+		return getAABB().getBoundingSphereCollider();
 	}
 
 	@Override

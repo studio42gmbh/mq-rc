@@ -25,8 +25,10 @@
 //</editor-fold>
 package de.s42.mq.collision;
 
-import java.util.HashSet;
-import java.util.Set;
+import de.s42.mq.cameras.Camera;
+import java.util.ArrayList;
+import java.util.List;
+import org.joml.Matrix4f;
 import org.joml.Vector3f;
 
 /**
@@ -36,11 +38,43 @@ import org.joml.Vector3f;
 public class DefaultCollisionSpace implements CollisionSpace
 {
 
-	protected final Set<Collider> colliders = new HashSet<>();
+	protected final List<Collider> colliders = new ArrayList<>();
+
+	@Override
+	public List<Collider> findInFrustum(Camera camera)
+	{
+		Matrix4f viewProjection = camera.getViewProjectionMatrix();
+
+		List<Collider> result = new ArrayList<>();
+
+		for (Collider collider : colliders) {
+			if (collider.intersectsFrustum(viewProjection)) {
+				result.add(collider);
+			}
+		}
+
+		return result;
+	}
+
+	@Override
+	public Collider find(Vector3f position)
+	{
+		for (Collider collider : colliders) {
+			if (collider.contains(position)) {
+				return collider;
+			}
+		}
+
+		return null;
+	}
 
 	@Override
 	public void addCollider(Collider collider)
 	{
+		if (colliders.contains(collider)) {
+			return;
+		}
+
 		colliders.add(collider);
 	}
 
@@ -57,15 +91,14 @@ public class DefaultCollisionSpace implements CollisionSpace
 	}
 
 	@Override
-	public Collider find(Vector3f position)
+	public int getIndex(Collider collider)
 	{
-		for (Collider collider : colliders) {
-			if (collider.contains(position)) {
-				return collider;
-			}
-		}
-
-		return null;
+		return colliders.indexOf(collider);
 	}
 
+	@Override
+	public Collider get(int index)
+	{
+		return colliders.get(index);
+	}
 }

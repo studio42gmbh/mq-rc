@@ -17,9 +17,12 @@ import de.s42.mq.loaders.fbx.MQDebug;
 import de.s42.mq.materials.Material;
 import de.s42.mq.rendering.RenderContext;
 import de.s42.mq.shaders.Shader;
+import de.s42.mq.util.AABB;
 import java.nio.FloatBuffer;
 import java.nio.IntBuffer;
+import org.joml.Matrix4f;
 import org.joml.Vector3f;
+import org.joml.Vector4f;
 import static org.lwjgl.opengl.GL11.*;
 import static org.lwjgl.opengl.GL15.*;
 import static org.lwjgl.opengl.GL20.glEnableVertexAttribArray;
@@ -207,6 +210,20 @@ public class Sphere<ChildType extends Object> extends Mesh<ChildType>
 		glBindVertexArray(0);
 		shader.afterRendering(context);
 		mat.afterRendering(context);
+	}
+
+	@Override
+	public AABB getAABB()
+	{
+		Matrix4f matrix = getTransform().getMatrix();
+
+		Vector4f min = (new Vector4f(-radius, -radius, -radius, 1.0f)).mul(matrix);
+		min.div(min.w);
+
+		Vector4f max = (new Vector4f(radius, radius, radius, 1.0f)).mul(matrix);
+		max.div(max.w);
+
+		return new AABB(min.xyz(new Vector3f()), max.xyz(new Vector3f()));
 	}
 
 	public float getRadius()

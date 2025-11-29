@@ -288,8 +288,8 @@ public class FbxSubMesh extends Mesh
 		shader.afterRendering(context);
 		mat.afterRendering(context);
 	}
-	// <editor-fold desc="Getters/Setters" defaultstate="collapsed">
 
+	// <editor-fold desc="Getters/Setters" defaultstate="collapsed">
 	public AIMesh getAiMesh()
 	{
 		return aiMesh;

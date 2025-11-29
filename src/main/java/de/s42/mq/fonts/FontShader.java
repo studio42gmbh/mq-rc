@@ -27,6 +27,7 @@ import de.s42.mq.shaders.Shader;
 public class FontShader extends Shader
 {
 
+	@SuppressWarnings("unused")
 	private final static Logger log = LogManager.getLogger(FontShader.class.getName());
 
 	protected int viewMatrixUniform = -1;

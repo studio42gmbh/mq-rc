@@ -187,6 +187,12 @@ public final class BoxCollider extends AbstractCollider
 	}
 
 	@Override
+	public boolean intersectsFrustum(Matrix4f frustum)
+	{
+		throw new UnsupportedOperationException("Not supported yet.");
+	}
+
+	@Override
 	public Vector3f getOrigin()
 	{
 		return transform.getRow(3, new Vector3f());

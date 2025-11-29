@@ -26,6 +26,7 @@
 package de.s42.mq.util;
 
 import de.s42.base.strings.StringHelper;
+import de.s42.mq.collision.SphereCollider;
 import org.joml.Vector3f;
 
 /**
@@ -190,6 +191,16 @@ public final class AABB
 		}
 
 		return result;
+	}
+
+	public SphereCollider getBoundingSphereCollider()
+	{
+		Vector3f deltaHalf = (new Vector3f(max)).sub(min).mul(0.5f);
+
+		float radius = deltaHalf.length();
+		Vector3f origin = deltaHalf.add(min);
+
+		return new SphereCollider(origin, radius);
 	}
 
 	@Override

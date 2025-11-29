@@ -125,7 +125,7 @@ public class Textfield extends MeshGroup implements UIComponent
 	@Override
 	public void handleKey(int key, int scancode, int action, int mods)
 	{
-		log.debug("handleKey", key, scancode, action, mods);
+		//log.debug("handleKey", key, scancode, action, mods);
 
 		if (action == GLFW_PRESS || action == GLFW_REPEAT) {
 

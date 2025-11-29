@@ -25,37 +25,33 @@
 //</editor-fold>
 package de.s42.mq.collision;
 
-import org.joml.FrustumIntersection;
 import org.joml.Matrix4f;
 import org.joml.Vector3f;
+import org.joml.Vector4f;
 
 /**
  * See https://gamedev.stackexchange.com/questions/96459/fast-ray-sphere-collision-code
  *
  * @author Benjamin Schiller
  */
-public final class SphereCollider extends AbstractCollider<SphereCollider>
+public final class PointCollider extends AbstractCollider<PointCollider>
 {
 
 	public Vector3f origin;
-	public float radius;
-	public float radiusSquared;
 
-	public SphereCollider()
+	public PointCollider()
 	{
 	}
 
-	public SphereCollider(Vector3f origin, float radius)
+	public PointCollider(Vector3f origin)
 	{
 		this.origin = origin;
-		this.radius = radius;
-		this.radiusSquared = radius * radius;
 	}
 
 	@Override
-	public SphereCollider copy()
+	public PointCollider copy()
 	{
-		SphereCollider copy = new SphereCollider(new Vector3f(origin), radius);
+		PointCollider copy = new PointCollider(new Vector3f(origin));
 		copy.userObject = userObject;
 
 		return copy;
@@ -64,66 +60,24 @@ public final class SphereCollider extends AbstractCollider<SphereCollider>
 	@Override
 	public boolean contains(Vector3f position)
 	{
-		return origin.distanceSquared(position) < radiusSquared;
+		return false;
 	}
 
 	@Override
 	public boolean intersect(Ray ray, Vector3f result)
 	{
-		Vector3f delta = (new Vector3f(ray.origin)).sub(origin);
-		float b = delta.dot(ray.direction);
-		float c = delta.dot(result) - radiusSquared;
-
-		// Exit if r’s origin outside s (c > 0) and r pointing away from s (b > 0)
-		if (c > 0.0f && b > 0.0f) {
-			return false;
-		}
-
-		float discr = b * b - c;
-
-		// A negative discriminant corresponds to ray missing sphere
-		if (discr < 0.0f) {
-			return false;
-		}
-
-		// Ray now found to intersect sphere, compute smallest t value of intersection
-		float t = -b - (float) Math.sqrt(discr);
-
-		// If t is negative, ray started inside sphere (so clamp t to zero or false)
-		if (t < 0.0f) {
-			return false;
-			//t = 0.0f; // allows to hit the surface
-		}
-
-		result.set(ray.direction).mul(t).add(ray.origin);
-
-		return true;
+		return false;
 	}
 
 	@Override
 	public boolean intersectsFrustum(Matrix4f viewProjection)
 	{
-		FrustumIntersection f = new FrustumIntersection(viewProjection, true);
-
-		return f.testSphere(origin, radius);
-
-		/*Vector4f test = (new Vector4f(origin, 1.0f)).mul(viewProjection);
+		Vector4f test = (new Vector4f(origin, 1.0f)).mul(viewProjection);
 		test.div(test.w);
 
 		return !(test.x < -1 || test.x > 1
 			|| test.y < -1 || test.y > 1
-			|| test.z < -1 || test.z > 1);*/
-	}
-
-	public float getRadius()
-	{
-		return radius;
-	}
-
-	public void setRadius(float radius)
-	{
-		this.radius = radius;
-		this.radiusSquared = radius * radius;
+			|| test.z < -1 || test.z > 1);
 	}
 
 	@Override

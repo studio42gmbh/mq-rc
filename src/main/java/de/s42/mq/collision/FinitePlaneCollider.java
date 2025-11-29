@@ -25,6 +25,7 @@
 //</editor-fold>
 package de.s42.mq.collision;
 
+import org.joml.Matrix4f;
 import org.joml.Vector3f;
 
 /**
@@ -91,6 +92,12 @@ public final class FinitePlaneCollider extends AbstractCollider
 
 	@Override
 	public Object copy()
+	{
+		throw new UnsupportedOperationException("Not supported yet.");
+	}
+
+	@Override
+	public boolean intersectsFrustum(Matrix4f frustum)
 	{
 		throw new UnsupportedOperationException("Not supported yet.");
 	}

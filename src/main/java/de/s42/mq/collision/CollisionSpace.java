@@ -25,6 +25,8 @@
 //</editor-fold>
 package de.s42.mq.collision;
 
+import de.s42.mq.cameras.Camera;
+import java.util.List;
 import org.joml.Vector3f;
 
 /**
@@ -41,4 +43,10 @@ public interface CollisionSpace
 	void updateCollider(Collider collider);
 
 	Collider find(Vector3f position);
+
+	Collider get(int index);
+
+	int getIndex(Collider collider);
+
+	List<Collider> findInFrustum(Camera camera);
 }
