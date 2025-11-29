@@ -26,6 +26,7 @@
 package de.s42.mq.collision;
 
 import de.s42.mq.util.AABB;
+import org.joml.FrustumIntersection;
 import org.joml.Matrix4f;
 import org.joml.Vector3f;
 import org.joml.Vector4f;
@@ -187,7 +188,7 @@ public final class BoxCollider extends AbstractCollider
 	}
 
 	@Override
-	public boolean intersectsFrustum(Matrix4f frustum)
+	public boolean intersectsFrustum(FrustumIntersection intersection)
 	{
 		throw new UnsupportedOperationException("Not supported yet.");
 	}

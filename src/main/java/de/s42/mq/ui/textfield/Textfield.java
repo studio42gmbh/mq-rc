@@ -238,7 +238,6 @@ public class Textfield extends MeshGroup implements UIComponent
 		updateLayoutOptions();
 
 		super.update(elapsedTime);
-
 	}
 
 	@Override

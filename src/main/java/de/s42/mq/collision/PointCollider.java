@@ -25,9 +25,8 @@
 //</editor-fold>
 package de.s42.mq.collision;
 
-import org.joml.Matrix4f;
+import org.joml.FrustumIntersection;
 import org.joml.Vector3f;
-import org.joml.Vector4f;
 
 /**
  * See https://gamedev.stackexchange.com/questions/96459/fast-ray-sphere-collision-code
@@ -70,14 +69,17 @@ public final class PointCollider extends AbstractCollider<PointCollider>
 	}
 
 	@Override
-	public boolean intersectsFrustum(Matrix4f viewProjection)
+	public boolean intersectsFrustum(FrustumIntersection intersection)
 	{
+		return intersection.testPoint(origin);
+		/*
 		Vector4f test = (new Vector4f(origin, 1.0f)).mul(viewProjection);
 		test.div(test.w);
 
 		return !(test.x < -1 || test.x > 1
 			|| test.y < -1 || test.y > 1
 			|| test.z < -1 || test.z > 1);
+		 */
 	}
 
 	@Override

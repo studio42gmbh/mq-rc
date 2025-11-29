@@ -23,39 +23,58 @@
  * THE SOFTWARE.
  */
 //</editor-fold>
-package de.s42.mq.loaders.fbx;
+package de.s42.mq.util;
 
-import java.util.concurrent.atomic.AtomicLong;
+import static de.s42.mq.util.MQMath.PI;
+import static de.s42.mq.util.MQMath.TAU;
+import java.util.SplittableRandom;
 
 /**
  *
  * @author Benjamin Schiller
  */
-public final class MQDebug
+public final class MQRandom
 {
 
-	protected final static AtomicLong drawCallCount = new AtomicLong();
-
-	protected final static AtomicLong instanceDrawCallCount = new AtomicLong();
-
-	public static void incDrawCallCount()
+	public final static MQRandom create(int seed)
 	{
-		incDrawCallCount(1, 1);
+		return new MQRandom(seed);
 	}
 
-	public static void incDrawCallCount(long drawCalls, long instanceDrawCount)
+	protected SplittableRandom random;
+
+	public MQRandom(long seed)
 	{
-		drawCallCount.addAndGet(drawCalls);
-		instanceDrawCallCount.addAndGet(instanceDrawCount);
+		random = new SplittableRandom(seed);
 	}
 
-	public static long getInstanceDrawCallCount()
+	public void setSeed(long seed)
 	{
-		return instanceDrawCallCount.get();
+		random = new SplittableRandom(seed);
 	}
 
-	public static long getDrawCallCount()
+	public float nextFloat()
 	{
-		return drawCallCount.get();
+		return random.nextFloat();
+	}
+
+	public float nextFloatPi()
+	{
+		return random.nextFloat(PI);
+	}
+
+	public float nextFloatTau()
+	{
+		return random.nextFloat(TAU);
+	}
+
+	public float nextFloat(float max)
+	{
+		return random.nextFloat(max);
+	}
+
+	public float nextFloat(float min, float max)
+	{
+		return random.nextFloat(min, max);
 	}
 }

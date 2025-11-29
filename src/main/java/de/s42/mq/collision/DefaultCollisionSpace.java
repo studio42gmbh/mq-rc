@@ -28,6 +28,7 @@ package de.s42.mq.collision;
 import de.s42.mq.cameras.Camera;
 import java.util.ArrayList;
 import java.util.List;
+import org.joml.FrustumIntersection;
 import org.joml.Matrix4f;
 import org.joml.Vector3f;
 
@@ -47,8 +48,10 @@ public class DefaultCollisionSpace implements CollisionSpace
 
 		List<Collider> result = new ArrayList<>();
 
+		FrustumIntersection intersection = new FrustumIntersection(viewProjection, true);
+
 		for (Collider collider : colliders) {
-			if (collider.intersectsFrustum(viewProjection)) {
+			if (collider.intersectsFrustum(intersection)) {
 				result.add(collider);
 			}
 		}

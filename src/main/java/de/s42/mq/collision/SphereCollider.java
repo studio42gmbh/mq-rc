@@ -26,7 +26,8 @@
 package de.s42.mq.collision;
 
 import org.joml.FrustumIntersection;
-import org.joml.Matrix4f;
+import org.joml.Intersectionf;
+import org.joml.Vector2f;
 import org.joml.Vector3f;
 
 /**
@@ -70,6 +71,13 @@ public final class SphereCollider extends AbstractCollider<SphereCollider>
 	@Override
 	public boolean intersect(Ray ray, Vector3f result)
 	{
+		Vector2f r = new Vector2f();
+		if (!Intersectionf.intersectRaySphere(ray.origin, ray.direction, origin, radiusSquared, r)) {
+			return false;
+		}
+		result.set(ray.direction).mul(r.x).add(ray.origin);
+		return true;
+		/*
 		Vector3f delta = (new Vector3f(ray.origin)).sub(origin);
 		float b = delta.dot(ray.direction);
 		float c = delta.dot(result) - radiusSquared;
@@ -98,14 +106,13 @@ public final class SphereCollider extends AbstractCollider<SphereCollider>
 		result.set(ray.direction).mul(t).add(ray.origin);
 
 		return true;
+		 */
 	}
 
 	@Override
-	public boolean intersectsFrustum(Matrix4f viewProjection)
+	public boolean intersectsFrustum(FrustumIntersection intersection)
 	{
-		FrustumIntersection f = new FrustumIntersection(viewProjection, true);
-
-		return f.testSphere(origin, radius);
+		return intersection.testSphere(origin, radius);
 
 		/*Vector4f test = (new Vector4f(origin, 1.0f)).mul(viewProjection);
 		test.div(test.w);

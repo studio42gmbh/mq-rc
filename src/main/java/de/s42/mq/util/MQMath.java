@@ -11,7 +11,6 @@
  */
 package de.s42.mq.util;
 
-import java.util.concurrent.ThreadLocalRandom;
 import org.joml.Vector2f;
 import org.joml.Vector3f;
 
@@ -119,31 +118,6 @@ public final class MQMath
 	public static float toDegrees(float radians)
 	{
 		return (float) Math.toDegrees(radians);
-	}
-
-	public static float random()
-	{
-		return ThreadLocalRandom.current().nextFloat();
-	}
-
-	public static float randomPi()
-	{
-		return ThreadLocalRandom.current().nextFloat(PI);
-	}
-
-	public static float randomTau()
-	{
-		return ThreadLocalRandom.current().nextFloat(TAU);
-	}
-
-	public static float random(float max)
-	{
-		return ThreadLocalRandom.current().nextFloat(max);
-	}
-
-	public static float random(float min, float max)
-	{
-		return ThreadLocalRandom.current().nextFloat(min, max);
 	}
 
 	public static float floorStep(float value, float step)

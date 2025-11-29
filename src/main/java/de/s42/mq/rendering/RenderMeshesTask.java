@@ -32,6 +32,7 @@ import de.s42.mq.ui.AbstractWindowTask;
 import de.s42.mq.ui.UIComponent;
 import de.s42.mq.ui.layout.Layout;
 import java.util.*;
+import org.joml.FrustumIntersection;
 import org.joml.Matrix4f;
 import org.joml.Matrix4x3f;
 
@@ -73,6 +74,8 @@ public class RenderMeshesTask extends AbstractWindowTask
 	protected Camera shadowCamera;
 	protected FXBuffer shadowBuffer;
 
+	protected final static List<InstanceData> INSTANCE_DATA = new ArrayList<>();
+
 	@Override
 	protected void runTaskFirstTime()
 	{
@@ -99,6 +102,7 @@ public class RenderMeshesTask extends AbstractWindowTask
 	}
 
 	@Override
+	@SuppressWarnings("null")
 	protected void runTask()
 	{
 		//log.debug("runTask");
@@ -157,12 +161,14 @@ public class RenderMeshesTask extends AbstractWindowTask
 
 		Map<Integer, List<FbxSubMesh>> meshesByVao = new HashMap<>();
 
+		FrustumIntersection intersection = new FrustumIntersection(viewProjection, true);
+
 		for (Mesh m : ms) {
 
 			if (clipMeshes) {
 				Collider collider = m.getBoundsCollider();
 
-				if (!collider.intersectsFrustum(viewProjection)) {
+				if (!collider.intersectsFrustum(intersection)) {
 					continue;
 				}
 			}
@@ -189,25 +195,26 @@ public class RenderMeshesTask extends AbstractWindowTask
 		// Render fbx sub meshes instanced
 		for (Map.Entry<Integer, List<FbxSubMesh>> entry : meshesByVao.entrySet()) {
 
-			List<FbxSubMesh> meshes = entry.getValue();
+			List<FbxSubMesh> fbxMeshes = entry.getValue();
 
-			FbxSubMesh fbxSubMesh = meshes.getFirst();
+			FbxSubMesh fbxSubMesh = fbxMeshes.getFirst();
 
-			List<InstanceData> data = new ArrayList<>(meshes.size());
+			INSTANCE_DATA.clear();
+			for (int i = 0; i < fbxMeshes.size(); ++i) {
 
-			for (int i = 0; i < meshes.size(); ++i) {
-
-				FbxSubMesh fbxSM = meshes.get(i);
+				FbxSubMesh fbxSM = fbxMeshes.get(i);
 				InstanceData iData = new FbxSubMesh.InstanceData();
 
 				iData.identifier = fbxSM.getIdentifier();
 				iData.tint = MQColor.White;
 				iData.matrix = fbxSM.getTransform().getMatrix().get4x3(new Matrix4x3f());
 
-				data.add(iData);
+				INSTANCE_DATA.add(iData);
 			}
 
-			fbxSubMesh.updateInstanceData(data);
+			fbxSubMesh.updateInstanceData(INSTANCE_DATA);
+
+			// Small workaround to create all instances relative to world origin
 			fbxSubMesh.getTransform().getMatrix().identity();
 
 			fbxSubMesh.setCamera(camera);

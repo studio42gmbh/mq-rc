@@ -26,7 +26,7 @@
 package de.s42.mq.collision;
 
 import de.s42.mq.core.Copyable;
-import org.joml.Matrix4f;
+import org.joml.FrustumIntersection;
 import org.joml.Vector3f;
 
 /**
@@ -52,12 +52,12 @@ public interface Collider<CopyType extends Collider> extends Copyable<CopyType>
 	boolean intersect(Ray ray, Vector3f result);
 
 	/**
-	 * Returns the intersection of this collider withthe given frstum matrix.
+	 * Returns the intersection of this collider with the given frustum matrix.
 	 *
-	 * @param viewProjection
+	 * @param intersection
 	 * @return
 	 */
-	boolean intersectsFrustum(Matrix4f viewProjection);
+	boolean intersectsFrustum(FrustumIntersection intersection);
 
 	/**
 	 * Retuirns true if the given point is contained in the given collider
