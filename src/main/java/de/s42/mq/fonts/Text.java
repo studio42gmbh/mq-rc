@@ -627,8 +627,7 @@ public class Text extends Mesh implements UIComponent, Copyable
 		Vector3f aabbMin = min.xyz(new Vector3f());
 		Vector3f aabbMax = max.xyz(new Vector3f());
 
-		log.debug((new Vector3f(aabbMax)).sub(aabbMin), lt.x, lt.y, rb.x, rb.y, text.getStringValue());
-
+		//log.debug((new Vector3f(aabbMax)).sub(aabbMin), lt.x, lt.y, rb.x, rb.y, text.getStringValue());
 		return new AABB(aabbMin, aabbMax);
 	}
 

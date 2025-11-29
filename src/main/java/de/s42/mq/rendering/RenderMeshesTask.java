@@ -140,6 +140,7 @@ public class RenderMeshesTask extends AbstractWindowTask
 		Matrix4f viewProjection = camera.getViewProjectionMatrix();
 
 		// Update UI
+		// @todo make layouting more stable to not require it when culling (currently once it clips it remains disappeared)
 		for (Mesh m : ms) {
 			if (m instanceof UIComponent uiComponent) {
 				Layout lay = uiComponent.getLayout();
@@ -149,7 +150,7 @@ public class RenderMeshesTask extends AbstractWindowTask
 			}
 		}
 
-		meshes.updateModelMatrix(true);
+		meshes.updateModelMatrix();
 
 		for (Mesh m : ms) {
 
