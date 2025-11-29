@@ -35,6 +35,7 @@ import de.s42.mq.shaders.Shader;
 import static de.s42.mq.shaders.Shader.*;
 import de.s42.mq.util.AABB;
 import java.nio.IntBuffer;
+import java.util.List;
 import org.joml.Matrix4f;
 import org.joml.Matrix4x3f;
 import org.joml.Vector3f;
@@ -60,6 +61,14 @@ import org.lwjgl.system.MemoryUtil;
  */
 public class FbxSubMesh extends Mesh
 {
+
+	public static class InstanceData
+	{
+
+		public Matrix4x3f matrix;
+		public int identifier;
+		public MQColor tint;
+	}
 
 	//private final static Logger log = LogManager.getLogger(FbxSubMesh.class.getName());
 	protected int vao = -1;
@@ -180,6 +189,7 @@ public class FbxSubMesh extends Mesh
 		// Tint
 		MQColor tint = MQColor.White;
 		tint.getRGB(instanceData, 12);
+		instanceData[15] = identifier;
 
 		updateInstanceData(1, instanceData);
 
@@ -207,6 +217,30 @@ public class FbxSubMesh extends Mesh
 		glBufferData(GL_ARRAY_BUFFER, instanceData, GL_DYNAMIC_DRAW);
 
 		glBindVertexArray(0);
+	}
+
+	public void updateInstanceData(List<InstanceData> data)
+	{
+		assert data != null : "transforms != null";
+		assert !data.isEmpty() : "!transforms.isEmpty()";
+
+		int tSize = INSTANCE_DATA_BYTE_SIZE / 4;
+
+		int iCount = data.size();
+
+		float[] instData = new float[iCount * tSize];
+
+		int i = 0;
+		for (InstanceData entry : data) {
+
+			entry.matrix.get(instData, i * tSize);
+			entry.tint.getRGB(instData, i * tSize + 12);
+			instData[i * tSize + 15] = entry.identifier;
+
+			i++;
+		}
+
+		updateInstanceData(iCount, instData);
 	}
 
 	@Override
@@ -280,6 +314,11 @@ public class FbxSubMesh extends Mesh
 		glVertexAttribPointer(LOCATION_INSTANCE_TINT, 3, GL_FLOAT, false, stride, 4 * 3 * 4);
 		glVertexAttribDivisor(LOCATION_INSTANCE_TINT, 1);
 
+		// layout(location = 8) in float instanceIdentifier;
+		glEnableVertexAttribArray(LOCATION_INSTANCE_IDENTIFIER);
+		glVertexAttribPointer(LOCATION_INSTANCE_IDENTIFIER, 1, GL_FLOAT, false, stride, 5 * 3 * 4);
+		glVertexAttribDivisor(LOCATION_INSTANCE_IDENTIFIER, 1);
+
 		glDrawElementsInstanced(GL_TRIANGLES, elementCount, GL_UNSIGNED_INT, 0, instanceCount);
 		MQDebug.incDrawCallCount();
 
@@ -345,4 +384,9 @@ public class FbxSubMesh extends Mesh
 		return instanceData;
 	}
 	// </editor-fold>
+
+	public int getVao()
+	{
+		return vao;
+	}
 }

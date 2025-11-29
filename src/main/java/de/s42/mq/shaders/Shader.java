@@ -91,7 +91,10 @@ public abstract class Shader extends AbstractAsset
 	// layout(location = 7) in vec3 instanceTint;
 	public final static int LOCATION_INSTANCE_TINT = 7;
 
-	public final static int INSTANCE_DATA_BYTE_SIZE = (12 + 3) * 4;
+	// layout(location = 8) in float instanceIdentifier;
+	public final static int LOCATION_INSTANCE_IDENTIFIER = 8;
+
+	public final static int INSTANCE_DATA_BYTE_SIZE = (12 + 3 + 1) * 4;
 
 	public enum CullType
 	{
@@ -253,6 +256,9 @@ public abstract class Shader extends AbstractAsset
 	protected int instanceTintAttribute = -1;
 
 	@dontPersist
+	protected int instanceIdentifierAttribute = -1;
+
+	@dontPersist
 	private final FloatBuffer matrixBuffer = MemoryUtil.memAllocFloat(16);
 
 	@dontPersist
@@ -286,6 +292,7 @@ public abstract class Shader extends AbstractAsset
 		instanceTransformC3Attribute = getAttributeLocationOpt("instanceTransformC3");
 		instanceTransformC4Attribute = getAttributeLocationOpt("instanceTransformC4");
 		instanceTintAttribute = getAttributeLocationOpt("instanceTint");
+		instanceIdentifierAttribute = getAttributeLocationOpt("instanceIdentifier");
 	}
 
 	@Override
@@ -1169,6 +1176,11 @@ public abstract class Shader extends AbstractAsset
 	public int getInstanceTintAttribute()
 	{
 		return instanceTintAttribute;
+	}
+
+	public int getInstanceIdentifierAttribute()
+	{
+		return instanceIdentifierAttribute;
 	}
 	// </editor-fold>
 }

@@ -15,12 +15,15 @@ import de.s42.dl.DLAttribute.AttributeDL;
 import de.s42.dl.exceptions.DLException;
 import de.s42.log.LogManager;
 import de.s42.log.Logger;
+import de.s42.mq.MQColor;
 import de.s42.mq.buffers.FXBuffer;
 import de.s42.mq.buffers.FrameBuffer;
 import de.s42.mq.cameras.Camera;
 import de.s42.mq.collision.Collider;
 import de.s42.mq.data.FloatData;
 import de.s42.mq.data.IntegerData;
+import de.s42.mq.loaders.fbx.FbxSubMesh;
+import de.s42.mq.loaders.fbx.FbxSubMesh.InstanceData;
 import de.s42.mq.materials.Material;
 import de.s42.mq.meshes.Mesh;
 import de.s42.mq.meshes.MeshGroup;
@@ -28,9 +31,9 @@ import de.s42.mq.shaders.Shader.CullType;
 import de.s42.mq.ui.AbstractWindowTask;
 import de.s42.mq.ui.UIComponent;
 import de.s42.mq.ui.layout.Layout;
-import java.util.Arrays;
-import java.util.List;
+import java.util.*;
 import org.joml.Matrix4f;
+import org.joml.Matrix4x3f;
 
 /**
  *
@@ -152,6 +155,8 @@ public class RenderMeshesTask extends AbstractWindowTask
 
 		meshes.updateModelMatrix();
 
+		Map<Integer, List<FbxSubMesh>> meshesByVao = new HashMap<>();
+
 		for (Mesh m : ms) {
 
 			if (clipMeshes) {
@@ -162,9 +167,53 @@ public class RenderMeshesTask extends AbstractWindowTask
 				}
 			}
 
+			// Dont render but gather the fbx sub meshes for later instanced rendering
+			if (m instanceof FbxSubMesh fbxSubMesh) {
+
+				int vao = fbxSubMesh.getVao();
+
+				if (!meshesByVao.containsKey(vao)) {
+					meshesByVao.put(vao, new ArrayList<>());
+				}
+
+				meshesByVao.get(vao).add(fbxSubMesh);
+
+				continue;
+			}
+
 			//log.debug("Mesh", m.getName());
 			m.setCamera(camera);
 			m.render(context);
+		}
+
+		// Render fbx sub meshes instanced
+		for (Map.Entry<Integer, List<FbxSubMesh>> entry : meshesByVao.entrySet()) {
+
+			List<FbxSubMesh> meshes = entry.getValue();
+
+			FbxSubMesh fbxSubMesh = meshes.getFirst();
+
+			List<InstanceData> data = new ArrayList<>(meshes.size());
+
+			for (int i = 0; i < meshes.size(); ++i) {
+
+				FbxSubMesh fbxSM = meshes.get(i);
+				InstanceData iData = new FbxSubMesh.InstanceData();
+
+				iData.identifier = fbxSM.getIdentifier();
+				iData.tint = MQColor.White;
+				iData.matrix = fbxSM.getTransform().getMatrix().get4x3(new Matrix4x3f());
+
+				data.add(iData);
+			}
+
+			fbxSubMesh.updateInstanceData(data);
+			fbxSubMesh.getTransform().getMatrix().identity();
+
+			fbxSubMesh.setCamera(camera);
+			fbxSubMesh.render(context);
+
+			fbxSubMesh.getTransform().update(true);
 		}
 
 		if (buffer != null) {
@@ -282,7 +331,6 @@ public class RenderMeshesTask extends AbstractWindowTask
 	{
 		this.overrideCullType = overrideCullType;
 	}
-	// "Getters/Setters" </editor-fold>
 
 	public boolean isClipMeshes()
 	{
@@ -293,4 +341,5 @@ public class RenderMeshesTask extends AbstractWindowTask
 	{
 		this.clipMeshes = clipMeshes;
 	}
+	// "Getters/Setters" </editor-fold>
 }
