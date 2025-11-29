@@ -323,7 +323,7 @@ public class Texture extends AbstractAsset
 
 	public void setHDRDefaults()
 	{
-		setInternalFormat(TextureFormat.RGBA16F);
+		setInternalFormat(TextureFormat.RGBA32F);
 		setFormat(TextureFormat.RGBA);
 		setDataType(TextureType.FLOAT);
 		setWrapR(TextureWrap.REPEAT);
