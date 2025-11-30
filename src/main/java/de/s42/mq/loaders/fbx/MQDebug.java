@@ -38,15 +38,24 @@ public final class MQDebug
 
 	protected final static AtomicLong instanceDrawCallCount = new AtomicLong();
 
+	protected final static AtomicLong triangleDrawCount = new AtomicLong();
+
 	public static void incDrawCallCount()
 	{
 		incDrawCallCount(1, 1);
 	}
 
-	public static void incDrawCallCount(long drawCalls, long instanceDrawCount)
+	public static void incDrawCallCount(long drawCallCount, long instanceDrawCallCount)
 	{
-		drawCallCount.addAndGet(drawCalls);
-		instanceDrawCallCount.addAndGet(instanceDrawCount);
+		MQDebug.drawCallCount.addAndGet(drawCallCount);
+		MQDebug.instanceDrawCallCount.addAndGet(instanceDrawCallCount);
+	}
+
+	public static void incDrawCallData(long drawCallCount, long instanceDrawCallCount, long triangleDrawCount)
+	{
+		MQDebug.drawCallCount.addAndGet(drawCallCount);
+		MQDebug.instanceDrawCallCount.addAndGet(instanceDrawCallCount);
+		MQDebug.triangleDrawCount.addAndGet(triangleDrawCount);
 	}
 
 	public static long getInstanceDrawCallCount()
@@ -57,5 +66,10 @@ public final class MQDebug
 	public static long getDrawCallCount()
 	{
 		return drawCallCount.get();
+	}
+
+	public static long getTriangleDrawCount()
+	{
+		return triangleDrawCount.get();
 	}
 }

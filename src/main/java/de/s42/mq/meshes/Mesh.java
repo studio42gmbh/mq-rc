@@ -66,6 +66,21 @@ public abstract class Mesh<ChildType extends Object> extends AbstractAsset imple
 	@editor
 	protected boolean enabled = true;
 
+	@editor(editable = false)
+	protected Map<String, Object> customProperties = new HashMap<>();
+
+	@editor(editable = true, editorGroup = "lod")
+	@AttributeDL(ignore = true, defaultValue = "-1")
+	protected int lod = -1;
+
+	@editor(editable = true, editorGroup = "lod")
+	@AttributeDL(ignore = true, defaultValue = "0.0")
+	protected float lodDistanceMin = 0.0f;
+
+	@editor(editable = true, editorGroup = "lod")
+	@AttributeDL(ignore = true, defaultValue = "1000.0")
+	protected float lodDistanceMax = 1000.0f;
+
 	@AttributeDL(ignore = true)
 	protected final Transform transform = new Transform();
 
@@ -80,9 +95,6 @@ public abstract class Mesh<ChildType extends Object> extends AbstractAsset imple
 
 	@AttributeDL(ignore = true)
 	protected MeshGroup parent;
-
-	@editor(editable = false)
-	protected Map<String, Object> customProperties = new HashMap<>();
 
 	public abstract void render(RenderContext context);
 
@@ -102,6 +114,9 @@ public abstract class Mesh<ChildType extends Object> extends AbstractAsset imple
 			copy.layers = layers;
 			copy.layersAsList.addAll(layersAsList);
 			copy.customProperties.putAll(customProperties);
+			copy.lod = lod;
+			copy.lodDistanceMin = lodDistanceMin;
+			copy.lodDistanceMax = lodDistanceMax;
 
 			for (MeshAnimation animation : animations) {
 				copy.animations.add(animation.copy());
@@ -483,5 +498,35 @@ public abstract class Mesh<ChildType extends Object> extends AbstractAsset imple
 	public boolean containsCustomProperty(String name)
 	{
 		return customProperties.containsKey(name);
+	}
+
+	public int getLod()
+	{
+		return lod;
+	}
+
+	public void setLod(int lod)
+	{
+		this.lod = lod;
+	}
+
+	public float getLodDistanceMin()
+	{
+		return lodDistanceMin;
+	}
+
+	public void setLodDistanceMin(float lodDistanceMin)
+	{
+		this.lodDistanceMin = lodDistanceMin;
+	}
+
+	public float getLodDistanceMax()
+	{
+		return lodDistanceMax;
+	}
+
+	public void setLodDistanceMax(float lodDistanceMax)
+	{
+		this.lodDistanceMax = lodDistanceMax;
 	}
 }

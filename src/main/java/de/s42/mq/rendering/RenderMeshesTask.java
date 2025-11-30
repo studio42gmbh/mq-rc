@@ -35,6 +35,7 @@ import java.util.*;
 import org.joml.FrustumIntersection;
 import org.joml.Matrix4f;
 import org.joml.Matrix4x3f;
+import org.joml.Vector3f;
 
 /**
  *
@@ -58,6 +59,12 @@ public class RenderMeshesTask extends AbstractWindowTask
 
 	@AttributeDL(required = false, defaultValue = "false")
 	protected boolean clipMeshes = false;
+
+	@AttributeDL(required = false, defaultValue = "true")
+	protected boolean lodMeshes = true;
+
+	@AttributeDL(required = false, defaultValue = "1.0")
+	protected float lodMeshDistanceScale = 1.0f;
 
 	@AttributeDL(required = false)
 	protected String[] layers;
@@ -161,8 +168,22 @@ public class RenderMeshesTask extends AbstractWindowTask
 
 		FrustumIntersection intersection = new FrustumIntersection(viewProjection, true);
 
+		Vector3f cameraPosition = camera.getWorldPosition();
+
 		for (Mesh m : ms) {
 
+			// Cull mesh lod wich is not in range
+			if (lodMeshes && m.getLod() > -1) {
+
+				float distance = (new Vector3f(cameraPosition)).sub(m.getWorldPosition()).length();
+
+				if (distance < m.getLodDistanceMin()
+					|| distance >= m.getLodDistanceMax()) {
+					continue;
+				}
+			}
+
+			// Frustum cull meshes
 			if (clipMeshes) {
 				Collider collider = m.getBoundsCollider();
 
@@ -193,6 +214,7 @@ public class RenderMeshesTask extends AbstractWindowTask
 		}
 
 		// Render fbx sub meshes instanced
+		// @todo Optimize handling of instaning spawner meshes - currently can cause a lot of mem usage if spawner changes often (culling ...)
 		for (Map.Entry<Integer, List<FbxSubMesh>> entry : meshesByVao.entrySet()) {
 
 			List<FbxSubMesh> fbxMeshes = entry.getValue();
@@ -348,6 +370,26 @@ public class RenderMeshesTask extends AbstractWindowTask
 	public void setClipMeshes(boolean clipMeshes)
 	{
 		this.clipMeshes = clipMeshes;
+	}
+
+	public boolean isLodMeshes()
+	{
+		return lodMeshes;
+	}
+
+	public void setLodMeshes(boolean lodMeshes)
+	{
+		this.lodMeshes = lodMeshes;
+	}
+
+	public float getLodMeshDistanceScale()
+	{
+		return lodMeshDistanceScale;
+	}
+
+	public void setLodMeshDistanceScale(float lodMeshDistanceScale)
+	{
+		this.lodMeshDistanceScale = lodMeshDistanceScale;
 	}
 	// "Getters/Setters" </editor-fold>
 }

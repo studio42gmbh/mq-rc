@@ -270,10 +270,26 @@ public class FbxMesh extends MeshGroup
 			subMesh.setFromMatrix(meshMatrix);
 			nodeContainer.addMesh(subMesh);
 
-			// handle custom layers for nodes
+			subMesh.setCustomProperties(nodeContainer.getCustomProperties());
+
+			// layers - Handle custom layers for nodes
 			if (nodeContainer.containsCustomProperty("layers")) {
-				subMesh.setCustomProperties(nodeContainer.getCustomProperties());
 				subMesh.setLayers(((String) nodeContainer.getCustomProperty("layers")).split(","));
+			}
+
+			// lod
+			if (nodeContainer.containsCustomProperty("lod")) {
+				subMesh.setLod((Integer) nodeContainer.getCustomProperty("lod"));
+			}
+
+			// lodMinDistance
+			if (nodeContainer.containsCustomProperty("lodDistanceMin")) {
+				subMesh.setLodDistanceMin((Float) nodeContainer.getCustomProperty("lodDistanceMin"));
+			}
+
+			// lodMaxDistance
+			if (nodeContainer.containsCustomProperty("lodDistanceMax")) {
+				subMesh.setLodDistanceMax((Float) nodeContainer.getCustomProperty("lodDistanceMax"));
 			}
 		}
 	}

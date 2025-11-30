@@ -320,7 +320,7 @@ public class FbxSubMesh extends Mesh
 		glVertexAttribDivisor(LOCATION_INSTANCE_IDENTIFIER, 1);
 
 		glDrawElementsInstanced(GL_TRIANGLES, elementCount, GL_UNSIGNED_INT, 0, instanceCount);
-		MQDebug.incDrawCallCount(1, instanceCount);
+		MQDebug.incDrawCallData(1, instanceCount, elementCount * instanceCount / 3);
 
 		glBindVertexArray(0);
 
