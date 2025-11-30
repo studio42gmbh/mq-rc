@@ -157,8 +157,6 @@ public class RenderMeshesTask extends AbstractWindowTask
 			}
 		}
 
-		meshes.updateModelMatrix();
-
 		Map<Integer, List<FbxSubMesh>> meshesByVao = new HashMap<>();
 
 		FrustumIntersection intersection = new FrustumIntersection(viewProjection, true);
@@ -174,7 +172,9 @@ public class RenderMeshesTask extends AbstractWindowTask
 			}
 
 			// Dont render but gather the fbx sub meshes for later instanced rendering
-			if (m instanceof FbxSubMesh fbxSubMesh) {
+			if (m instanceof FbxSubMesh fbxSubMesh
+				&& (fbxSubMesh.getInstanceCount() == 1
+				|| fbxSubMesh.containsLayer("instanceSpawn"))) {
 
 				int vao = fbxSubMesh.getVao();
 
@@ -212,6 +212,7 @@ public class RenderMeshesTask extends AbstractWindowTask
 				INSTANCE_DATA.add(iData);
 			}
 
+			fbxSubMesh.addLayer("instanceSpawn");
 			fbxSubMesh.updateInstanceData(INSTANCE_DATA);
 
 			// Small workaround to create all instances relative to world origin
