@@ -34,7 +34,7 @@ public class MeshGroup extends Mesh
 	@SuppressWarnings("FieldNameHidesFieldInSuperclass")
 	private final static Logger log = LogManager.getLogger(MeshGroup.class.getName());
 
-	protected final List<Mesh> meshes = Collections.synchronizedList(new ArrayList());
+	protected final List<Mesh> meshes = new ArrayList<>();
 	protected final Map<String, Object> customProperties = new HashMap<>();
 
 	@Override
