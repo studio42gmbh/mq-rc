@@ -19,7 +19,9 @@ import de.s42.mq.cameras.Camera;
 import de.s42.mq.materials.Material;
 import de.s42.mq.rendering.RenderContext;
 import de.s42.mq.util.AABB;
-import java.util.*;
+import java.util.ArrayList;
+import java.util.Collections;
+import java.util.List;
 import java.util.function.Predicate;
 import org.joml.Quaternionf;
 import org.joml.Vector3f;
@@ -35,7 +37,6 @@ public class MeshGroup extends Mesh
 	private final static Logger log = LogManager.getLogger(MeshGroup.class.getName());
 
 	protected final List<Mesh> meshes = new ArrayList<>();
-	protected final Map<String, Object> customProperties = new HashMap<>();
 
 	@Override
 	public MeshGroup copy()
@@ -393,26 +394,6 @@ public class MeshGroup extends Mesh
 	public void logHierarchy()
 	{
 		logHierarchy(this, 0);
-	}
-
-	public Map<String, Object> getCustomProperties()
-	{
-		return customProperties;
-	}
-
-	public <PropertyType extends Object> PropertyType getCustomProperty(String name)
-	{
-		return (PropertyType) customProperties.get(name);
-	}
-
-	public void setCustomProperty(String name, Object value)
-	{
-		customProperties.put(name, value);
-	}
-
-	public boolean containsCustomProperty(String name)
-	{
-		return customProperties.containsKey(name);
 	}
 
 	/**

@@ -184,6 +184,8 @@ public class FbxMesh extends MeshGroup
 		// read metadata for custom properties
 		if (metadata != null) {
 
+			log.trace("loadMetaData", nodeContainer.getName());
+
 			for (int c = 0; c < metadata.mNumProperties(); ++c) {
 
 				String key = metadata.mKeys().get(c).dataString();
@@ -191,24 +193,52 @@ public class FbxMesh extends MeshGroup
 
 				if (!defaultProperties.contains(key)) {
 
-					if (aiMetaDataEntry.mType() == AI_FLOAT) {
-						ByteBuffer buff = aiMetaDataEntry.mData(4);
-						Float prop = buff.getFloat();
-
-						log.trace("Custom Float Data in " + nodeContainer.getName() + " " + key + " : " + prop);
-
-						nodeContainer.setCustomProperty(key, prop);
-					} else if (aiMetaDataEntry.mType() == AI_AISTRING) {
-
-						ByteBuffer buff = aiMetaDataEntry.mData(8192);
-						int len = buff.getInt();
-						// @todo why is there an offset of 4? it should directly contain the string ... well works for now
-						buff = buff.slice(buff.position() + 4, (int) len);
-						String prop = StandardCharsets.UTF_8.decode(buff).toString();
-
-						log.trace("Custom String Data in " + nodeContainer.getName() + " " + key + " : '" + prop + "'");
-
-						nodeContainer.setCustomProperty(key, prop);
+					switch (aiMetaDataEntry.mType()) {
+						case AI_FLOAT -> {
+							ByteBuffer buff = aiMetaDataEntry.mData(4);
+							float prop = buff.getFloat();
+							log.trace("Custom Float Data in " + nodeContainer.getName() + " " + key + " : " + prop);
+							nodeContainer.setCustomProperty(key, prop);
+						}
+						case AI_INT32 -> {
+							ByteBuffer buff = aiMetaDataEntry.mData(4);
+							int prop = buff.getInt();
+							log.trace("Custom Int Data in " + nodeContainer.getName() + " " + key + " : " + prop);
+							nodeContainer.setCustomProperty(key, prop);
+						}
+						case AI_DOUBLE -> {
+							ByteBuffer buff = aiMetaDataEntry.mData(8);
+							Double prop = buff.getDouble();
+							log.trace("Custom Double Data in " + nodeContainer.getName() + " " + key + " : " + prop);
+							nodeContainer.setCustomProperty(key, prop);
+						}
+						case AI_UINT64 -> {
+							ByteBuffer buff = aiMetaDataEntry.mData(8);
+							long prop = buff.getLong();
+							log.trace("Custom Long Data in " + nodeContainer.getName() + " " + key + " : " + prop);
+							nodeContainer.setCustomProperty(key, prop);
+						}
+						case AI_AIVECTOR3D -> {
+							ByteBuffer buff = aiMetaDataEntry.mData(24);
+							double x = buff.getDouble();
+							double y = buff.getDouble();
+							double z = buff.getDouble();
+							Vector3f prop = new Vector3f((float) x, (float) y, (float) z);
+							log.trace("Custom Vector3 Data in " + nodeContainer.getName() + " " + key + " : " + prop);
+							nodeContainer.setCustomProperty(key, prop);
+						}
+						case AI_AISTRING -> {
+							ByteBuffer buff = aiMetaDataEntry.mData(8192);
+							int len = buff.getInt();
+							// @todo why is there an offset of 4? it should directly contain the string ... well works for now
+							buff = buff.slice(buff.position() + 4, (int) len);
+							String prop = StandardCharsets.UTF_8.decode(buff).toString();
+							log.trace("Custom String Data in " + nodeContainer.getName() + " " + key + " : '" + prop + "'");
+							nodeContainer.setCustomProperty(key, prop);
+						}
+						default -> {
+							log.warn("Unknown Custom Data in " + nodeContainer.getName() + " " + key + " - aiMetaDataEntry.mType : '" + aiMetaDataEntry.mType() + "'");
+						}
 					}
 				}
 			}
@@ -242,6 +272,7 @@ public class FbxMesh extends MeshGroup
 
 			// handle custom layers for nodes
 			if (nodeContainer.containsCustomProperty("layers")) {
+				subMesh.setCustomProperties(nodeContainer.getCustomProperties());
 				subMesh.setLayers(((String) nodeContainer.getCustomProperty("layers")).split(","));
 			}
 		}

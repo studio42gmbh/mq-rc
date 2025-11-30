@@ -328,22 +328,6 @@ public class FbxSubMesh extends Mesh
 		mat.afterRendering(context);
 	}
 
-	// <editor-fold desc="Getters/Setters" defaultstate="collapsed">
-	public AIMesh getAiMesh()
-	{
-		return aiMesh;
-	}
-
-	public void setAiMesh(AIMesh aiMesh)
-	{
-		this.aiMesh = aiMesh;
-	}
-
-	public AABB getLocalAABB()
-	{
-		return new AABB(aabb);
-	}
-
 	/**
 	 * Calculates the current AABB in world coordinates
 	 *
@@ -374,6 +358,22 @@ public class FbxSubMesh extends Mesh
 		return result;
 	}
 
+	// <editor-fold desc="Getters/Setters" defaultstate="collapsed">
+	public AIMesh getAiMesh()
+	{
+		return aiMesh;
+	}
+
+	public void setAiMesh(AIMesh aiMesh)
+	{
+		this.aiMesh = aiMesh;
+	}
+
+	public AABB getLocalAABB()
+	{
+		return new AABB(aabb);
+	}
+
 	public int getInstanceCount()
 	{
 		return instanceCount;
@@ -383,10 +383,11 @@ public class FbxSubMesh extends Mesh
 	{
 		return instanceData;
 	}
-	// </editor-fold>
 
 	public int getVao()
 	{
 		return vao;
 	}
+	// </editor-fold>
+
 }

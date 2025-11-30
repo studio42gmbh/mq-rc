@@ -24,10 +24,7 @@ import de.s42.mq.ui.editor;
 import de.s42.mq.util.AABB;
 import de.s42.mq.util.Transform;
 import java.lang.reflect.InvocationTargetException;
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.Collections;
-import java.util.List;
+import java.util.*;
 import org.joml.Matrix4f;
 import org.joml.Quaternionf;
 import org.joml.Vector3f;
@@ -84,6 +81,9 @@ public abstract class Mesh<ChildType extends Object> extends AbstractAsset imple
 	@AttributeDL(ignore = true)
 	protected MeshGroup parent;
 
+	@editor(editable = false)
+	protected Map<String, Object> customProperties = new HashMap<>();
+
 	public abstract void render(RenderContext context);
 
 	@Override
@@ -101,6 +101,7 @@ public abstract class Mesh<ChildType extends Object> extends AbstractAsset imple
 			copy.identifier = identifier;
 			copy.layers = layers;
 			copy.layersAsList.addAll(layersAsList);
+			copy.customProperties.putAll(customProperties);
 
 			for (MeshAnimation animation : animations) {
 				copy.animations.add(animation.copy());
@@ -454,5 +455,33 @@ public abstract class Mesh<ChildType extends Object> extends AbstractAsset imple
 		}
 
 		return null;
+	}
+
+	public Map<String, Object> getCustomProperties()
+	{
+		return Collections.unmodifiableMap(customProperties);
+	}
+
+	public void setCustomProperties(Map<String, Object> customProperties)
+	{
+		assert customProperties != null : "customProperties != null";
+
+		this.customProperties.clear();
+		this.customProperties.putAll(customProperties);
+	}
+
+	public <PropertyType extends Object> PropertyType getCustomProperty(String name)
+	{
+		return (PropertyType) customProperties.get(name);
+	}
+
+	public void setCustomProperty(String name, Object value)
+	{
+		customProperties.put(name, value);
+	}
+
+	public boolean containsCustomProperty(String name)
+	{
+		return customProperties.containsKey(name);
 	}
 }
