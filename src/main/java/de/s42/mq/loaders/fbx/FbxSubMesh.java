@@ -84,6 +84,10 @@ public class FbxSubMesh extends Mesh
 
 	protected AIMesh aiMesh;
 
+	protected FbxSubMesh[] lods;
+
+	protected FbxSubMesh lod0Mesh;
+
 	protected final AABB aabb = new AABB();
 
 	public FbxSubMesh()
@@ -102,9 +106,23 @@ public class FbxSubMesh extends Mesh
 		copy.elementArrayBuffer = elementArrayBuffer;
 		copy.elementCount = elementCount;
 		copy.instanceCount = instanceCount;
+		copy.transform.set(transform);
 		copy.instanceDataBuffer = instanceDataBuffer;
 		copy.instanceData = instanceData;
+		copy.lod0Mesh = lod0Mesh;
 		copy.aabb.set(aabb);
+
+		// Copy lod meshes
+		if (lods != null) {
+			copy.lods = new FbxSubMesh[lods.length];
+			for (int i = 0; i < lods.length; ++i) {
+				FbxSubMesh lm = lods[i].copy();
+				lm.transform = copy.transform;
+				lm.identifier = copy.identifier;
+				lm.lod0Mesh = copy;
+				copy.lods[i] = lm;
+			}
+		}
 
 		return copy;
 	}
@@ -192,6 +210,12 @@ public class FbxSubMesh extends Mesh
 		instanceData[15] = identifier;
 
 		updateInstanceData(1, instanceData);
+
+		if (lods != null) {
+			for (FbxSubMesh lm : lods) {
+				lm.load();
+			}
+		}
 
 		log.trace("Loaded mesh " + faceCount);
 	}
@@ -344,7 +368,7 @@ public class FbxSubMesh extends Mesh
 
 		Vector3f[] corners = aabb.getCornerVectors();
 
-		Matrix4f matrix = getTransform().getMatrix();
+		Matrix4f matrix = (lod0Mesh != null) ? lod0Mesh.getTransform().getMatrix() : getTransform().getMatrix();
 
 		for (Vector3f corner : corners) {
 
@@ -356,6 +380,54 @@ public class FbxSubMesh extends Mesh
 		}
 
 		return result;
+	}
+
+	@Override
+	public FbxSubMesh getLodMesh(float distance)
+	{
+		// No loads or own distance
+		if (lod == -1
+			|| (distance > lodDistanceMin && distance <= lodDistanceMax)) {
+			return this;
+		}
+
+		// Not this - no lods
+		if (lods == null) {
+			return null;
+		}
+
+		// Find matching lod
+		for (FbxSubMesh lodMesh : lods) {
+			if (distance > lodMesh.lodDistanceMin
+				&& distance <= lodMesh.lodDistanceMax) {
+				lodMesh.lod0Mesh = this;
+				lodMesh.identifier = identifier;
+				return lodMesh;
+			}
+		}
+
+		return null;
+	}
+
+	public void addLodMesh(FbxSubMesh lodMesh)
+	{
+		if (lods != null) {
+
+			FbxSubMesh[] newLods = new FbxSubMesh[lods.length + 1];
+			System.arraycopy(lods, 0, newLods, 0, lods.length);
+			newLods[lods.length] = lodMesh;
+			lods = newLods;
+		} else {
+			FbxSubMesh[] newLods = new FbxSubMesh[1];
+			newLods[0] = lodMesh;
+			lods = newLods;
+		}
+
+		// Make sure the lod meshes share this transform
+		// @todo Might break if later transform is changed
+		lodMesh.transform = transform;
+		lodMesh.identifier = identifier;
+		lodMesh.lod0Mesh = this;
 	}
 
 	// <editor-fold desc="Getters/Setters" defaultstate="collapsed">
@@ -388,6 +460,15 @@ public class FbxSubMesh extends Mesh
 	{
 		return vao;
 	}
-	// </editor-fold>
 
+	public FbxSubMesh[] getLods()
+	{
+		return lods;
+	}
+
+	public void setLods(FbxSubMesh[] lods)
+	{
+		this.lods = lods;
+	}
+	// </editor-fold>
 }

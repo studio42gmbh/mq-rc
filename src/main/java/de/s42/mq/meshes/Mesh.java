@@ -82,7 +82,7 @@ public abstract class Mesh<ChildType extends Object> extends AbstractAsset imple
 	protected float lodDistanceMax = 1000.0f;
 
 	@AttributeDL(ignore = true)
-	protected final Transform transform = new Transform();
+	protected Transform transform = new Transform();
 
 	@AttributeDL(ignore = true)
 	protected final List<MeshAnimation> animations = new ArrayList<>();
@@ -171,6 +171,11 @@ public abstract class Mesh<ChildType extends Object> extends AbstractAsset imple
 		}
 
 		super.unload();
+	}
+
+	public Mesh getLodMesh(float distance)
+	{
+		return this;
 	}
 
 	public Matrix4f getModelMatrix()

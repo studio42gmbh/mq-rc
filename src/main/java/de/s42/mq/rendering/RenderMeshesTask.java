@@ -177,8 +177,9 @@ public class RenderMeshesTask extends AbstractWindowTask
 
 				float distance = (new Vector3f(cameraPosition)).sub(m.getWorldPosition()).length();
 
-				if (distance < m.getLodDistanceMin()
-					|| distance >= m.getLodDistanceMax()) {
+				m = m.getLodMesh(distance);
+
+				if (m == null) {
 					continue;
 				}
 			}

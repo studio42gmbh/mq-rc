@@ -26,7 +26,9 @@ import java.nio.ByteBuffer;
 import java.nio.charset.StandardCharsets;
 import java.nio.file.Path;
 import java.util.Arrays;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 import org.joml.Matrix4f;
 import org.joml.Quaternionf;
 import org.joml.Vector3f;
@@ -245,9 +247,17 @@ public class FbxMesh extends MeshGroup
 		}
 	}
 
-	protected void loadSubMeshes(AIScene scene, AINode node, MeshGroup nodeContainer, Matrix4f meshMatrix)
+	protected final Map<String, FbxSubMesh> lodMeshes = new HashMap<>();
+
+	protected boolean loadSubMeshes(AIScene scene, AINode node, MeshGroup nodeContainer, Matrix4f meshMatrix)
 	{
+		log.debug("loadSubMeshes", nodeContainer.getName());
+
+		boolean shallAddContainer = true;
+
 		for (int i = 0; i < node.mNumMeshes(); ++i) {
+
+			shallAddContainer = false;
 			@SuppressWarnings("null")
 			AIMesh aiMesh = AIMesh.create(scene.mMeshes().get(node.mMeshes().get(i)));
 
@@ -268,7 +278,6 @@ public class FbxMesh extends MeshGroup
 			subMesh.setLayers("opaque");
 			subMesh.setMaterial(subMaterial);
 			subMesh.setFromMatrix(meshMatrix);
-			nodeContainer.addMesh(subMesh);
 
 			subMesh.setCustomProperties(nodeContainer.getCustomProperties());
 
@@ -291,7 +300,32 @@ public class FbxMesh extends MeshGroup
 			if (nodeContainer.containsCustomProperty("lodDistanceMax")) {
 				subMesh.setLodDistanceMax((Float) nodeContainer.getCustomProperty("lodDistanceMax"));
 			}
+
+			log.debug("subMesh", subMesh.getName());
+
+			// Handle lod meshing
+			if (subMesh.getLod() > -1) {
+
+				String lodMeshId = subMesh.getName().substring(0, subMesh.getName().indexOf('.'));
+
+				FbxSubMesh currentLodMesh = lodMeshes.get(lodMeshId);
+
+				// Found existing lod mesh -> Add this
+				if (currentLodMesh != null) {
+					currentLodMesh.addLodMesh(subMesh);
+					log.debug("Added lod mesh", currentLodMesh.getName(), subMesh.getName());
+					continue;
+				}
+
+				// First lod mesh -> Make this the leading lod mesh for this id
+				lodMeshes.put(lodMeshId, subMesh);
+			}
+
+			nodeContainer.addMesh(subMesh);
+			shallAddContainer = true;
 		}
+
+		return shallAddContainer;
 	}
 
 	protected void loadNodes(AIScene scene, AINode rootNode)
@@ -341,12 +375,10 @@ public class FbxMesh extends MeshGroup
 		originContainer.setName(nodeName + "Origin");
 		Matrix4f originTransform = getOriginTransform(nodeTransform, globalTransform);
 		originContainer.setFromMatrix(originTransform);
-		nodeMeshContainer.addMesh(originContainer);
 
 		// Is an identity node that allowss to manipulate the mesh easily later
 		MeshGroup childContainer = new MeshGroup();
 		childContainer.setName(nodeName);
-		originContainer.addMesh(childContainer);
 
 		/* Simpler version without Origin container ...
 		MeshGroup childContainer = new MeshGroup();
@@ -359,7 +391,14 @@ public class FbxMesh extends MeshGroup
 
 		// load the meshes into the container
 		Matrix4f meshTransform = getMeshTransform(nodeTransform, globalTransform, nodeGlobalTransform);
-		loadSubMeshes(scene, node, childContainer, meshTransform);
+		boolean shallAddContainer = loadSubMeshes(scene, node, childContainer, meshTransform);
+
+		// Just add control nodes if there is submeshes or further subnodes
+		// @todo Improve addedSubMeshes state is very unclear -1 is for Mounts, 0 no meshes (lod), >0 normal submeshes
+		if (shallAddContainer || node.mNumChildren() > 0) {
+			nodeMeshContainer.addMesh(originContainer);
+			originContainer.addMesh(childContainer);
+		}
 
 		// scan for futher sub nodes
 		for (int i = 0; i < node.mNumChildren(); ++i) {
