@@ -30,6 +30,7 @@ import de.s42.dl.exceptions.InvalidInstance;
 import de.s42.mq.MQColor;
 import de.s42.mq.materials.Material;
 import de.s42.mq.meshes.Mesh;
+import de.s42.mq.meshes.MeshGroup;
 import de.s42.mq.rendering.RenderContext;
 import de.s42.mq.shaders.Shader;
 import static de.s42.mq.shaders.Shader.*;
@@ -427,7 +428,35 @@ public class FbxSubMesh extends Mesh
 		// @todo Might break if later transform is changed
 		lodMesh.transform = transform;
 		lodMesh.identifier = identifier;
+		lodMesh.material = material;
+		lodMesh.parent = parent;
 		lodMesh.lod0Mesh = this;
+	}
+
+	@Override
+	public void setMaterial(Material material)
+	{
+		super.setMaterial(material);
+
+		// Set material to lods
+		if (lods != null) {
+			for (FbxSubMesh lm : lods) {
+				lm.setMaterial(material);
+			}
+		}
+	}
+
+	@Override
+	public void setParent(MeshGroup parent)
+	{
+		super.setParent(parent);
+
+		// Set parent to lods
+		if (lods != null) {
+			for (FbxSubMesh lm : lods) {
+				lm.setParent(parent);
+			}
+		}
 	}
 
 	// <editor-fold desc="Getters/Setters" defaultstate="collapsed">

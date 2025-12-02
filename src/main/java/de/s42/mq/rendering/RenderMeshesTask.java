@@ -180,7 +180,7 @@ public class RenderMeshesTask extends AbstractWindowTask
 			}
 		}
 
-		Map<Integer, List<FbxSubMesh>> meshesByVao = new HashMap<>();
+		Map<String, List<FbxSubMesh>> meshesByKey = new HashMap<>();
 
 		FrustumIntersection intersection = new FrustumIntersection(viewProjection, true);
 
@@ -214,13 +214,13 @@ public class RenderMeshesTask extends AbstractWindowTask
 				&& (fbxSubMesh.getInstanceCount() == 1
 				|| fbxSubMesh.containsLayer("instanceSpawn"))) {
 
-				int vao = fbxSubMesh.getVao();
+				String key = "" + fbxSubMesh.getVao() + fbxSubMesh.getMaterial().getName();
 
-				if (!meshesByVao.containsKey(vao)) {
-					meshesByVao.put(vao, new ArrayList<>());
+				if (!meshesByKey.containsKey(key)) {
+					meshesByKey.put(key, new ArrayList<>());
 				}
 
-				meshesByVao.get(vao).add(fbxSubMesh);
+				meshesByKey.get(key).add(fbxSubMesh);
 
 				continue;
 			}
@@ -232,7 +232,7 @@ public class RenderMeshesTask extends AbstractWindowTask
 
 		// Render fbx sub meshes instanced
 		// @todo Optimize handling of instaning spawner meshes - currently can cause a lot of mem usage if spawner changes often (culling ...)
-		for (Map.Entry<Integer, List<FbxSubMesh>> entry : meshesByVao.entrySet()) {
+		for (Map.Entry<String, List<FbxSubMesh>> entry : meshesByKey.entrySet()) {
 
 			List<FbxSubMesh> fbxMeshes = entry.getValue();
 

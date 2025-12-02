@@ -117,6 +117,7 @@ public abstract class Mesh<ChildType extends Object> extends AbstractAsset imple
 			copy.lod = lod;
 			copy.lodDistanceMin = lodDistanceMin;
 			copy.lodDistanceMax = lodDistanceMax;
+			copy.parent = parent;
 
 			for (MeshAnimation animation : animations) {
 				copy.animations.add(animation.copy());
