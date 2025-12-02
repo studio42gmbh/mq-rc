@@ -204,7 +204,7 @@ public class Sphere<ChildType extends Object> extends Mesh<ChildType>
 		}
 
 		glDrawElements(GL_TRIANGLES, (rings - 1) * (sectors - 1) * 6, GL_UNSIGNED_INT, 0L);
-		MQDebug.incDrawCallCount();
+		MQDebug.incDrawCallData(1, 1, (rings - 1) * (sectors - 1) * 2);
 
 		glBindBuffer(GL_ARRAY_BUFFER, 0);
 		glBindVertexArray(0);

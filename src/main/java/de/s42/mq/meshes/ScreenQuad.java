@@ -51,7 +51,7 @@ public class ScreenQuad extends Quad
 		// @todo build all meshes to not set material or shader stuff directly!
 		glBindVertexArray(vao);
 		glDrawArrays(GL_TRIANGLES, 0, 3);
-		MQDebug.incDrawCallCount();
+		MQDebug.incDrawCallData(1, 1, 2);
 		glBindVertexArray(0);
 	}
 }

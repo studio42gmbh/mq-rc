@@ -191,7 +191,7 @@ public class Quad extends Mesh
 		}
 
 		glDrawArrays(GL_TRIANGLES, 0, 6);
-		MQDebug.incDrawCallCount();
+		MQDebug.incDrawCallData(1, 1, 2);
 
 		glBindBuffer(GL_ARRAY_BUFFER, 0);
 		glBindVertexArray(0);

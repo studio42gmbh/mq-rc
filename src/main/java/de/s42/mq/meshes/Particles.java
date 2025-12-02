@@ -183,8 +183,10 @@ public class Particles extends Mesh
 		glVertexAttribDivisor(shader.getSeedAttribute(), 1);
 		glBindBuffer(GL_ARRAY_BUFFER, 0);
 
-		glDrawArraysInstanced(GL_TRIANGLES, 0, 6, (int) MQMath.clamp(displayCount.getIntegerValue(), 0, count));
-		MQDebug.incDrawCallCount();
+		int c = (int) MQMath.clamp(displayCount.getIntegerValue(), 0, count);
+
+		glDrawArraysInstanced(GL_TRIANGLES, 0, 6, c);
+		MQDebug.incDrawCallData(1, c, c * 2);
 
 		glBindVertexArray(0);
 

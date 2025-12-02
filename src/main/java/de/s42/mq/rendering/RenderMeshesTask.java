@@ -108,6 +108,13 @@ public class RenderMeshesTask extends AbstractWindowTask
 		}
 	}
 
+	protected final static Map<String, List<Mesh>> meshesCache = new HashMap<>();
+
+	public final static void clearMeshesCache()
+	{
+		meshesCache.clear();
+	}
+
 	@Override
 	@SuppressWarnings("null")
 	protected void runTask()
@@ -142,14 +149,23 @@ public class RenderMeshesTask extends AbstractWindowTask
 			context.setShadowTexture(shadowBuffer.getTexture());
 		}
 
-		List l = Arrays.asList(layers);
+		String cacheKey = "" + meshes.hashCode() + "" + layers[0];
 
-		List<Mesh> ms = meshes.findMeshesByFilter((mesh) -> {
-			return mesh != null
-				&& !(mesh instanceof MeshGroup)
-				&& mesh.isEnabled()
-				&& mesh.containsLayers(l);
-		});
+		List<Mesh> ms = meshesCache.get(cacheKey);
+
+		if (ms == null) {
+
+			List l = Arrays.asList(layers);
+
+			ms = meshes.findMeshesByFilter((mesh) -> {
+				return mesh != null
+					&& mesh.isEnabled()
+					&& !(mesh instanceof MeshGroup)
+					&& mesh.containsLayers(l);
+			});
+
+			meshesCache.put(cacheKey, ms);
+		}
 
 		Matrix4f viewProjection = camera.getViewProjectionMatrix();
 
