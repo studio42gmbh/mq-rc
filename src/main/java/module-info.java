@@ -51,6 +51,8 @@ module de.sft.mq.rc
 	exports de.s42.mq.loaders.fbx;
 	exports de.s42.mq.materials;
 	exports de.s42.mq.meshes;
+	exports de.s42.mq.pcg;
+	exports de.s42.mq.pcg.points;
 	exports de.s42.mq.rc;
 	exports de.s42.mq.rendering;
 	exports de.s42.mq.shaders;

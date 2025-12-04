@@ -46,7 +46,8 @@ public class FbxMesh extends MeshGroup
 
 	@SuppressWarnings("FieldNameHidesFieldInSuperclass")
 	private final static Logger log = LogManager.getLogger(FbxMesh.class.getName());
-	// used to filter out default properties from blender export
+
+	// Used to filter out default properties from blender export
 	protected final static List<String> defaultProperties = Arrays.asList(
 		"UserProperties",
 		"IsNull",
@@ -251,7 +252,7 @@ public class FbxMesh extends MeshGroup
 
 	protected boolean loadSubMeshes(AIScene scene, AINode node, MeshGroup nodeContainer, Matrix4f meshMatrix)
 	{
-		log.debug("loadSubMeshes", nodeContainer.getName());
+		//log.debug("loadSubMeshes", nodeContainer.getName());
 
 		boolean shallAddContainer = true;
 
@@ -301,8 +302,7 @@ public class FbxMesh extends MeshGroup
 				subMesh.setLodDistanceMax((Float) nodeContainer.getCustomProperty("lodDistanceMax"));
 			}
 
-			log.debug("subMesh", subMesh.getName());
-
+			//log.debug("subMesh", subMesh.getName());
 			// Handle lod meshing
 			if (subMesh.getLod() > -1) {
 
@@ -313,7 +313,7 @@ public class FbxMesh extends MeshGroup
 				// Found existing lod mesh -> Add this
 				if (currentLodMesh != null) {
 					currentLodMesh.addLodMesh(subMesh);
-					log.debug("Added lod mesh", currentLodMesh.getName(), subMesh.getName());
+					//log.debug("Added lod mesh", currentLodMesh.getName(), subMesh.getName());
 					continue;
 				}
 

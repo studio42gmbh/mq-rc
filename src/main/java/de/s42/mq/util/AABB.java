@@ -27,6 +27,7 @@ package de.s42.mq.util;
 
 import de.s42.base.strings.StringHelper;
 import de.s42.mq.collision.SphereCollider;
+import java.util.Objects;
 import org.joml.Vector3f;
 
 /**
@@ -207,5 +208,37 @@ public final class AABB
 	public String toString()
 	{
 		return StringHelper.toString(this);
+	}
+
+	@Override
+	public int hashCode()
+	{
+		int hash = 5;
+		hash = 41 * hash + Objects.hashCode(this.min);
+		hash = 41 * hash + Objects.hashCode(this.max);
+		return hash;
+	}
+
+	@Override
+	public boolean equals(Object obj)
+	{
+		if (this == obj) {
+			return true;
+		}
+
+		if (obj == null) {
+			return false;
+		}
+
+		if (getClass() != obj.getClass()) {
+			return false;
+		}
+
+		final AABB other = (AABB) obj;
+		if (!Objects.equals(this.min, other.min)) {
+			return false;
+		}
+
+		return Objects.equals(this.max, other.max);
 	}
 }
