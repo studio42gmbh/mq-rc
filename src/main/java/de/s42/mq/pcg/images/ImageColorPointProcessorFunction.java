@@ -23,26 +23,14 @@
  * THE SOFTWARE.
  */
 //</editor-fold>
-package de.s42.mq.pcg.points;
-
-import org.joml.Vector3f;
+package de.s42.mq.pcg.images;
 
 /**
  *
  * @author Benjamin Schiller
  */
-public interface PCGPoints
+public interface ImageColorPointProcessorFunction
 {
 
-	float[] getData();
-
-	int getCount();
-
-	int getComponentSize();
-
-	Vector3f getPosition(int index, Vector3f target);
-
-	int getMask(int index);
-
-	void process(PCGPointProcessor processor);
+	void process(float[] data, int index, float r, float g, float b, float a);
 }

@@ -36,7 +36,6 @@ import de.s42.mq.pcg.images.PCGImage;
 import de.s42.mq.pcg.images.StandardPCGImage;
 import de.s42.mq.pcg.points.PCGPoints;
 import de.s42.mq.pcg.points.StandardPCGPoints;
-import static de.s42.mq.pcg.points.StandardPCGPoints.PCG_POINTS_STRUCT_COMPONENTS;
 import de.s42.mq.util.AABB;
 import java.util.ArrayList;
 import java.util.List;
@@ -82,6 +81,15 @@ public class StandardPCGContext implements PCGContext
 		return new StandardPCGPoints(count);
 	}
 
+	@Override
+	public PCGPoints createPoints(int count, int extendedComponentSize)
+	{
+		assert count >= 0 : "count >= 0";
+		assert extendedComponentSize >= 0 : "extendedComponentSize >= 0";
+
+		return new StandardPCGPoints(count, extendedComponentSize);
+	}
+
 	public void removeGizmos()
 	{
 		assert meshes != null : "meshes != null";
@@ -105,7 +113,8 @@ public class StandardPCGContext implements PCGContext
 
 		try {
 			float[] data = points.getData();
-			for (int i = 0; i < data.length; i += PCG_POINTS_STRUCT_COMPONENTS) {
+			int componentSize = points.getComponentSize();
+			for (int i = 0; i < data.length; i += componentSize) {
 
 				if (StandardPCGPoints.retrieveIsVisible(data, i)) {
 					Sphere gizmo = new Sphere(0.1f, 10, 10);

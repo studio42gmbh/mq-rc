@@ -25,7 +25,6 @@
 //</editor-fold>
 package de.s42.mq.pcg.points;
 
-import static de.s42.mq.pcg.points.StandardPCGPoints.PCG_POINTS_STRUCT_COMPONENTS;
 import de.s42.mq.util.AABB;
 import de.s42.mq.util.MQRandom;
 
@@ -63,10 +62,9 @@ public class RandomizePointPositions implements PCGPointProcessor
 		float minZ = randomBounds.min.z;
 		float maxZ = randomBounds.max.z;
 
-		for (int i = startIndex; i < endIndex; i += PCG_POINTS_STRUCT_COMPONENTS) {
-
+		int componentSize = points.getComponentSize();
+		for (int i = startIndex; i < endIndex; i += componentSize) {
 			StandardPCGPoints.applyPosition(data, i, random.nextFloat(minX, maxX), random.nextFloat(minY, maxY), random.nextFloat(minZ, maxZ));
-			StandardPCGPoints.applyIsVisible(data, i, true);
 		}
 	}
 }

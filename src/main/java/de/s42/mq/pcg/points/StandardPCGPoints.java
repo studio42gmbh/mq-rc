@@ -31,102 +31,146 @@ import org.joml.Vector3f;
  *
  * @author Benjamin Schiller
  */
-public class StandardPCGPoints implements PCGPoints
+public final class StandardPCGPoints implements PCGPoints
 {
 
-	public final static int PCG_POINTS_STRUCT_COMPONENTS = 13;
-	public final static int PCG_POINTS_STRUCT_OFFSET_MASK = 12;
+	public final static int PCG_POINTS_STRUCT_DEFAULT_COMPONENTS = 4;
+	public final static int PCG_POINTS_STRUCT_OFFSET_POSITION = 0;
+	public final static int PCG_POINTS_STRUCT_OFFSET_MASK = 3;
 
 	public final static int PCG_POINT_MASK_VISIBLE = 0b00000001;
 	public final static int PCG_POINT_MASK_ALL = PCG_POINT_MASK_VISIBLE;
 
-	public static int retrieveMask(float[] data, int index)
+	public static int retrieveMask(float[] data, int componentIndex)
 	{
-		return Float.floatToRawIntBits(data[index + PCG_POINTS_STRUCT_OFFSET_MASK]);
+		return Float.floatToRawIntBits(data[componentIndex + PCG_POINTS_STRUCT_OFFSET_MASK]);
 	}
 
-	public static void applyMaskAnd(float[] data, int index, int maskAnd)
+	public static void applyMaskAnd(float[] data, int componentIndex, int maskAnd)
 	{
-		applyMask(data, index, retrieveMask(data, index) & maskAnd);
+		applyMask(data, componentIndex, retrieveMask(data, componentIndex) & maskAnd);
 	}
 
-	public static void applyMaskOr(float[] data, int index, int maskOr)
+	public static void applyMaskOr(float[] data, int componentIndex, int maskOr)
 	{
-		applyMask(data, index, retrieveMask(data, index) | maskOr);
+		applyMask(data, componentIndex, retrieveMask(data, componentIndex) | maskOr);
 	}
 
-	public static void applyMask(float[] data, int index, int mask)
+	public static void applyMask(float[] data, int componentIndex, int mask)
 	{
-		data[index + PCG_POINTS_STRUCT_OFFSET_MASK] = Float.intBitsToFloat(mask);
+		data[componentIndex + PCG_POINTS_STRUCT_OFFSET_MASK] = Float.intBitsToFloat(mask);
 	}
 
-	public static boolean retrieveIsVisible(float[] data, int index)
+	public static boolean retrieveIsVisible(float[] data, int componentIndex)
 	{
-		return (retrieveMask(data, index) & PCG_POINT_MASK_VISIBLE) != 0;
+		return (retrieveMask(data, componentIndex) & PCG_POINT_MASK_VISIBLE) != 0;
 	}
 
-	public static void applyIsVisible(float[] data, int index, boolean visible)
+	public static void applyIsVisible(float[] data, int componentIndex, boolean visible)
 	{
 		if (visible) {
-			applyMaskOr(data, index, PCG_POINT_MASK_VISIBLE);
+			applyMaskOr(data, componentIndex, PCG_POINT_MASK_VISIBLE);
 		} else {
-			applyMaskAnd(data, index, PCG_POINT_MASK_ALL & ~PCG_POINT_MASK_VISIBLE);
+			applyMaskAnd(data, componentIndex, PCG_POINT_MASK_ALL & ~PCG_POINT_MASK_VISIBLE);
 		}
 	}
 
-	public static float retrievePositionX(float[] data, int index)
+	public static float retrievePositionX(float[] data, int componentIndex)
 	{
-		return data[index];
+		return data[componentIndex + PCG_POINTS_STRUCT_OFFSET_POSITION];
 	}
 
-	public static float retrievePositionY(float[] data, int index)
+	public static float retrievePositionY(float[] data, int componentIndex)
 	{
-		return data[index + 1];
+		return data[componentIndex + PCG_POINTS_STRUCT_OFFSET_POSITION + 1];
 	}
 
-	public static float retrievePositionZ(float[] data, int index)
+	public static float retrievePositionZ(float[] data, int componentIndex)
 	{
-		return data[index + 2];
+		return data[componentIndex + PCG_POINTS_STRUCT_OFFSET_POSITION + 2];
 	}
 
-	public static Vector3f retrievePosition(float[] data, int index, Vector3f target)
+	public static Vector3f retrievePosition(float[] data, int componentIndex, Vector3f target)
 	{
-		target.x = retrievePositionX(data, index);
-		target.y = retrievePositionY(data, index);
-		target.z = retrievePositionZ(data, index);
+		target.x = retrievePositionX(data, componentIndex);
+		target.y = retrievePositionY(data, componentIndex);
+		target.z = retrievePositionZ(data, componentIndex);
 
 		return target;
 	}
 
-	public static void applyPositionX(float[] data, int index, float x)
+	public static void applyPositionX(float[] data, int componentIndex, float x)
 	{
-		data[index] = x;
+		data[componentIndex + PCG_POINTS_STRUCT_OFFSET_POSITION] = x;
 	}
 
-	public static void applyPositionY(float[] data, int index, float y)
+	public static void applyPositionY(float[] data, int componentIndex, float y)
 	{
-		data[index + 1] = y;
+		data[componentIndex + PCG_POINTS_STRUCT_OFFSET_POSITION + 1] = y;
 	}
 
-	public static void applyPositionZ(float[] data, int index, float z)
+	public static void applyPositionZ(float[] data, int componentIndex, float z)
 	{
-		data[index + 2] = z;
+		data[componentIndex + PCG_POINTS_STRUCT_OFFSET_POSITION + 2] = z;
 	}
 
-	public static void applyPosition(float[] data, int index, float x, float y, float z)
+	public static void applyPosition(float[] data, int componentIndex, float x, float y, float z)
 	{
-		applyPositionX(data, index, x);
-		applyPositionY(data, index, y);
-		applyPositionZ(data, index, z);
+		applyPositionX(data, componentIndex, x);
+		applyPositionY(data, componentIndex, y);
+		applyPositionZ(data, componentIndex, z);
 	}
 
-	protected float[] data;
+	/**
+	 *
+	 * @param data
+	 * @param componentIndex
+	 * @param extensionOffset offset of extension component (0 = first extension component)
+	 * @return
+	 */
+	public static float retrieveExtendedComponent(float[] data, int componentIndex, int extensionOffset)
+	{
+		return data[componentIndex + PCG_POINTS_STRUCT_DEFAULT_COMPONENTS + extensionOffset];
+	}
+
+	/**
+	 *
+	 * @param data
+	 * @param componentIndex index of element in component space (elementNr * componentSize)
+	 * @param extensionOffset offset of extension component (0 = first extension component)
+	 * @param value
+	 */
+	public static void applyExtendedComponent(float[] data, int componentIndex, int extensionOffset, float value)
+	{
+		data[componentIndex + PCG_POINTS_STRUCT_DEFAULT_COMPONENTS + extensionOffset] = value;
+	}
+
+	protected final float[] data;
+	protected final int componentSize;
 
 	public StandardPCGPoints(int count)
 	{
 		assert count >= 0 : "count >= 0";
 
-		data = new float[count * PCG_POINTS_STRUCT_COMPONENTS];
+		componentSize = PCG_POINTS_STRUCT_DEFAULT_COMPONENTS;
+
+		data = new float[count * componentSize];
+	}
+
+	public StandardPCGPoints(int count, int additionalComponentSize)
+	{
+		assert count >= 0 : "count >= 0";
+		assert additionalComponentSize >= 0 : "additionalComponentSize >= 0";
+
+		componentSize = PCG_POINTS_STRUCT_DEFAULT_COMPONENTS + additionalComponentSize;
+
+		data = new float[count * componentSize];
+	}
+
+	@Override
+	public int getComponentSize()
+	{
+		return componentSize;
 	}
 
 	@Override
@@ -143,7 +187,7 @@ public class StandardPCGPoints implements PCGPoints
 		assert index >= 0 && index < getCount() : "index >= 0 && index < getCount()";
 		assert target != null : "target != null";
 
-		return retrievePosition(data, index * PCG_POINTS_STRUCT_COMPONENTS, target);
+		return retrievePosition(data, index * componentSize, target);
 	}
 
 	@Override
@@ -151,13 +195,13 @@ public class StandardPCGPoints implements PCGPoints
 	{
 		assert index >= 0 && index < getCount() : "index >= 0 && index < getCount()";
 
-		return retrieveMask(data, index * PCG_POINTS_STRUCT_COMPONENTS);
+		return retrieveMask(data, index * componentSize);
 	}
 
 	@Override
 	public int getCount()
 	{
-		return data.length / PCG_POINTS_STRUCT_COMPONENTS;
+		return data.length / componentSize;
 	}
 
 	@Override

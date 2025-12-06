@@ -42,6 +42,8 @@ public interface PCGContext
 
 	PCGPoints createPoints(int count);
 
+	PCGPoints createPoints(int count, int extendedComponentSize);
+
 	PCGImage loadImage(String id);
 
 	void error(Object... message);

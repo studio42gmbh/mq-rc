@@ -38,17 +38,17 @@ import org.joml.Vector4f;
  *
  * @author Benjamin Schiller
  */
-public class ImageColorPointFilter implements PCGPointProcessor
+public class ImageColorPointProcessor implements PCGPointProcessor
 {
 
 	@SuppressWarnings("unused")
-	private final static Logger log = LogManager.getLogger(ImageColorPointFilter.class.getName());
+	private final static Logger log = LogManager.getLogger(ImageColorPointProcessor.class.getName());
 
 	protected PCGImage image;
 	protected Vertex32Transform transform;
-	protected ImageColorPointFilterFunction filter;
+	protected ImageColorPointProcessorFunction function;
 
-	public ImageColorPointFilter()
+	public ImageColorPointProcessor()
 	{
 	}
 
@@ -56,17 +56,17 @@ public class ImageColorPointFilter implements PCGPointProcessor
 	 *
 	 * @param image Sampler to read data from
 	 * @param transform Converts the point space into image space
-	 * @param filter
+	 * @param function
 	 */
-	public ImageColorPointFilter(PCGImage image, Vertex32Transform transform, ImageColorPointFilterFunction filter)
+	public ImageColorPointProcessor(PCGImage image, Vertex32Transform transform, ImageColorPointProcessorFunction function)
 	{
 		assert image != null : "image != null";
 		assert transform != null : "transform != null";
-		assert filter != null : "filter != null";
+		assert function != null : "function != null";
 
 		this.image = image;
 		this.transform = transform;
-		this.filter = filter;
+		this.function = function;
 	}
 
 	@Override
@@ -88,10 +88,7 @@ public class ImageColorPointFilter implements PCGPointProcessor
 
 			Vector4f color = image.getRGBA(transformed.x, transformed.y, new Vector4f());
 
-			// Set Mask VISIBLE to 1 if accepted to 0 otherwise
-			StandardPCGPoints.applyIsVisible(data, i, filter.accept(color.x, color.y, color.z, color.w));
-
-			//log.debug("pos", x, y, z, "tr", transformed.x, transformed.y, "col", color.x, color.y, color.z, color.w, "mask", mask);
+			function.process(data, i, color.x, color.y, color.z, color.w);
 		}
 	}
 
@@ -115,13 +112,13 @@ public class ImageColorPointFilter implements PCGPointProcessor
 		this.transform = transform;
 	}
 
-	public ImageColorPointFilterFunction getFilter()
+	public ImageColorPointProcessorFunction getFunction()
 	{
-		return filter;
+		return function;
 	}
 
-	public void setFilter(ImageColorPointFilterFunction filter)
+	public void setFunction(ImageColorPointProcessorFunction function)
 	{
-		this.filter = filter;
+		this.function = function;
 	}
 }
