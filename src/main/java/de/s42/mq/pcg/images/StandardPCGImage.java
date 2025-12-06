@@ -36,7 +36,7 @@ import static org.lwjgl.stb.STBImage.stbi_load_from_memory;
 import org.lwjgl.system.MemoryStack;
 
 /**
- *
+ * @todo this is just a test - implement properly
  * @author Benjamin Schiller
  */
 public class StandardPCGImage implements PCGImage
@@ -65,7 +65,10 @@ public class StandardPCGImage implements PCGImage
 	public Vector4f getRGBA(float x, float y, Vector4f target)
 	{
 		assert target != null : "target != null";
-		assert data != null : "data != null";
+
+		if (data == null) {
+			return target;
+		}
 
 		return getRGBA((int) (x * (float) width), (int) (y * (float) height), target);
 
@@ -75,7 +78,10 @@ public class StandardPCGImage implements PCGImage
 	public Vector4f getRGBA(int x, int y, Vector4f target)
 	{
 		assert target != null : "target != null";
-		assert data != null : "data != null";
+
+		if (data == null) {
+			return target;
+		}
 
 		int index = (x + y * width) << 2;
 
@@ -94,7 +100,7 @@ public class StandardPCGImage implements PCGImage
 			return;
 		}
 
-		log.warn("load");
+		log.info("loading", id);
 
 		// Load height map to memory
 		try (MemoryStack frame = MemoryStack.stackPush()) {
@@ -112,7 +118,7 @@ public class StandardPCGImage implements PCGImage
 			// @todo add proper loading
 			width = widthB.get();
 			height = heightB.get();
-			int components = componentsB.get();
+			//int components = componentsB.get();
 
 			data = new float[width * height << 2];
 
@@ -144,5 +150,4 @@ public class StandardPCGImage implements PCGImage
 	{
 		this.id = id;
 	}
-
 }

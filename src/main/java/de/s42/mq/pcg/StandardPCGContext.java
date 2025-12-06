@@ -107,9 +107,7 @@ public class StandardPCGContext implements PCGContext
 			float[] data = points.getData();
 			for (int i = 0; i < data.length; i += PCG_POINTS_STRUCT_COMPONENTS) {
 
-				int mask = Float.floatToIntBits(data[i + 3]);
-
-				if ((mask & 0b00000001) == 0b00000001) {
+				if (StandardPCGPoints.retrieveIsVisible(data, i)) {
 					Sphere gizmo = new Sphere(0.1f, 10, 10);
 					gizmo.setPosition(new Vector3f(data[i], data[i + 1], data[i + 2]));
 					gizmo.setMaterial(gizmoMaterial);

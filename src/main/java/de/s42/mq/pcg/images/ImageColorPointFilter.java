@@ -30,8 +30,8 @@ import de.s42.log.Logger;
 import de.s42.mq.pcg.Vertex32Transform;
 import de.s42.mq.pcg.points.PCGPointProcessor;
 import de.s42.mq.pcg.points.PCGPoints;
+import de.s42.mq.pcg.points.StandardPCGPoints;
 import static de.s42.mq.pcg.points.StandardPCGPoints.PCG_POINTS_STRUCT_COMPONENTS;
-import static de.s42.mq.pcg.points.StandardPCGPoints.PCG_POINT_MASK_VISIBLE;
 import org.joml.Vector2f;
 import org.joml.Vector4f;
 
@@ -53,6 +53,12 @@ public class ImageColorPointFilter implements PCGPointProcessor
 	{
 	}
 
+	/**
+	 *
+	 * @param image Sampler to read data from
+	 * @param transform Converts the point space into image space
+	 * @param filter
+	 */
 	public ImageColorPointFilter(PCGImage image, Vertex32Transform transform, ImageColorPointFilterFunction filter)
 	{
 		assert image != null : "image != null";
@@ -74,18 +80,16 @@ public class ImageColorPointFilter implements PCGPointProcessor
 
 		for (int i = startIndex; i < endIndex; i += PCG_POINTS_STRUCT_COMPONENTS) {
 
-			float x = data[i];
-			float y = data[i + 1];
-			float z = data[i + 2];
+			float x = StandardPCGPoints.retrievePositionX(data, i);
+			float y = StandardPCGPoints.retrievePositionY(data, i);
+			float z = StandardPCGPoints.retrievePositionZ(data, i);
 
 			Vector2f transformed = transform.transform(x, y, z, new Vector2f());
 
 			Vector4f color = image.getRGBA(transformed.x, transformed.y, new Vector4f());
 
 			// Set Mask VISIBLE to 1 if accepted to 0 otherwise
-			int mask = Float.floatToRawIntBits(data[i + 3]);
-			mask = (filter.accept(color.x, color.y, color.z, color.w)) ? (mask & PCG_POINT_MASK_VISIBLE) : (mask & ~PCG_POINT_MASK_VISIBLE);
-			data[i + 3] = Float.intBitsToFloat(mask);
+			StandardPCGPoints.applyIsVisible(data, i, filter.accept(color.x, color.y, color.z, color.w));
 
 			//log.debug("pos", x, y, z, "tr", transformed.x, transformed.y, "col", color.x, color.y, color.z, color.w, "mask", mask);
 		}
