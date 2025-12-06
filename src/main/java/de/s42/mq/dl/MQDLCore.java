@@ -266,7 +266,7 @@ public class MQDLCore extends DefaultCore
 		defineType(createType(ClearBufferTask.class), "ClearBufferTask");
 
 		// Shaders
-		defineType(createType(Shader.class), "Shader");
+		defineType(Shader.class, "Shader");
 		defineType(createType(PlainShader.class), "PlainShader");
 		defineType(createType(BasicShader.class), "BasicShader");
 		defineType(createType(BasicFXShader.class), "BasicFXShader");
@@ -283,7 +283,7 @@ public class MQDLCore extends DefaultCore
 		//defineType(createType(ParticlesShader.class), "ParticlesShader");
 		defineType(createType(SSAOShader.class), "SSAOShader");
 		defineType(createType(PBRShader.class), "PBRShader");
-		defineType(createType(FogShader.class), "FogShader");
+		defineType(FogShader.class, "FogShader");
 		defineType(createType(SSRRShader.class), "SSRRShader");
 
 		// Materials

@@ -56,6 +56,8 @@ import static org.lwjgl.opengl.GL30.*;
 import static org.lwjgl.opengl.GL31.glGetActiveUniformName;
 import static org.lwjgl.opengl.GL32.GL_TEXTURE_CUBE_MAP_SEAMLESS;
 import static org.lwjgl.opengl.GL33.*;
+import static org.lwjgl.opengl.NVMeshShader.GL_MESH_SHADER_BIT_NV;
+import static org.lwjgl.opengl.NVMeshShader.GL_MESH_SHADER_NV;
 import org.lwjgl.system.MemoryUtil;
 
 /**
@@ -214,13 +216,15 @@ public abstract class Shader extends AbstractAsset
 	@AttributeDL(ignore = true)
 	protected Mesh mesh;
 
-	@required
 	@isFile
 	protected Path vertexShaderSource;
 
 	@required
 	@isFile
 	protected Path fragmentShaderSource;
+
+	@isFile
+	protected Path meshShaderSource;
 
 	@dontPersist
 	protected final Map<String, Integer> uniforms = new HashMap<>();
@@ -308,16 +312,6 @@ public abstract class Shader extends AbstractAsset
 
 		int program = glCreateProgram();
 
-		log.debug("Loading vertex shader", FilesHelper.createMavenNetbeansFileConsoleLink(getVertexShaderSource()));
-
-		int vshader;
-		try {
-			vshader = createShader(getVertexShaderSource(), GL_VERTEX_SHADER);
-		} catch (Exception ex) {
-			throw new IllegalStateException("Error creating vertex shader '" + getVertexShaderSource() + "' - " + ex.getMessage(), ex);
-		}
-		glAttachShader(program, vshader);
-
 		log.debug("Loading fragment shader", FilesHelper.createMavenNetbeansFileConsoleLink(getFragmentShaderSource()));
 
 		int fshader;
@@ -327,6 +321,32 @@ public abstract class Shader extends AbstractAsset
 			throw new IllegalStateException("Error creating fragment shader '" + getFragmentShaderSource() + "' - " + ex.getMessage(), ex);
 		}
 		glAttachShader(program, fshader);
+
+		if (getVertexShaderSource() != null) {
+
+			log.debug("Loading vertex shader", FilesHelper.createMavenNetbeansFileConsoleLink(getVertexShaderSource()));
+
+			int vshader;
+			try {
+				vshader = createShader(getVertexShaderSource(), GL_VERTEX_SHADER);
+			} catch (Exception ex) {
+				throw new IllegalStateException("Error creating vertex shader '" + getVertexShaderSource() + "' - " + ex.getMessage(), ex);
+			}
+			glAttachShader(program, vshader);
+		}
+
+		if (getMeshShaderSource() != null) {
+
+			log.debug("Loading mesh shader", FilesHelper.createMavenNetbeansFileConsoleLink(getMeshShaderSource()));
+
+			int mshader;
+			try {
+				mshader = createShader(getMeshShaderSource(), GL_MESH_SHADER_NV | GL_MESH_SHADER_BIT_NV);
+			} catch (Exception ex) {
+				throw new IllegalStateException("Error creating mesh shader '" + getMeshShaderSource() + "' - " + ex.getMessage(), ex);
+			}
+			glAttachShader(program, mshader);
+		}
 
 		glLinkProgram(program);
 		int linked = glGetProgrami(program, GL_LINK_STATUS);
@@ -957,6 +977,7 @@ public abstract class Shader extends AbstractAsset
 		});
 	}
 
+	// <editor-fold desc="Getters/Setters" defaultstate="collapsed">
 	public int getShaderProgramId()
 	{
 		return shaderProgramId;
@@ -997,7 +1018,6 @@ public abstract class Shader extends AbstractAsset
 		return Collections.unmodifiableMap(attributes);
 	}
 
-	// <editor-fold desc="Getters/Setters" defaultstate="collapsed">
 	public int getInputPosition()
 	{
 		return inputPosition;
@@ -1086,6 +1106,11 @@ public abstract class Shader extends AbstractAsset
 	public boolean isRenderTransparent()
 	{
 		return renderTransparent;
+	}
+
+	public boolean isMeshShader()
+	{
+		return getMeshShaderSource() != null;
 	}
 
 	public void setRenderTransparent(boolean renderTransparent)
@@ -1181,6 +1206,16 @@ public abstract class Shader extends AbstractAsset
 	public int getInstanceIdentifierAttribute()
 	{
 		return instanceIdentifierAttribute;
+	}
+
+	public Path getMeshShaderSource()
+	{
+		return meshShaderSource;
+	}
+
+	public void setMeshShaderSource(Path meshShaderSource)
+	{
+		this.meshShaderSource = meshShaderSource;
 	}
 	// </editor-fold>
 }

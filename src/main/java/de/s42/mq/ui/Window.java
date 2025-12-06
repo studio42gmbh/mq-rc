@@ -11,6 +11,7 @@
  */
 package de.s42.mq.ui;
 
+import de.s42.base.strings.StringHelper;
 import de.s42.dl.DLAttribute.AttributeDL;
 import de.s42.dl.annotations.files.IsFileDLAnnotation.isFile;
 import de.s42.dl.exceptions.DLException;
@@ -29,7 +30,9 @@ import static org.lwjgl.opengl.GL11.*;
 import static org.lwjgl.opengl.GL20.glDrawBuffers;
 import static org.lwjgl.opengl.GL30.GL_FRAMEBUFFER;
 import static org.lwjgl.opengl.GL30.glBindFramebuffer;
+import org.lwjgl.opengl.GL45;
 import org.lwjgl.opengl.GLCapabilities;
+import static org.lwjgl.opengl.NVMeshShader.*;
 
 /**
  *
@@ -119,6 +122,16 @@ public class Window extends AbstractAsset
 			capabilities = GL.createCapabilities();
 
 			log.info("OpenGL version", glGetString(GL_VERSION));
+
+			log.trace("OpenGL capabilities", StringHelper.toString(capabilities));
+
+			log.info("GL_NV_mesh_shader", capabilities.GL_NV_mesh_shader);
+			log.info("GL_MAX_MESH_WORK_GROUP_SIZE_NV X", GL45.glGetIntegeri(GL_MAX_MESH_WORK_GROUP_SIZE_NV, 0));
+			log.info("GL_MAX_MESH_WORK_GROUP_SIZE_NV Y", GL45.glGetIntegeri(GL_MAX_MESH_WORK_GROUP_SIZE_NV, 1));
+			log.info("GL_MAX_MESH_WORK_GROUP_SIZE_NV Z", GL45.glGetIntegeri(GL_MAX_MESH_WORK_GROUP_SIZE_NV, 2));
+			log.info("GL_MAX_DRAW_MESH_TASKS_COUNT_NV", GL45.glGetInteger(GL_MAX_DRAW_MESH_TASKS_COUNT_NV));
+			log.info("GL_MAX_MESH_OUTPUT_VERTICES_NV", GL45.glGetInteger(GL_MAX_MESH_OUTPUT_VERTICES_NV));
+			log.info("GL_MAX_MESH_OUTPUT_PRIMITIVES_NV", GL45.glGetInteger(GL_MAX_MESH_OUTPUT_PRIMITIVES_NV));
 		}
 	}
 

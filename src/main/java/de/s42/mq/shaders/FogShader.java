@@ -28,6 +28,7 @@ import de.s42.mq.rendering.RenderContext;
 public class FogShader extends Shader
 {
 
+	@SuppressWarnings("unused")
 	private final static Logger log = LogManager.getLogger(FogShader.class.getName());
 
 	protected int inBufferResolutionUniform = -1;

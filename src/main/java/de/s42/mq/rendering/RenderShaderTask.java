@@ -17,6 +17,7 @@ import de.s42.mq.materials.ShaderMaterial;
 import de.s42.mq.meshes.ScreenQuad;
 import de.s42.mq.shaders.Shader;
 import de.s42.mq.ui.AbstractWindowTask;
+import static org.lwjgl.opengl.NVMeshShader.glDrawMeshTasksNV;
 
 /**
  *
@@ -63,7 +64,11 @@ public class RenderShaderTask extends AbstractWindowTask
 			window.setRenderViewportToWindow();
 		}
 
-		screenQuad.render(context);
+		if (shader.isMeshShader()) {
+			glDrawMeshTasksNV(0, 1);
+		} else {
+			screenQuad.render(context);
+		}
 
 		shader.afterRendering(context);
 		shaderMaterial.afterRendering(context);

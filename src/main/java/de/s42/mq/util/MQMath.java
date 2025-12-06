@@ -21,17 +21,17 @@ import org.joml.Vector3f;
 public final class MQMath
 {
 
-	public static final float EPSILON = Float.MIN_VALUE;
-	public static final float ONE_MINUS_EPSILON = 1.0f - EPSILON;
-	public static final float ONE_PLUS_EPSILON = 1.0f + EPSILON;
-	public static final float PI = (float) Math.PI;
-	public static final float TAU = (float) (Math.PI * 2.0);
-	public static final float PIHALF = (float) (Math.PI * 0.5);
-	public static final float PIQUARTER = (float) (Math.PI * 0.25);
-	public final static double SQRT2 = Math.sqrt(2.0);
-	public final static double SQRT3 = Math.sqrt(3.0);
+	public final static float EPSILON = Float.MIN_VALUE;
+	public final static float ONE_MINUS_EPSILON = 1.0f - EPSILON;
+	public final static float ONE_PLUS_EPSILON = 1.0f + EPSILON;
+	public final static float PI = (float) Math.PI;
+	public final static float TAU = (float) (Math.PI * 2.0);
+	public final static float PIHALF = (float) (Math.PI * 0.5);
+	public final static float PIQUARTER = (float) (Math.PI * 0.25);
+	public final static float SQRT2 = (float) Math.sqrt(2.0);
+	public final static float SQRT3 = (float) Math.sqrt(3.0);
 
-	public static final float[] POWERS_OF_TEN_FLOAT = {
+	public final static float[] POWERS_OF_TEN_FLOAT = {
 		1.0f,
 		10.0f,
 		100.0f,
