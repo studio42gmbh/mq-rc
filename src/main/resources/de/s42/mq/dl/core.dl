@@ -50,6 +50,7 @@ type de.s42.mq.shaders.postfx.PostFXShader @java extends de.s42.mq.shaders.Shade
 	FloatData lookupIntensity /*@editable*/ /*@min(0.0)*/ /*@max(1000.0)*/ /*@step(0.1)*/;
 	FloatData barrelPower /*@editable*/ /*@min(0.0)*/ /*@max(1000.0)*/ /*@step(0.1)*/;
 	Texture lookup;
+	Camera gameCamera;
 }
 
 type de.s42.mq.shaders.ParticlesShader @java extends de.s42.mq.shaders.Shader alias ParticlesShader

@@ -13,6 +13,7 @@ package de.s42.mq.shaders.postfx;
 
 import de.s42.dl.DLAttribute.AttributeDL;
 import de.s42.dl.exceptions.DLException;
+import de.s42.mq.cameras.Camera;
 import de.s42.mq.data.ColorData;
 import de.s42.mq.data.FloatData;
 import de.s42.mq.data.IntegerData;
@@ -32,15 +33,16 @@ public class PostFXShader extends Shader
 	protected int width;
 	protected int height;
 
-	protected int blitModeUniform;
-	protected int exposureUniform;
-	protected int vignetteStartUniform;
-	protected int vignetteEndUniform;
-	protected int vignetteColorUniform;
-	protected int chromaticAbberationStrengthUniform;
-	protected int inBufferResolutionUniform;
-	protected int lookupIntensityUniform;
-	protected int barrelPowerUniform;
+	protected int blitModeUniform = -1;
+	protected int exposureUniform = -1;
+	protected int vignetteStartUniform = -1;
+	protected int vignetteEndUniform = -1;
+	protected int vignetteColorUniform = -1;
+	protected int chromaticAbberationStrengthUniform = -1;
+	protected int inBufferResolutionUniform = -1;
+	protected int lookupIntensityUniform = -1;
+	protected int barrelPowerUniform = -1;
+	protected int cameraFarUniform = -1;
 
 	@AttributeDL(defaultValue = "TONEMAP_ACES")
 	@editor
@@ -72,6 +74,8 @@ public class PostFXShader extends Shader
 	@editor
 	protected FloatData chromaticAbberationStrength = new FloatData();
 
+	protected Camera gameCamera;
+
 	@Override
 	protected void loadShader() throws DLException
 	{
@@ -90,6 +94,7 @@ public class PostFXShader extends Shader
 		inBufferResolutionUniform = getUniformLocation("inBufferResolution");
 		lookupIntensityUniform = getUniformLocationOpt("lookupIntensity");
 		barrelPowerUniform = getUniformLocationOpt("barrelPower");
+		cameraFarUniform = getUniformLocationOpt("cameraFar");
 	}
 
 	@Override
@@ -125,6 +130,10 @@ public class PostFXShader extends Shader
 		setTexture(inBufferId.getIntegerValue(), 1);
 		if (lookup != null) {
 			setTexture(lookup.getTextureId(), 2);
+		}
+
+		if (gameCamera != null) {
+			setUniform(cameraFarUniform, gameCamera.getFar());
 		}
 
 		// @todo -> causes 1281 OpenGL error in default buffer as glfw uses GL_BACK_LEFT
@@ -306,6 +315,16 @@ public class PostFXShader extends Shader
 	public void setBarrelPower(FloatData barrelPower)
 	{
 		this.barrelPower = barrelPower;
+	}
+
+	public Camera getGameCamera()
+	{
+		return gameCamera;
+	}
+
+	public void setGameCamera(Camera gameCamera)
+	{
+		this.gameCamera = gameCamera;
 	}
 	// </editor-fold>
 }
