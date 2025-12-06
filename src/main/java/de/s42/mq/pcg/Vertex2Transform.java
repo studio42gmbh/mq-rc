@@ -25,34 +25,14 @@
 //</editor-fold>
 package de.s42.mq.pcg;
 
-import de.s42.mq.pcg.images.PCGImage;
-import de.s42.mq.pcg.points.PCGPoints;
-import de.s42.mq.util.AABB;
+import org.joml.Vector2f;
 
 /**
  *
  * @author Benjamin Schiller
  */
-public interface PCGContext
+public interface Vertex2Transform
 {
 
-	AABB getBounds();
-
-	int getBoundsId();
-
-	PCGPoints createPoints(int count);
-
-	PCGImage loadImage(String id);
-
-	void error(Object... message);
-
-	void warn(Object... message);
-
-	void info(Object... message);
-
-	void debug(Object... message);
-
-	boolean isDebug();
-
-	void createDebugSphereGizmos(PCGPoints points);
+	Vector2f transform(float x, float y, Vector2f target);
 }

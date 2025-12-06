@@ -53,7 +53,7 @@ public final class MQMath
 	{
 	}
 
-	public static final float pow10(int exp)
+	public static float pow10(int exp)
 	{
 		if (exp < 0 || exp > 15) {
 			throw new IllegalArgumentException("exp has to be 0 - 15");
@@ -62,7 +62,7 @@ public final class MQMath
 		return POWERS_OF_TEN_FLOAT[exp];
 	}
 
-	public static final float pow10(float number, int exp)
+	public static float pow10(float number, int exp)
 	{
 		if (exp < 0 || exp > 15) {
 			throw new IllegalArgumentException("exp has to be 0 - 15");
@@ -105,9 +105,9 @@ public final class MQMath
 		);
 	}
 
-	public static final float fract(float value)
+	public static float fract(float value)
 	{
-		return value - (float) Math.floor(value);
+		return value - floor(value);
 	}
 
 	public static float toRadians(float degrees)
@@ -138,10 +138,5 @@ public final class MQMath
 	public static float ceil(float value)
 	{
 		return (float) Math.ceil(value);
-	}
-
-	public static float round(float value)
-	{
-		return (float) Math.round(value);
 	}
 }

@@ -25,6 +25,8 @@
 //</editor-fold>
 package de.s42.mq.pcg.points;
 
+import static de.s42.mq.pcg.points.StandardPCGPoints.PCG_POINTS_STRUCT_COMPONENTS;
+import static de.s42.mq.pcg.points.StandardPCGPoints.PCG_POINT_MASK_VISIBLE;
 import de.s42.mq.util.AABB;
 import de.s42.mq.util.MQRandom;
 
@@ -51,9 +53,8 @@ public class RandomizePointPositions implements PCGPointProcessor
 	public void process(PCGPoints points, float[] data, int startIndex, int endIndex)
 	{
 		assert data != null : "data != null";
-		assert startIndex + 3 <= endIndex : "startIndex + 3 <= endIndex";
-		assert (endIndex - startIndex) % 3 == 0 : "(endIndex - startIndex) % 3 == 0";
-		assert startIndex >= 0 && startIndex <= data.length - 3 : "startIndex >= 0 && startIndex < data.length - 3";
+		assert startIndex <= endIndex : "startIndex <= endIndex";
+		assert startIndex >= 0 && startIndex <= data.length : "startIndex >= 0 && startIndex < data.length";
 		assert endIndex >= 0 && endIndex <= data.length : "endIndex >= 0 && endIndex < data.length";
 
 		float minX = randomBounds.min.x;
@@ -63,11 +64,11 @@ public class RandomizePointPositions implements PCGPointProcessor
 		float minZ = randomBounds.min.z;
 		float maxZ = randomBounds.max.z;
 
-		for (int i = startIndex; i < endIndex; i += 3) {
-
+		for (int i = startIndex; i < endIndex; i += PCG_POINTS_STRUCT_COMPONENTS) {
 			data[i] = random.nextFloat(minX, maxX);
 			data[i + 1] = random.nextFloat(minY, maxY);
 			data[i + 2] = random.nextFloat(minZ, maxZ);
+			data[i + 3] = Float.intBitsToFloat(PCG_POINT_MASK_VISIBLE);
 		}
 	}
 }

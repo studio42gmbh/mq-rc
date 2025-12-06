@@ -34,13 +34,17 @@ import org.joml.Vector3f;
 public class StandardPCGPoints implements PCGPoints
 {
 
+	public final static int PCG_POINTS_STRUCT_COMPONENTS = 4;
+
+	public final static int PCG_POINT_MASK_VISIBLE = 0b00000001;
+
 	protected float[] data;
 
 	public StandardPCGPoints(int count)
 	{
-		assert count > 0 : "count > 0";
+		assert count >= 0 : "count >= 0";
 
-		data = new float[count * 3];
+		data = new float[count * PCG_POINTS_STRUCT_COMPONENTS];
 	}
 
 	@Override
@@ -52,22 +56,30 @@ public class StandardPCGPoints implements PCGPoints
 	}
 
 	@Override
-	public Vector3f get(int index, Vector3f target)
+	public Vector3f getPosition(int index, Vector3f target)
 	{
-		assert index >= 0 && index < data.length / 3 : "index >= 0 && index < data.length / 3";
+		assert index >= 0 && index < data.length / PCG_POINTS_STRUCT_COMPONENTS : "index >= 0 && index < data.length / PCG_POINTS_STRUCT_COMPONENTS";
 		assert target != null : "target != null";
 
-		target.x = data[index * 3];
-		target.y = data[index * 3 + 1];
-		target.z = data[index * 3 + 2];
+		target.x = data[index * PCG_POINTS_STRUCT_COMPONENTS];
+		target.y = data[index * PCG_POINTS_STRUCT_COMPONENTS + 1];
+		target.z = data[index * PCG_POINTS_STRUCT_COMPONENTS + 2];
 
 		return target;
 	}
 
 	@Override
+	public int getMask(int index)
+	{
+		assert index >= 0 && index < data.length / PCG_POINTS_STRUCT_COMPONENTS : "index >= 0 && index < data.length / PCG_POINTS_STRUCT_COMPONENTS";
+
+		return Float.floatToIntBits(data[index * PCG_POINTS_STRUCT_COMPONENTS + 3]);
+	}
+
+	@Override
 	public int getCount()
 	{
-		return data.length / 3;
+		return data.length / PCG_POINTS_STRUCT_COMPONENTS;
 	}
 
 	@Override

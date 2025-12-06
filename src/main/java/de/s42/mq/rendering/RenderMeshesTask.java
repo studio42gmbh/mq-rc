@@ -259,8 +259,8 @@ public class RenderMeshesTask extends AbstractWindowTask
 
 			fbxSubMesh.setCamera(camera);
 			fbxSubMesh.render(context);
-
-			fbxSubMesh.getTransform().update(true);
+			fbxSubMesh.updateModelMatrix(true);
+			//fbxSubMesh.getTransform().update(true);
 		}
 
 		if (buffer != null) {

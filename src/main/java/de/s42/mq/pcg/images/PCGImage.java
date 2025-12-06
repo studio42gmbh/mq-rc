@@ -23,36 +23,34 @@
  * THE SOFTWARE.
  */
 //</editor-fold>
-package de.s42.mq.pcg;
+package de.s42.mq.pcg.images;
 
-import de.s42.mq.pcg.images.PCGImage;
-import de.s42.mq.pcg.points.PCGPoints;
-import de.s42.mq.util.AABB;
+import org.joml.Vector4f;
 
 /**
  *
  * @author Benjamin Schiller
  */
-public interface PCGContext
+public interface PCGImage
 {
 
-	AABB getBounds();
+	/**
+	 * In normalized coords [0.0, 1.0]
+	 *
+	 * @param x
+	 * @param y
+	 * @param target
+	 * @return
+	 */
+	Vector4f getRGBA(float x, float y, Vector4f target);
 
-	int getBoundsId();
-
-	PCGPoints createPoints(int count);
-
-	PCGImage loadImage(String id);
-
-	void error(Object... message);
-
-	void warn(Object... message);
-
-	void info(Object... message);
-
-	void debug(Object... message);
-
-	boolean isDebug();
-
-	void createDebugSphereGizmos(PCGPoints points);
+	/**
+	 * In pixel coordinates [0, width]
+	 *
+	 * @param x
+	 * @param y
+	 * @param target
+	 * @return
+	 */
+	Vector4f getRGBA(int x, int y, Vector4f target);
 }

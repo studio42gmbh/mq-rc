@@ -32,8 +32,11 @@ import de.s42.mq.materials.Material;
 import de.s42.mq.meshes.Mesh;
 import de.s42.mq.meshes.MeshGroup;
 import de.s42.mq.meshes.Sphere;
+import de.s42.mq.pcg.images.PCGImage;
+import de.s42.mq.pcg.images.StandardPCGImage;
 import de.s42.mq.pcg.points.PCGPoints;
 import de.s42.mq.pcg.points.StandardPCGPoints;
+import static de.s42.mq.pcg.points.StandardPCGPoints.PCG_POINTS_STRUCT_COMPONENTS;
 import de.s42.mq.util.AABB;
 import java.util.ArrayList;
 import java.util.List;
@@ -59,6 +62,26 @@ public class StandardPCGContext implements PCGContext
 	{
 	}
 
+	@Override
+	public PCGImage loadImage(String id)
+	{
+		assert id != null : "id != null";
+
+		// @todo
+		StandardPCGImage image = new StandardPCGImage(id);
+		image.load();
+
+		return image;
+	}
+
+	@Override
+	public PCGPoints createPoints(int count)
+	{
+		assert count >= 0 : "count >= 0";
+
+		return new StandardPCGPoints(count);
+	}
+
 	public void removeGizmos()
 	{
 		assert meshes != null : "meshes != null";
@@ -69,33 +92,36 @@ public class StandardPCGContext implements PCGContext
 	}
 
 	@Override
-	public void createSphereGizmos(PCGPoints points)
+	public void createDebugSphereGizmos(PCGPoints points)
 	{
+		assert points != null : "points != null";
+
+		if (!debug) {
+			return;
+		}
+
 		assert meshes != null : "meshes != null";
 		assert gizmoMaterial != null : "gizmoMaterial != null";
 
 		try {
 			float[] data = points.getData();
-			for (int i = 0; i < data.length; i += 3) {
-				Sphere gizmo = new Sphere(0.1f, 10, 10);
-				gizmo.setPosition(new Vector3f(data[i], data[i + 1], data[i + 2]));
-				gizmo.setMaterial(gizmoMaterial);
-				gizmo.setLayers("transparent");
-				gizmo.load();
-				gizmos.add(gizmo);
-				meshes.addMesh(gizmo);
+			for (int i = 0; i < data.length; i += PCG_POINTS_STRUCT_COMPONENTS) {
+
+				int mask = Float.floatToIntBits(data[i + 3]);
+
+				if ((mask & 0b00000001) == 0b00000001) {
+					Sphere gizmo = new Sphere(0.1f, 10, 10);
+					gizmo.setPosition(new Vector3f(data[i], data[i + 1], data[i + 2]));
+					gizmo.setMaterial(gizmoMaterial);
+					gizmo.setLayers("transparent");
+					gizmo.load();
+					gizmos.add(gizmo);
+					meshes.addMesh(gizmo);
+				}
 			}
 		} catch (DLException ex) {
 			throw new RuntimeException();
 		}
-	}
-
-	@Override
-	public PCGPoints createPoints(int count)
-	{
-		assert count > 0 : "count > 0";
-
-		return new StandardPCGPoints(count);
 	}
 
 	@Override

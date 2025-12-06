@@ -28,6 +28,8 @@ package de.s42.mq.loaders.fbx;
 import de.s42.dl.exceptions.DLException;
 import de.s42.dl.exceptions.InvalidInstance;
 import de.s42.mq.MQColor;
+import de.s42.mq.collision.Collider;
+import de.s42.mq.collision.SphereCollider;
 import de.s42.mq.materials.Material;
 import de.s42.mq.meshes.Mesh;
 import de.s42.mq.meshes.MeshGroup;
@@ -37,10 +39,7 @@ import static de.s42.mq.shaders.Shader.*;
 import de.s42.mq.util.AABB;
 import java.nio.IntBuffer;
 import java.util.List;
-import org.joml.Matrix4f;
-import org.joml.Matrix4x3f;
-import org.joml.Vector3f;
-import org.joml.Vector4f;
+import org.joml.*;
 import org.lwjgl.assimp.AIAABB;
 import org.lwjgl.assimp.AIFace;
 import org.lwjgl.assimp.AIMesh;
@@ -91,6 +90,10 @@ public class FbxSubMesh extends Mesh
 
 	protected final AABB aabb = new AABB();
 
+	protected AABB worldAABB;
+	protected Collider worldSphereCollider;
+	protected Collider customWorldSphereCollider;
+
 	public FbxSubMesh()
 	{
 	}
@@ -112,6 +115,9 @@ public class FbxSubMesh extends Mesh
 		copy.instanceData = instanceData;
 		copy.lod0Mesh = lod0Mesh;
 		copy.aabb.set(aabb);
+		copy.worldAABB = worldAABB;
+		copy.worldSphereCollider = worldSphereCollider;
+		copy.customWorldSphereCollider = customWorldSphereCollider;
 
 		// Copy lod meshes
 		if (lods != null) {
@@ -362,6 +368,10 @@ public class FbxSubMesh extends Mesh
 	@Override
 	public AABB getAABB()
 	{
+		if (worldAABB != null) {
+			return worldAABB;
+		}
+
 		//updateModelMatrix();
 		AABB result = new AABB();
 		result.setMax(new Vector3f(Float.NEGATIVE_INFINITY));
@@ -380,7 +390,35 @@ public class FbxSubMesh extends Mesh
 			result.merge(corner);
 		}
 
+		worldAABB = result;
+
 		return result;
+	}
+
+	@Override
+	public Collider getBoundsCollider()
+	{
+		if (customWorldSphereCollider != null) {
+			return customWorldSphereCollider;
+		}
+
+		if (worldSphereCollider != null) {
+			return worldSphereCollider;
+		}
+
+		worldSphereCollider = super.getBoundsCollider();
+
+		return worldSphereCollider;
+	}
+
+	/**
+	 * Used to manipulate the bounding sphere for instanced objects (like tile instancespawners etc.)
+	 *
+	 * @param collider
+	 */
+	public void setCustomWorldSphereCollider(SphereCollider collider)
+	{
+		customWorldSphereCollider = collider;
 	}
 
 	@Override
@@ -460,6 +498,55 @@ public class FbxSubMesh extends Mesh
 	}
 
 	// <editor-fold desc="Getters/Setters" defaultstate="collapsed">
+	@Override
+	public void setPosition(Vector3f position)
+	{
+		super.setPosition(position);
+
+		worldAABB = null;
+		worldSphereCollider = null;
+	}
+
+	@Override
+	public void setRotation(Quaternionf rotation)
+	{
+		super.setRotation(rotation);
+
+		worldAABB = null;
+		worldSphereCollider = null;
+	}
+
+	@Override
+	public void setScale(Vector3f scale)
+	{
+		super.setScale(scale);
+
+		worldAABB = null;
+		worldSphereCollider = null;
+	}
+
+	@Override
+	public void setModelMatrixDirty(boolean modelMatrixDirty)
+	{
+		super.setModelMatrixDirty(modelMatrixDirty);
+
+		if (modelMatrixDirty == true) {
+			worldAABB = null;
+			worldSphereCollider = null;
+		}
+	}
+
+	@Override
+	public void updateModelMatrix(boolean force)
+	{
+		if (force == true || transform.isDirty()) {
+			worldAABB = null;
+			worldSphereCollider = null;
+		}
+
+		super.updateModelMatrix(force);
+	}
+
 	public AIMesh getAiMesh()
 	{
 		return aiMesh;

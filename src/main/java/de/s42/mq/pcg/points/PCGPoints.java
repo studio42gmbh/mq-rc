@@ -34,11 +34,13 @@ import org.joml.Vector3f;
 public interface PCGPoints
 {
 
+	float[] getData();
+
 	int getCount();
 
-	Vector3f get(int index, Vector3f target);
+	Vector3f getPosition(int index, Vector3f target);
 
-	float[] getData();
+	int getMask(int index);
 
 	void process(PCGPointProcessor processor);
 }
