@@ -28,7 +28,8 @@ public enum BlitMode
 	ALPHA_CHANNEL(8),
 	LUMINANCE(9),
 	INVERTED(10),
-	IDENTIFIER(11),;
+	IDENTIFIER(11),
+	DEPTH(12);
 
 	public final int blitModeId;
 	private static int maxBlitModeId = -1;
