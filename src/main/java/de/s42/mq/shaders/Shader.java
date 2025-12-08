@@ -306,6 +306,8 @@ public abstract class Shader extends AbstractAsset
 			return;
 		}
 
+		log.start("Shader.load");
+
 		super.load();
 
 		log.debug("Loading", getClass().getName());
@@ -367,9 +369,15 @@ public abstract class Shader extends AbstractAsset
 		fetchUniforms();
 		fetchAttributes();
 
+		log.start("Shader.load:loadShader");
+
 		loadShader();
 
+		log.stopTrace("Shader.load:loadShader");
+
 		glUseProgram(0);
+
+		log.stopDebug("Shader.load");
 	}
 
 	@Override
@@ -452,6 +460,8 @@ public abstract class Shader extends AbstractAsset
 	{
 		assert source != null : "source != null";
 
+		log.start("Shader.createShader");
+
 		if (!Files.isRegularFile(source)) {
 			throw new Exception("Error creating shader " + source.toString() + " is not a regular file");
 		}
@@ -461,7 +471,12 @@ public abstract class Shader extends AbstractAsset
 
 		// Support DLT dynamic shaders
 		if (source.getFileName().toString().contains(".dlt.")) {
-			log.debug("Found dynamic shader source", source);
+
+			log.start("Shader.createShader:dlt");
+
+			log.trace("Found dynamic shader source", source);
+
+			log.start("Shader.createShader:dlt:compile");
 
 			TemplateCompilerOptions options = new TemplateCompilerOptions(source.toString());
 			options.setClassName("DLTShader");
@@ -469,10 +484,19 @@ public abstract class Shader extends AbstractAsset
 			options.setCacheCompiledTemplate(true);
 			CompiledTemplate compiled = DLT.compile(source, options);
 
+			log.stopTrace("Shader.createShader:dlt:compile");
+
+			log.start("Shader.createShader:dlt:evaluate");
+
 			DefaultTemplateContext context = new DefaultTemplateContext(source.toAbsolutePath().toString());
+			context.setCacheCompiledTemplates(true);
 			context.addModifier(new UniformOrConst());
 			context.setBinding("shader", this);
 			evaluated = compiled.evaluate(context);
+
+			log.stopTrace("Shader.createShader:dlt:evaluate");
+
+			log.stopTrace("Shader.createShader:dlt");
 
 			log.trace("Generated:\n", evaluated);
 
@@ -517,6 +541,8 @@ public abstract class Shader extends AbstractAsset
 		if (shaderLog.trim().length() > 0) {
 			log.warn(shaderLog);
 		}
+
+		log.stopDebug("Shader.createShader");
 
 		return shaderId;
 	}
