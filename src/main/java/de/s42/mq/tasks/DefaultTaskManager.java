@@ -85,6 +85,7 @@ public class DefaultTaskManager extends AbstractAsset implements TaskManager
 	}
 
 	@Override
+	@SuppressWarnings("SynchronizeOnNonFinalField")
 	public void unload() throws DLException
 	{
 		if (!isLoaded()) {

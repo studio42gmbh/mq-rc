@@ -39,6 +39,7 @@ import static de.s42.mq.shaders.Shader.*;
 import de.s42.mq.util.AABB;
 import java.nio.IntBuffer;
 import java.util.List;
+import org.joml.Math;
 import org.joml.*;
 import org.lwjgl.assimp.AIAABB;
 import org.lwjgl.assimp.AIFace;
@@ -79,6 +80,7 @@ public class FbxSubMesh extends Mesh
 	protected int elementCount;
 
 	protected int instanceCount = 1;
+	protected int instanceRenderCount = 1;
 	protected int instanceDataBuffer = -1;
 	protected float instanceData[] = new float[INSTANCE_DATA_BYTE_SIZE / 4];
 
@@ -236,24 +238,26 @@ public class FbxSubMesh extends Mesh
 	 */
 	public void updateInstanceData(int instanceCount, float[] instanceData)
 	{
-		assert instanceCount > 0 : "instanceCount > 0";
+		assert instanceCount >= 0 : "instanceCount >= 0";
 		assert instanceData.length == instanceCount * (INSTANCE_DATA_BYTE_SIZE / 4) : "instanceTransforms.length == instanceCount * (INSTANCE_TRANSFORM_BYTE_SIZE / 4)";
 
 		this.instanceCount = instanceCount;
+		this.instanceRenderCount = instanceCount;
 		this.instanceData = instanceData;
 
-		glBindVertexArray(vao);
-		instanceDataBuffer = glGenBuffers();
-		glBindBuffer(GL_ARRAY_BUFFER, instanceDataBuffer);
-		glBufferData(GL_ARRAY_BUFFER, instanceData, GL_DYNAMIC_DRAW);
+		if (instanceDataBuffer == -1) {
+			instanceDataBuffer = glGenBuffers();
+		}
 
+		glBindVertexArray(vao);
+		glBindBuffer(GL_ARRAY_BUFFER, instanceDataBuffer);
+		glBufferData(GL_ARRAY_BUFFER, instanceData, GL_STATIC_DRAW);
 		glBindVertexArray(0);
 	}
 
 	public void updateInstanceData(List<InstanceData> data)
 	{
 		assert data != null : "transforms != null";
-		assert !data.isEmpty() : "!transforms.isEmpty()";
 
 		int tSize = INSTANCE_DATA_BYTE_SIZE / 4;
 
@@ -287,9 +291,21 @@ public class FbxSubMesh extends Mesh
 		glDeleteBuffers(normalArrayBuffer);
 		glDeleteBuffers(elementArrayBuffer);
 		elementCount = 0;
-		glDeleteBuffers(instanceDataBuffer);
+
+		deleteInstanceData();
 
 		super.unload();
+	}
+
+	public void deleteInstanceData()
+	{
+		instanceData = null;
+
+		if (instanceDataBuffer > -1) {
+			int b = instanceDataBuffer;
+			instanceDataBuffer = -1;
+			glDeleteBuffers(instanceDataBuffer);
+		}
 	}
 
 	@Override
@@ -300,6 +316,10 @@ public class FbxSubMesh extends Mesh
 		assert material.isLoaded() : "material.isLoaded()";
 		assert material.getShader().isLoaded() : "material.getShader().isLoaded()";
 		assert isLoaded() : "isLoaded()";
+
+		if (instanceRenderCount <= 0) {
+			return;
+		}
 
 		updateModelMatrix();
 
@@ -350,8 +370,9 @@ public class FbxSubMesh extends Mesh
 		glVertexAttribPointer(LOCATION_INSTANCE_IDENTIFIER, 1, GL_FLOAT, false, stride, 5 * 3 * 4);
 		glVertexAttribDivisor(LOCATION_INSTANCE_IDENTIFIER, 1);
 
-		glDrawElementsInstanced(GL_TRIANGLES, elementCount, GL_UNSIGNED_INT, 0, instanceCount);
-		MQDebug.incDrawCallData(1, instanceCount, elementCount * instanceCount / 3);
+		int renderCount = Math.max(0, Math.min(instanceRenderCount, instanceCount));
+		glDrawElementsInstanced(GL_TRIANGLES, elementCount, GL_UNSIGNED_INT, 0, renderCount);
+		MQDebug.incDrawCallData(1, renderCount, elementCount * renderCount / 3);
 
 		glBindVertexArray(0);
 
@@ -471,6 +492,7 @@ public class FbxSubMesh extends Mesh
 		lodMesh.lod0Mesh = this;
 	}
 
+	// <editor-fold desc="Getters/Setters" defaultstate="collapsed">
 	@Override
 	public void setMaterial(Material material)
 	{
@@ -497,7 +519,6 @@ public class FbxSubMesh extends Mesh
 		}
 	}
 
-	// <editor-fold desc="Getters/Setters" defaultstate="collapsed">
 	@Override
 	public void setPosition(Vector3f position)
 	{
@@ -586,5 +607,20 @@ public class FbxSubMesh extends Mesh
 	{
 		this.lods = lods;
 	}
+
+	public int getInstanceRenderCount()
+	{
+		return instanceRenderCount;
+	}
+
+	public void setInstanceRenderCount(int instanceRenderCount)
+	{
+		this.instanceRenderCount = instanceRenderCount;
+	}
 	// </editor-fold>
+
+	public int getInstanceDataBuffer()
+	{
+		return instanceDataBuffer;
+	}
 }

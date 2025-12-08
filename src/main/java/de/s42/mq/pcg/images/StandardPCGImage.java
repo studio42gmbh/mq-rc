@@ -70,7 +70,7 @@ public class StandardPCGImage implements PCGImage
 			return target;
 		}
 
-		return getRGBA((int) (x * (float) width), (int) (y * (float) height), target);
+		return getRGBA((int) (x * (float) (width - 1)), (int) (y * (float) (height - 1)), target);
 
 	}
 
@@ -93,7 +93,7 @@ public class StandardPCGImage implements PCGImage
 		return target;
 	}
 
-	public void load()
+	public synchronized void load()
 	{
 		// @todo add proper caching
 		if (data != null) {
