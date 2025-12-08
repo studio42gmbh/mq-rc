@@ -28,6 +28,9 @@ package de.s42.mq.util;
 import static de.s42.mq.util.MQMath.PI;
 import static de.s42.mq.util.MQMath.TAU;
 import java.util.SplittableRandom;
+import org.joml.Vector2f;
+import org.joml.Vector3f;
+import org.joml.Vector4f;
 
 /**
  *
@@ -76,5 +79,32 @@ public final class MQRandom
 	public float nextFloat(float min, float max)
 	{
 		return random.nextFloat(min, max);
+	}
+
+	public Vector2f nextVector(float maxX, float maxY, Vector2f target)
+	{
+		target.x = nextFloat(maxX);
+		target.y = nextFloat(maxY);
+
+		return target;
+	}
+
+	public Vector3f nextVector(float maxX, float maxY, float maxZ, Vector3f target)
+	{
+		target.x = nextFloat(maxX);
+		target.y = nextFloat(maxY);
+		target.z = nextFloat(maxZ);
+
+		return target;
+	}
+
+	public Vector4f nextVector(float maxX, float maxY, float maxZ, float maxW, Vector4f target)
+	{
+		target.x = nextFloat(maxX);
+		target.y = nextFloat(maxY);
+		target.z = nextFloat(maxZ);
+		target.w = nextFloat(maxW);
+
+		return target;
 	}
 }

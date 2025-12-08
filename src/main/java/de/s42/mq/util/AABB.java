@@ -65,6 +65,12 @@ public final class AABB
 		this.max = new Vector3f(max);
 	}
 
+	public AABB(float minX, float minY, float minZ, float maxX, float maxY, float maxZ)
+	{
+		this.min = new Vector3f(minX, minY, minZ);
+		this.max = new Vector3f(maxX, maxY, maxZ);
+	}
+
 	public AABB set(AABB other)
 	{
 		assert other != null : "other != null";

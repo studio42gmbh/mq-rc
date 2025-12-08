@@ -29,17 +29,19 @@ package de.s42.mq.pcg.points;
  *
  * @author Benjamin Schiller
  */
-public interface PCGPointProcessor
+public interface PCGSubPointProcessor
 {
 
 	/**
-	 * Gets a continous array of floats where triples represent a vector
+	 * Gets a continous array of floats where triples represent a vector. Gets a ref to a parent element allowing
+	 * hierarchical processing.
 	 *
 	 * @param points
 	 * @param data
-	 * @param startIndex start point index (will get multiplied by componentSize of points to determine offset in data)
-	 * @param endIndex end point index (will get multiplied by componentSize of points to determine offset in data)
-	 * @param step in points (will get multiplied by componentSize of points to determine offset in data)
+	 * @param parentIndex
+	 * @param startIndex
+	 * @param endIndex
+	 * @param step
 	 */
-	void process(PCGPoints points, float[] data, int startIndex, int endIndex, int step);
+	void process(PCGPoints points, float[] data, int parentIndex, int startIndex, int endIndex, int step);
 }

@@ -32,7 +32,7 @@ import de.s42.mq.util.MQRandom;
  *
  * @author Benjamin Schiller
  */
-public class RandomizePointPositions implements PCGPointProcessor
+public class RandomizePointPositions implements PCGPointProcessor, PCGSubPointProcessor
 {
 
 	protected final MQRandom random;
@@ -48,12 +48,14 @@ public class RandomizePointPositions implements PCGPointProcessor
 	}
 
 	@Override
-	public void process(PCGPoints points, float[] data, int startIndex, int endIndex)
+	public void process(PCGPoints points, float[] data, int startIndex, int endIndex, int step)
 	{
 		assert data != null : "data != null";
+		assert startIndex >= 0 && startIndex <= points.getCount() : "startIndex >= 0 && startIndex < points.getCount()";
+		assert endIndex >= 0 && endIndex <= points.getCount() : "endIndex >= 0 && endIndex < points.getCount()";
 		assert startIndex <= endIndex : "startIndex <= endIndex";
-		assert startIndex >= 0 && startIndex <= data.length : "startIndex >= 0 && startIndex < data.length";
-		assert endIndex >= 0 && endIndex <= data.length : "endIndex >= 0 && endIndex < data.length";
+
+		int componentSize = points.getComponentSize();
 
 		float minX = randomBounds.min.x;
 		float maxX = randomBounds.max.x;
@@ -62,8 +64,36 @@ public class RandomizePointPositions implements PCGPointProcessor
 		float minZ = randomBounds.min.z;
 		float maxZ = randomBounds.max.z;
 
+		int componentStepSize = componentSize * step;
+		for (int i = startIndex * componentSize; i < endIndex * componentSize; i += componentStepSize) {
+			StandardPCGPoints.applyPosition(data, i, random.nextFloat(minX, maxX), random.nextFloat(minY, maxY), random.nextFloat(minZ, maxZ));
+		}
+	}
+
+	@Override
+	public void process(PCGPoints points, float[] data, int parentIndex, int startIndex, int endIndex, int step)
+	{
+		assert data != null : "data != null";
+		assert startIndex >= 0 && startIndex <= points.getCount() : "startIndex >= 0 && startIndex < points.getCount()";
+		assert endIndex >= 0 && endIndex <= points.getCount() : "endIndex >= 0 && endIndex < points.getCount()";
+		assert startIndex <= endIndex : "startIndex <= endIndex";
+
 		int componentSize = points.getComponentSize();
-		for (int i = startIndex; i < endIndex; i += componentSize) {
+
+		int parentComponentIndex = parentIndex * componentSize;
+		float pX = StandardPCGPoints.retrievePositionX(data, parentComponentIndex);
+		float pY = StandardPCGPoints.retrievePositionY(data, parentComponentIndex);
+		float pZ = StandardPCGPoints.retrievePositionZ(data, parentComponentIndex);
+
+		float minX = randomBounds.min.x + pX;
+		float maxX = randomBounds.max.x + pX;
+		float minY = randomBounds.min.y + pY;
+		float maxY = randomBounds.max.y + pY;
+		float minZ = randomBounds.min.z + pZ;
+		float maxZ = randomBounds.max.z + pZ;
+
+		int componentStepSize = componentSize * step;
+		for (int i = startIndex * componentSize; i < endIndex * componentSize; i += componentStepSize) {
 			StandardPCGPoints.applyPosition(data, i, random.nextFloat(minX, maxX), random.nextFloat(minY, maxY), random.nextFloat(minZ, maxZ));
 		}
 	}

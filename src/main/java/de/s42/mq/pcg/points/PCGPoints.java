@@ -45,4 +45,10 @@ public interface PCGPoints
 	int getMask(int index);
 
 	void process(PCGPointProcessor processor);
+
+	void process(PCGPointProcessor processor, int startIndex, int endIndex);
+
+	void process(PCGPointProcessor processor, int startIndex, int endIndex, int step);
+
+	void processSub(PCGSubPointProcessor processor, int parentIndex, int startIndex, int endIndex, int step);
 }

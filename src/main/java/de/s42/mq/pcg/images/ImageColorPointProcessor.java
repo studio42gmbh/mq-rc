@@ -70,7 +70,7 @@ public class ImageColorPointProcessor implements PCGPointProcessor
 	}
 
 	@Override
-	public void process(PCGPoints points, float[] data, int startIndex, int endIndex)
+	public void process(PCGPoints points, float[] data, int startIndex, int endIndex, int step)
 	{
 		assert data != null : "data != null";
 		assert startIndex <= endIndex : "startIndex <= endIndex";
@@ -78,7 +78,9 @@ public class ImageColorPointProcessor implements PCGPointProcessor
 		assert endIndex >= 0 && endIndex <= data.length : "endIndex >= 0 && endIndex < data.length";
 
 		int componentSize = points.getComponentSize();
-		for (int i = startIndex; i < endIndex; i += componentSize) {
+
+		int componentStepSize = componentSize * step;
+		for (int i = startIndex * componentSize; i < endIndex * componentSize; i += componentStepSize) {
 
 			float x = StandardPCGPoints.retrievePositionX(data, i);
 			float y = StandardPCGPoints.retrievePositionY(data, i);

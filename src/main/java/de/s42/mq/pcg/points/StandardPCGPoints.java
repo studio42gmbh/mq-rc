@@ -178,7 +178,43 @@ public final class StandardPCGPoints implements PCGPoints
 	{
 		assert processor != null : "processor != null";
 
-		processor.process(this, data, 0, data.length);
+		process(processor, 0, getCount(), 1);
+	}
+
+	@Override
+	public void process(PCGPointProcessor processor, int startIndex, int endIndex)
+	{
+		assert processor != null : "processor != null";
+		assert startIndex >= 0 && startIndex <= getCount() : "startIndex >= 0 && startIndex <= getCount()";
+		assert endIndex >= 0 && endIndex <= getCount() : "endIndex >= 0 && endIndex <= getCount() " + endIndex;
+		assert startIndex <= endIndex : "startIndex <= endIndex";
+
+		processor.process(this, data, startIndex, endIndex, 1);
+	}
+
+	@Override
+	public void process(PCGPointProcessor processor, int startIndex, int endIndex, int step)
+	{
+		assert processor != null : "processor != null";
+		assert startIndex >= 0 && startIndex <= getCount() : "startIndex >= 0 && startIndex <= getCount()";
+		assert endIndex >= 0 && endIndex <= getCount() : "endIndex >= 0 && endIndex <= getCount() " + endIndex;
+		assert startIndex <= endIndex : "startIndex <= endIndex";
+		assert step >= 1 : "step >= 1";
+
+		processor.process(this, data, startIndex, endIndex, step);
+	}
+
+	@Override
+	public void processSub(PCGSubPointProcessor processor, int parentIndex, int startIndex, int endIndex, int step)
+	{
+		assert processor != null : "processor != null";
+		assert parentIndex >= 0 && parentIndex <= getCount() : "parentIndex >= 0 && parentIndex <= getCount()";
+		assert startIndex >= 0 && startIndex <= getCount() : "startIndex >= 0 && startIndex <= getCount()";
+		assert endIndex >= 0 && endIndex <= getCount() : "endIndex >= 0 && endIndex <= getCount() " + endIndex;
+		assert startIndex <= endIndex : "startIndex <= endIndex";
+		assert step >= 1 : "step >= 1";
+
+		processor.process(this, data, parentIndex, startIndex, endIndex, step);
 	}
 
 	@Override
