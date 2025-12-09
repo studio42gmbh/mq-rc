@@ -23,12 +23,8 @@
  * THE SOFTWARE.
  */
 //</editor-fold>
-package de.s42.mq.pcg;
+package de.s42.mq.pcg.voxels;
 
-import de.s42.mq.pcg.images.PCGImage;
-import de.s42.mq.pcg.points.PCGPoints;
-import de.s42.mq.pcg.voxels.PCGVoxels;
-import de.s42.mq.util.AABB;
 import org.joml.Vector3f;
 import org.joml.Vector3i;
 
@@ -36,20 +32,32 @@ import org.joml.Vector3i;
  *
  * @author Benjamin Schiller
  */
-public interface PCGContext
+public interface PCGVoxels
 {
 
-	AABB getBounds();
+	int[] getData();
 
-	int getBoundsId();
+	int getWidth();
 
-	PCGPoints createPoints(int count);
+	int getHeight();
 
-	PCGPoints createPoints(int count, int extendedComponentSize);
+	int getDepth();
 
-	PCGVoxels createVoxels(int width, int height, int depth, Vector3f origin);
+	int get(int x, int y, int z);
 
-	PCGVoxels createVoxels(Vector3i dimension, Vector3f origin);
+	int get(Vector3i position);
 
-	PCGImage loadImage(String id);
+	int getIndex(int x, int y, int z);
+
+	int getIndex(Vector3i position);
+
+	void set(int x, int y, int z, int value);
+
+	void set(Vector3i position, int value);
+
+	void set(int index, int value);
+
+	public Vector3f getOrigin();
+
+	void process(PCGVoxelProcessor processor);
 }

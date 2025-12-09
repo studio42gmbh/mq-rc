@@ -19,6 +19,9 @@ import de.s42.mq.materials.Material;
 import de.s42.mq.rendering.RenderContext;
 import de.s42.mq.shaders.Shader;
 import de.s42.mq.util.AABB;
+import org.joml.Matrix4f;
+import org.joml.Vector3f;
+import org.joml.Vector4f;
 import static org.lwjgl.opengl.GL11.*;
 import static org.lwjgl.opengl.GL15.*;
 import static org.lwjgl.opengl.GL20.glEnableVertexAttribArray;
@@ -32,6 +35,7 @@ import static org.lwjgl.opengl.GL30.*;
 public class Cube extends Mesh
 {
 
+	@SuppressWarnings("FieldNameHidesFieldInSuperclass")
 	private final static Logger log = LogManager.getLogger(Cube.class.getName());
 
 	public static Cube fromAABB(AABB aabb)
@@ -91,6 +95,16 @@ public class Cube extends Mesh
 
 	protected int vao = -1;
 	protected int vbo = -1;
+
+	@Override
+	public Cube copy()
+	{
+		Cube copy = (Cube) super.copy();
+		copy.vao = vao;
+		copy.vbo = vbo;
+
+		return copy;
+	}
 
 	@Override
 	public void load() throws DLException
@@ -181,5 +195,19 @@ public class Cube extends Mesh
 
 		shader.afterRendering(context);
 		mat.afterRendering(context);
+	}
+
+	@Override
+	public AABB getAABB()
+	{
+		Matrix4f matrix = getTransform().getMatrix();
+
+		Vector4f min = (new Vector4f(-1.0f, -1.0f, -1.0f, 1.0f)).mul(matrix);
+		min.div(min.w);
+
+		Vector4f max = (new Vector4f(1.0f, 1.0f, 1.0f, 1.0f)).mul(matrix);
+		max.div(max.w);
+
+		return new AABB(min.xyz(new Vector3f()), max.xyz(new Vector3f()));
 	}
 }

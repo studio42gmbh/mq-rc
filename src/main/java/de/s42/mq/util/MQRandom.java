@@ -81,6 +81,16 @@ public final class MQRandom
 		return random.nextFloat(min, max);
 	}
 
+	public int nextInt(int max)
+	{
+		return random.nextInt(max);
+	}
+
+	public int nextInt(int min, int max)
+	{
+		return random.nextInt(min, max);
+	}
+
 	public Vector2f nextVector(float maxX, float maxY, Vector2f target)
 	{
 		target.x = nextFloat(maxX);

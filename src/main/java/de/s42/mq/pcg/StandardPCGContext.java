@@ -25,21 +25,15 @@
 //</editor-fold>
 package de.s42.mq.pcg;
 
-import de.s42.dl.exceptions.DLException;
-import de.s42.log.LogManager;
-import de.s42.log.Logger;
-import de.s42.mq.materials.Material;
-import de.s42.mq.meshes.Mesh;
-import de.s42.mq.meshes.MeshGroup;
-import de.s42.mq.meshes.Sphere;
 import de.s42.mq.pcg.images.PCGImage;
 import de.s42.mq.pcg.images.StandardPCGImage;
 import de.s42.mq.pcg.points.PCGPoints;
 import de.s42.mq.pcg.points.StandardPCGPoints;
+import de.s42.mq.pcg.voxels.PCGVoxels;
+import de.s42.mq.pcg.voxels.StandardPCGVoxels;
 import de.s42.mq.util.AABB;
-import java.util.ArrayList;
-import java.util.List;
 import org.joml.Vector3f;
+import org.joml.Vector3i;
 
 /**
  *
@@ -48,14 +42,7 @@ import org.joml.Vector3f;
 public class StandardPCGContext implements PCGContext
 {
 
-	protected boolean debug;
 	protected AABB bounds;
-	protected MeshGroup meshes;
-	protected Material gizmoMaterial;
-	protected String logComponent = "Unknown";
-	protected Logger log;
-
-	protected final List<Mesh> gizmos = new ArrayList<>();
 
 	public StandardPCGContext()
 	{
@@ -90,85 +77,16 @@ public class StandardPCGContext implements PCGContext
 		return new StandardPCGPoints(count, extendedComponentSize);
 	}
 
-	public void removeGizmos()
+	@Override
+	public PCGVoxels createVoxels(Vector3i dimension, Vector3f origin)
 	{
-		assert meshes != null : "meshes != null";
-
-		for (Mesh gizmo : gizmos) {
-			meshes.removeMesh(gizmo);
-		}
+		return createVoxels(dimension.x, dimension.y, dimension.z, origin);
 	}
 
 	@Override
-	public void createDebugSphereGizmos(PCGPoints points)
+	public PCGVoxels createVoxels(int width, int height, int depth, Vector3f origin)
 	{
-		assert points != null : "points != null";
-
-		if (!debug) {
-			return;
-		}
-
-		assert meshes != null : "meshes != null";
-		assert gizmoMaterial != null : "gizmoMaterial != null";
-
-		try {
-			float[] data = points.getData();
-			int componentSize = points.getComponentSize();
-			for (int i = 0; i < data.length; i += componentSize) {
-
-				if (StandardPCGPoints.retrieveIsVisible(data, i)) {
-					Sphere gizmo = new Sphere(0.1f, 10, 10);
-					gizmo.setPosition(new Vector3f(data[i], data[i + 1], data[i + 2]));
-					gizmo.setMaterial(gizmoMaterial);
-					gizmo.setLayers("transparent");
-					gizmo.load();
-					gizmos.add(gizmo);
-					meshes.addMesh(gizmo);
-				}
-			}
-		} catch (DLException ex) {
-			throw new RuntimeException();
-		}
-	}
-
-	@Override
-	public void error(Object... message)
-	{
-		if (log == null) {
-			log = LogManager.getLogger(logComponent);
-		}
-
-		log.error(message);
-	}
-
-	@Override
-	public void warn(Object... message)
-	{
-		if (log == null) {
-			log = LogManager.getLogger(logComponent);
-		}
-
-		log.warn(message);
-	}
-
-	@Override
-	public void info(Object... message)
-	{
-		if (log == null) {
-			log = LogManager.getLogger(logComponent);
-		}
-
-		log.info(message);
-	}
-
-	@Override
-	public void debug(Object... message)
-	{
-		if (log == null) {
-			log = LogManager.getLogger(logComponent);
-		}
-
-		log.debug(message);
+		return new StandardPCGVoxels(width, height, depth, origin);
 	}
 
 	@Override
@@ -186,51 +104,5 @@ public class StandardPCGContext implements PCGContext
 	public void setBounds(AABB bounds)
 	{
 		this.bounds = bounds;
-	}
-
-	@Override
-	public boolean isDebug()
-	{
-		return debug;
-	}
-
-	public void setDebug(boolean debug)
-	{
-		this.debug = debug;
-	}
-
-	public MeshGroup getMeshes()
-	{
-		return meshes;
-	}
-
-	public void setMeshes(MeshGroup meshes)
-	{
-		this.meshes = meshes;
-	}
-
-	public List<Mesh> getGizmos()
-	{
-		return gizmos;
-	}
-
-	public Material getGizmoMaterial()
-	{
-		return gizmoMaterial;
-	}
-
-	public void setGizmoMaterial(Material gizmoMaterial)
-	{
-		this.gizmoMaterial = gizmoMaterial;
-	}
-
-	public String getLogComponent()
-	{
-		return logComponent;
-	}
-
-	public void setLogComponent(String logComponent)
-	{
-		this.logComponent = logComponent;
 	}
 }

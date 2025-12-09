@@ -1,0 +1,147 @@
+// <editor-fold desc="The MIT License" defaultstate="collapsed">
+/*
+ * The MIT License
+ *
+ * Copyright 2025 Studio 42 GmbH ( https://www.s42m.de ).
+ *
+ * Permission is hereby granted, free of charge, to any person obtaining a copy
+ * of this software and associated documentation files (the "Software"), to deal
+ * in the Software without restriction, including without limitation the rights
+ * to use, copy, modify, merge, publish, distribute, sublicense, and/or sell
+ * copies of the Software, and to permit persons to whom the Software is
+ * furnished to do so, subject to the following conditions:
+ *
+ * The above copyright notice and this permission notice shall be included in
+ * all copies or substantial portions of the Software.
+ *
+ * THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
+ * IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
+ * FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE
+ * AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
+ * LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
+ * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
+ * THE SOFTWARE.
+ */
+//</editor-fold>
+package de.s42.mq.pcg.voxels;
+
+import org.joml.Vector3f;
+import org.joml.Vector3i;
+
+/**
+ *
+ * @author Benjamin Schiller
+ */
+public class StandardPCGVoxels implements PCGVoxels
+{
+
+	protected final int[] data;
+	protected final int width;
+	protected final int height;
+	protected final int depth;
+	protected final int count;
+	protected final Vector3f origin;
+
+	public StandardPCGVoxels(int width, int height, int depth, Vector3f origin)
+	{
+		assert width > 0 : "width > 0";
+		assert height > 0 : "height > 0";
+		assert depth > 0 : "depth > 0";
+		assert origin != null : "origin != null";
+
+		this.count = width * height * depth;
+		this.data = new int[count];
+		this.width = width;
+		this.height = height;
+		this.depth = depth;
+		this.origin = new Vector3f(origin);
+	}
+
+	@Override
+	public void process(PCGVoxelProcessor processor)
+	{
+		assert processor != null : "processor != null";
+
+		processor.process(this, data);
+	}
+
+	// <editor-fold desc="Getters/Setters" defaultstate="collapsed">
+	@Override
+	public int[] getData()
+	{
+		return data;
+	}
+
+	@Override
+	public int getWidth()
+	{
+		return width;
+	}
+
+	@Override
+	public int getHeight()
+	{
+		return height;
+	}
+
+	@Override
+	public int getDepth()
+	{
+		return depth;
+	}
+
+	@Override
+	public int get(Vector3i position)
+	{
+		assert position != null : "position != null";
+
+		return get(position.x, position.y, position.z);
+	}
+
+	@Override
+	public int get(int x, int y, int z)
+	{
+		return data[getIndex(x, y, z)];
+	}
+
+	@Override
+	public int getIndex(Vector3i position)
+	{
+		assert position != null : "position != null";
+
+		return getIndex(position.x, position.y, position.z);
+	}
+
+	@Override
+	public int getIndex(int x, int y, int z)
+	{
+		return x * height * depth + y * depth + z;
+	}
+
+	@Override
+	public Vector3f getOrigin()
+	{
+		return origin;
+	}
+
+	@Override
+	public void set(Vector3i position, int value)
+	{
+		assert position != null : "position != null";
+
+		set(position.x, position.y, position.z, value);
+	}
+
+	@Override
+	public void set(int x, int y, int z, int value)
+	{
+		set(getIndex(x, y, z), value);
+	}
+
+	@Override
+	public void set(int index, int value)
+	{
+		data[index] = value;
+	}
+	// "Getters/Setters" </editor-fold>
+}

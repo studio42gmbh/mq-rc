@@ -26,6 +26,7 @@
 package de.s42.mq.util;
 
 import de.s42.base.strings.StringHelper;
+import de.s42.dl.DLAttribute.AttributeDL;
 import de.s42.mq.collision.SphereCollider;
 import java.util.Objects;
 import org.joml.Vector3f;
@@ -200,6 +201,7 @@ public final class AABB
 		return result;
 	}
 
+	@AttributeDL(ignore = true)
 	public SphereCollider getBoundingSphereCollider()
 	{
 		Vector3f deltaHalf = (new Vector3f(max)).sub(min).mul(0.5f);

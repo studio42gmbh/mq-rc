@@ -28,6 +28,7 @@ import java.util.*;
 import org.joml.Matrix4f;
 import org.joml.Quaternionf;
 import org.joml.Vector3f;
+import org.joml.Vector4f;
 
 /**
  *
@@ -131,8 +132,15 @@ public abstract class Mesh<ChildType extends Object> extends AbstractAsset imple
 
 	public AABB getAABB()
 	{
-		// @todo implement
-		return (new AABB()).translate(getPosition());
+		Matrix4f matrix = getTransform().getMatrix();
+
+		Vector4f min = (new Vector4f(-0.5f, -0.5f, -0.5f, 1.0f)).mul(matrix);
+		min.div(min.w);
+
+		Vector4f max = (new Vector4f(0.5f, 0.5f, 0.5f, 1.0f)).mul(matrix);
+		max.div(max.w);
+
+		return new AABB(min.xyz(new Vector3f()), max.xyz(new Vector3f()));
 	}
 
 	public Collider getBoundsCollider()
