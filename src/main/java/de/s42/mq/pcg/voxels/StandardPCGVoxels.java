@@ -131,6 +131,10 @@ public class StandardPCGVoxels implements PCGVoxels
 	@Override
 	public int getIndex(int x, int y, int z)
 	{
+		assert x >= 0 && x < width : "x >= 0 && x < width";
+		assert y >= 0 && y < height : "y >= 0 && y < height";
+		assert z >= 0 && z < depth : "z >= 0 && z < depth";
+
 		return x * height * depth + y * depth + z;
 	}
 
@@ -157,6 +161,8 @@ public class StandardPCGVoxels implements PCGVoxels
 	@Override
 	public void set(int index, int value)
 	{
+		assert index >= 0 && index < data.length : "index >= 0 && index < data.length";
+
 		data[index] = value;
 	}
 	// "Getters/Setters" </editor-fold>
