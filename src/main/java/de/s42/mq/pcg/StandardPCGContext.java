@@ -29,6 +29,8 @@ import de.s42.mq.pcg.images.PCGImage;
 import de.s42.mq.pcg.images.StandardPCGImage;
 import de.s42.mq.pcg.points.PCGPoints;
 import de.s42.mq.pcg.points.StandardPCGPoints;
+import de.s42.mq.pcg.sdf.PCGSDF;
+import de.s42.mq.pcg.sdf.StandardPCGSDF;
 import de.s42.mq.pcg.voxels.PCGVoxels;
 import de.s42.mq.pcg.voxels.StandardPCGVoxels;
 import de.s42.mq.util.AABB;
@@ -87,6 +89,12 @@ public class StandardPCGContext implements PCGContext
 	public PCGVoxels createVoxels(int width, int height, int depth, Vector3f origin)
 	{
 		return new StandardPCGVoxels(width, height, depth, origin);
+	}
+
+	@Override
+	public PCGSDF createSDF(int count)
+	{
+		return new StandardPCGSDF(count);
 	}
 
 	@Override

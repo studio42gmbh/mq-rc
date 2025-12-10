@@ -65,6 +65,22 @@ public class StandardPCGVoxels implements PCGVoxels
 		processor.process(this, data);
 	}
 
+	@Override
+	public void process(PCGVoxelPositionProcessor processor)
+	{
+		assert processor != null : "processor != null";
+
+		int index = 0;
+		for (float x = 0.0f; x < width; x += 1.0f) {
+			for (float y = 0.0f; y < height; y += 1.0f) {
+				for (float z = 0.0f; z < depth; z += 1.0f) {
+					processor.process(x, y, z, index, data[index]);
+					index++;
+				}
+			}
+		}
+	}
+
 	// <editor-fold desc="Getters/Setters" defaultstate="collapsed">
 	@Override
 	public int[] getData()

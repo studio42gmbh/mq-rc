@@ -60,4 +60,6 @@ public interface PCGVoxels
 	public Vector3f getOrigin();
 
 	void process(PCGVoxelProcessor processor);
+
+	void process(PCGVoxelPositionProcessor processor);
 }

@@ -23,36 +23,21 @@
  * THE SOFTWARE.
  */
 //</editor-fold>
-package de.s42.mq.pcg;
+package de.s42.mq.pcg.sdf;
 
-import de.s42.mq.pcg.images.PCGImage;
-import de.s42.mq.pcg.points.PCGPoints;
-import de.s42.mq.pcg.sdf.PCGSDF;
-import de.s42.mq.pcg.voxels.PCGVoxels;
-import de.s42.mq.util.AABB;
 import org.joml.Vector3f;
-import org.joml.Vector3i;
 
 /**
  *
  * @author Benjamin Schiller
  */
-public interface PCGContext
+public interface PCGSDF
 {
 
-	AABB getBounds();
+	float getMin(float x, float y, float z);
 
-	int getBoundsId();
+	float getMin(Vector3f position);
 
-	PCGPoints createPoints(int count);
+	void addSphere(float x, float y, float z, float radius);
 
-	PCGPoints createPoints(int count, int extendedComponentSize);
-
-	PCGVoxels createVoxels(int width, int height, int depth, Vector3f origin);
-
-	PCGVoxels createVoxels(Vector3i dimension, Vector3f origin);
-
-	PCGSDF createSDF(int count);
-
-	PCGImage loadImage(String id);
 }

@@ -110,6 +110,11 @@ public final class MQMath
 		return value - floor(value);
 	}
 
+	public static float sqrt(float value)
+	{
+		return (float) Math.sqrt(value);
+	}
+
 	public static float toRadians(float degrees)
 	{
 		return (float) Math.toRadians(degrees);

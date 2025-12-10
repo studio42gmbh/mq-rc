@@ -23,36 +23,22 @@
  * THE SOFTWARE.
  */
 //</editor-fold>
-package de.s42.mq.pcg;
-
-import de.s42.mq.pcg.images.PCGImage;
-import de.s42.mq.pcg.points.PCGPoints;
-import de.s42.mq.pcg.sdf.PCGSDF;
-import de.s42.mq.pcg.voxels.PCGVoxels;
-import de.s42.mq.util.AABB;
-import org.joml.Vector3f;
-import org.joml.Vector3i;
+package de.s42.mq.pcg.voxels;
 
 /**
  *
  * @author Benjamin Schiller
  */
-public interface PCGContext
+public interface PCGVoxelPositionProcessor
 {
 
-	AABB getBounds();
-
-	int getBoundsId();
-
-	PCGPoints createPoints(int count);
-
-	PCGPoints createPoints(int count, int extendedComponentSize);
-
-	PCGVoxels createVoxels(int width, int height, int depth, Vector3f origin);
-
-	PCGVoxels createVoxels(Vector3i dimension, Vector3f origin);
-
-	PCGSDF createSDF(int count);
-
-	PCGImage loadImage(String id);
+	/**
+	 * Gets a continous array of floats where triples represent a vector
+	 *
+	 * @param x
+	 * @param y
+	 * @param z
+	 * @param value
+	 */
+	void process(float x, float y, float z, int index, int value);
 }
