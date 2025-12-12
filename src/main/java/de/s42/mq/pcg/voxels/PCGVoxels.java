@@ -43,6 +43,8 @@ public interface PCGVoxels
 
 	int getDepth();
 
+	int getCount();
+
 	int get(int x, int y, int z);
 
 	int get(Vector3i position);

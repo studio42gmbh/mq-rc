@@ -99,6 +99,17 @@ public final class MQRandom
 		return target;
 	}
 
+	public Vector2f nextVectorRadial(float radius, Vector2f target)
+	{
+		float a = nextFloatTau();
+		float r = nextFloat(radius);
+
+		target.x = r * MQMath.sin(a);
+		target.y = r * MQMath.cos(a);
+
+		return target;
+	}
+
 	public Vector3f nextVector(float maxX, float maxY, float maxZ, Vector3f target)
 	{
 		target.x = nextFloat(maxX);

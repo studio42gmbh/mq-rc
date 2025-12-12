@@ -115,6 +115,16 @@ public final class MQMath
 		return (float) Math.sqrt(value);
 	}
 
+	public static float sin(float value)
+	{
+		return (float) Math.sin(value);
+	}
+
+	public static float cos(float value)
+	{
+		return (float) Math.cos(value);
+	}
+
 	public static float toRadians(float degrees)
 	{
 		return (float) Math.toRadians(degrees);

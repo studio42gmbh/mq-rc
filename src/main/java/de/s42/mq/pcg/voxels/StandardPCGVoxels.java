@@ -35,6 +35,23 @@ import org.joml.Vector3i;
 public class StandardPCGVoxels implements PCGVoxels
 {
 
+	public static void applyValue(int[] data, int componentIndex, int value)
+	{
+		data[componentIndex] = value;
+	}
+
+	public static int retrieveValue(int[] data, int componentIndex)
+	{
+		return data[componentIndex];
+	}
+
+	public static int retrieveOffsetValue(StandardPCGVoxels voxels, int[] data, int componentIndex, int offX, int offY, int offZ)
+	{
+		int offset = offX * voxels.height * voxels.depth + offY * voxels.depth + offZ;
+
+		return data[componentIndex + offset];
+	}
+
 	protected final int[] data;
 	protected final int width;
 	protected final int height;
@@ -74,7 +91,7 @@ public class StandardPCGVoxels implements PCGVoxels
 		for (float x = 0.0f; x < width; x += 1.0f) {
 			for (float y = 0.0f; y < height; y += 1.0f) {
 				for (float z = 0.0f; z < depth; z += 1.0f) {
-					processor.process(x, y, z, index, data[index]);
+					processor.process(data, x, y, z, index);
 					index++;
 				}
 			}
@@ -86,6 +103,12 @@ public class StandardPCGVoxels implements PCGVoxels
 	public int[] getData()
 	{
 		return data;
+	}
+
+	@Override
+	public int getCount()
+	{
+		return width * height * depth;
 	}
 
 	@Override

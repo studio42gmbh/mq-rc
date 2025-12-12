@@ -35,10 +35,11 @@ public interface PCGVoxelPositionProcessor
 	/**
 	 * Gets a continous array of floats where triples represent a vector
 	 *
+	 * @param data
 	 * @param x
 	 * @param y
 	 * @param z
-	 * @param value
+	 * @param index
 	 */
-	void process(float x, float y, float z, int index, int value);
+	void process(int[] data, float x, float y, float z, int index);
 }
